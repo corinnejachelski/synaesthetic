@@ -22,6 +22,11 @@ class User(db.Model):
                              secondary="user_tracks",
                              backref="users")
 
+    def __repr__(self):
+        """Return a human-readable representation of a User."""
+
+        return f"<User user_id={self.user_id} display_name={self.display_name}>"
+
 
 class UserArtist(db.Model):
     """Association table for users and artists"""
@@ -31,6 +36,11 @@ class UserArtist(db.Model):
     userartist_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     user_id = db.Column(db.String, db.ForeignKey('users.user_id'))
     artist_id = db.Column(db.String, db.ForeignKey('artists.artist_id'))
+
+    def __repr__(self):
+        """Return a human-readable representation of a UserArtist."""
+
+        return f"<UserArtist artist_id={self.artist_id}>"
 
 
 class UserTrack(db.Model):
@@ -62,7 +72,7 @@ class Artist(db.Model):
     tracks = db.relationship("Track", backref="artists")
 
     def __repr__(self):
-        """Return a human-readable representation of a Human."""
+        """Return a human-readable representation of an Artist."""
 
         return f"<Artist artist_id={self.artist_id} artist_name={self.artist_name}>"
 
@@ -88,6 +98,11 @@ class Genre(db.Model):
 
     #artists relationship to Artist objects
 
+    def __repr__(self):
+        """Return a human-readable representation of a Genre."""
+
+        return f"<Genre genre_id={self.genre_id} genre={self.genre}>"
+
 class ArtistGenre(db.Model):
     """Association table for artists and genres"""
 
@@ -96,6 +111,11 @@ class ArtistGenre(db.Model):
     artistgenre_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     artist_id = db.Column(db.String, db.ForeignKey('artists.artist_id'))
     genre_id = db.Column(db.Integer, db.ForeignKey('genres.genre_id'))
+
+    def __repr__(self):
+        """Return a human-readable representation of an ArtistGenre."""
+
+        return f"<ArtistGenre artist_id={self.artist_id} genre_id={self.genre_id}>"
 
 
 class Track(db.Model):

@@ -13,18 +13,49 @@ model.connect_to_db(server.app)
 model.db.create_all()
 
 # get user's top 50 artists and store as Artist objects
-#this will change to be the API response
+#this will change to be the API response instead of file
 with open('top_artists.json') as f:
     data = json.load(f)
 
+#will change to get_user_info() from API response
+user_id = "test" 
+display_name = "test"
+image_url = "test"
+
+db_user = crud.create_user(user_id, display_name, image_url)
+
+#parse artists in response
 for artist in data['items']:
     artist_id = artist['id']
     artist_name = artist['name']
     popularity = artist['popularity']
 
-    db_artist = crud.create_artist(artist_id, artist_name, popularity)
+    #check if artist is in artists table
+    if crud.get_artist_by_id(artist_id) == None:
+        db_artist = crud.create_artist(artist_id, artist_name, popularity)
+
+    #add each artist to user_artists table
+    db_user_artist = crud.create_user_artist(user_id, artist_id)
 
 
+    #parse genres from list
+    for genre in artist['genres']:
+        genre = genre
+
+        #check if genre is in genres table
+        if crud.get_genre_by_name(genre) == None:
+            db_genre = crud.create_genre(genre)
+
+        genre_id = crud.get_genre_id_by_name(genre)  
+
+        #need auto-increment genre_id as FK to create artist_genre    
+        #add each artist's genres to artist_genres table
+        db_artist_genre = crud.create_artist_genres(artist_id, genre_id)
+
+    
+
+
+#seed genres table
 
 # 'genres' : artist['genres']}
 
