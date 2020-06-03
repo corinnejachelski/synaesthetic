@@ -61,6 +61,11 @@ class Artist(db.Model):
 
     tracks = db.relationship("Track", backref="artists")
 
+    def __repr__(self):
+        """Return a human-readable representation of a Human."""
+
+        return f"<Artist artist_id={self.artist_id} artist_name={self.artist_name}>"
+
 
 class RelatedArtist(db.Model):
     """Data model for related artists to Artist objects"""
