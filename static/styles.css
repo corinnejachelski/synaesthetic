@@ -1,0 +1,24 @@
+.main-text{
+    font-family: 'Secular One', sans-serif;
+    font-size: 600px;
+    font-weight: lighter;
+    margin: auto;
+    color: white;
+    text-align: center;
+}
+body{
+    background-color: black;
+    font-family: 'Secular One', sans-serif;
+}
+button, input[type="submit"] {
+    font-size: 2em;
+    border-radius: 10px;
+    background: #84bd00 ;
+    color: white;
+    border: 0;
+    cursor: pointer2
+    font-weight: 600;
+    position: absolute;
+    margin: auto;
+    /* transition: background 0.2s; */ 
+  }
