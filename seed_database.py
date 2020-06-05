@@ -5,6 +5,10 @@ import json
 from pprint import pprint
 from random import choice
 import model, crud, server
+from datetime import datetime
+
+start = datetime.now()
+print(start)
 
 os.system('dropdb synaesthetic')
 os.system('createdb synaesthetic')
@@ -18,8 +22,8 @@ with open('top_artists.json') as f:
     data = json.load(f)
 
 #will change to get_user_info() from API response
-user_id = "test" 
-display_name = "test"
+user_id = "test2" 
+display_name = "test2"
 image_url = "test"
 
 db_user = crud.create_user(user_id, display_name, image_url)
@@ -52,7 +56,9 @@ for artist in data['items']:
         #add each artist's genres to artist_genres table
         db_artist_genre = crud.create_artist_genres(artist_id, genre_id)
 
-    
+end = datetime.now()
+
+print(end - start)    
 
 
 #seed genres table

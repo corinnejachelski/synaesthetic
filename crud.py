@@ -3,7 +3,7 @@
 from model import (db, User, UserArtist, UserTrack, Artist, RelatedArtist, 
 Genre, ArtistGenre, Track, Audio, connect_to_db)
 
-
+#seed database helper functions
 def create_user(user_id, display_name, image_url):
     """Create and return new User"""
 
@@ -60,7 +60,7 @@ def create_artist_genres(artist_id, genre_id):
 
     return artist_genres
 
-
+#query helper functions
 def get_artist_by_id(artist_id):
     """Query artists table and return object"""
 
@@ -75,6 +75,33 @@ def get_genre_by_name(genre):
 def get_genre_id_by_name(genre):
 
     return db.session.query(Genre.genre_id).filter_by(genre=genre).first()
+
+
+def get_artists_by_user(user_id):
+    """
+    >>>get_artists_by_user("test2")
+
+    [('1bL7zNdRZRQtgMnMpsCh0K',), ('2DvbYXMiUAQuupPEQnIt1I',),....]
+    """
+
+    return db.session.query(UserArtist.artist_id).filter_by(user_id=user_id).all()
+
+def get_genres_by_artist(artist_id):
+
+   return db.session.query(ArtistGenre.genre_id).filter_by(artist_id=artist_id).all()
+
+# def get_max_genre_by_artist(artist_id):
+
+#     genre_ids = db.session.query(ArtistGenre.genre_id).filter_by(artist_id=artist_id).all()
+
+#     num_genres = {}
+#     for genre in genre_ids:
+#         num_artists[genre.ge]
+#         len(genre[0])
+    
+def get_count_by_genre_id(genre_id):
+
+    return db.session.query(ArtistGenre.artist_id).filter_by(genre_id=genre_id).count()
 
 if __name__ == '__main__':
     from server import app
