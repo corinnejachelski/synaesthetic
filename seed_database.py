@@ -10,11 +10,11 @@ from datetime import datetime
 start = datetime.now()
 print(start)
 
-os.system('dropdb synaesthetic')
-os.system('createdb synaesthetic')
+# os.system('dropdb synaesthetic')
+# os.system('createdb synaesthetic')
 
 model.connect_to_db(server.app)
-model.db.create_all()
+# model.db.create_all()
 
 # get user's top 50 artists and store as Artist objects
 #this will change to be the API response instead of file
@@ -42,7 +42,7 @@ for artist in data['items']:
     db_user_artist = crud.create_user_artist(user_id, artist_id)
 
 
-    #parse genres from list
+    #parse genres from list for each artist
     for genre in artist['genres']:
         genre = genre
 

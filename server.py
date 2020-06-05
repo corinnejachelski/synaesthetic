@@ -47,23 +47,53 @@ def display_homepage():
 
 @app.route('/login')
 def login():
-    oauth = spotipy.oauth2.SpotifyOAuth(client_id = SPOTIPY_CLIENT_ID,
-                                    client_secret = SPOTIPY_CLIENT_SECRET,
-                                    redirect_uri = SPOTIPY_REDIRECT_URI,
-                                    scope = SCOPE)
+    oauth = spotipy.oauth2.SpotifyOAuth(client_id=SPOTIPY_CLIENT_ID,
+                                    client_secret=SPOTIPY_CLIENT_SECRET,
+                                    redirect_uri=SPOTIPY_REDIRECT_URI,
+                                    scope=SCOPE,
+                                    username=username)
 
     # token = oauth.get_access_token(username)
 
     auth_url = oauth.get_authorize_url()
+    #returns a server error OSError: [Errno 98] Address already in use
+    # res = oauth.get_auth_response()
+    #returns a server error OSError: [Errno 98] Address already in use
+    code = oauth.get_authorization_code()
+    # token = oauth.get_cached_token()
+    # token = oauth.get_access_token(code)
 
     print("\n\n\n\n\n\n\n\n\n\n\n")
     print(auth_url)
+    print("\n\n\n\n\n\n\n\n\n\n\n")
+    print(f"code: {code}")
+    # print("\n\n\n\n\n\n\n\n\n\n\n")
+    # print(f"token: {token}")
     # print(dir(oauth))
     return redirect(auth_url)
 
 
 @app.route('/callback')
 def callback():
+
+    # client = spotipy.oauth2.SpotifyClientCredentials(client_id=SPOTIPY_CLIENT_ID, 
+    #                                         client_secret=SPOTIPY_CLIENT_SECRET, 
+    #                                         proxies=None, 
+    #                                         requests_session=True, 
+    #                                         requests_timeout=None)
+
+    # token = client.get_access_token()
+    # print("\n\n\n\n\n\n\n\n\n\n\n")
+    # print(f"token: {token}")
+
+    # if token:
+    #     sp = spotipy.Spotify(auth=token)
+    #     results = sp.current_user_saved_tracks()
+    #     for item in results['items']:
+    #         track = item['track']
+    #         print(track['name'] + ' - ' + track['artists'][0]['name'])
+    # else:
+    #     print("Can't get token for", username)
 
     # sp = spotipy.Spotify()
 

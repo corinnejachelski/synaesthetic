@@ -77,31 +77,43 @@ def get_genre_id_by_name(genre):
     return db.session.query(Genre.genre_id).filter_by(genre=genre).first()
 
 
-def get_artists_by_user(user_id):
-    """
-    >>>get_artists_by_user("test2")
+def get_genres_by_user_artists(user_id):
+    """returns {'art pop': ['Grimes', 'Lady Lamb'], 
+    'electropop': ['Grimes', 'Big Wild'], 
+    'indietronica': ['Grimes', 'Big Wild'],..}"""
 
-    [('1bL7zNdRZRQtgMnMpsCh0K',), ('2DvbYXMiUAQuupPEQnIt1I',),....]
-    """
+    #join tables to access relationships
+    #user_join returns a User object
+    user_join = User.query.options( 
+             db.joinedload('artists') # attribute for user 
+               .joinedload('genres')  # attribute from artist
+         ).get(user_id)  # test is the user id ()                                                                                               
 
-    return db.session.query(UserArtist.artist_id).filter_by(user_id=user_id).all()
+    user_genres = {}                                                                                                                 
 
-def get_genres_by_artist(artist_id):
+    for artist in user_join.artists: 
+        for genre in artist.genres: 
+             user_genres[genre.genre] = user_genres.get(genre.genre, []) + [artist.artist_name]
 
-   return db.session.query(ArtistGenre.genre_id).filter_by(artist_id=artist_id).all()
+    #just artist lists in dictionaries to access repeating artists
+    artists = sorted(user_genres.values())
 
-# def get_max_genre_by_artist(artist_id):
+    return user_genres
 
-#     genre_ids = db.session.query(ArtistGenre.genre_id).filter_by(artist_id=artist_id).all()
+def count_user_artists_by_genre(user_id):
+    """returns {'dance pop': 1, 'electropop': 2, 
+    'escape room': 1, 'indietronica': 2,...}"""
 
-#     num_genres = {}
-#     for genre in genre_ids:
-#         num_artists[genre.ge]
-#         len(genre[0])
-    
-def get_count_by_genre_id(genre_id):
 
-    return db.session.query(ArtistGenre.artist_id).filter_by(genre_id=genre_id).count()
+    user_genres = get_genres_by_user_artists(user_id)
+
+    count_artists = {}
+    for genre in user_genres:
+        count_artists[genre] = count_artists.get(genre, 0) + len(user_genres[genre])
+
+    return count_artists 
+
+
 
 if __name__ == '__main__':
     from server import app
