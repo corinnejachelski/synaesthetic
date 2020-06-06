@@ -95,15 +95,15 @@ def get_genres_by_user_artists(user_id):
         for genre in artist.genres: 
              user_genres[genre.genre] = user_genres.get(genre.genre, []) + [artist.artist_name]
 
-    #just artist lists in dictionaries to access repeating artists
+    #just artist lists from values to access repeating artists (in multiple genres)
+    # [['ATYYA'], ['ATYYA'], ['Alpha Brain Waves'], ['Ark Patrol'], ['Ark Patrol', 'Big Wild']
     artists = sorted(user_genres.values())
 
     return user_genres
 
 def count_user_artists_by_genre(user_id):
-    """returns {'dance pop': 1, 'electropop': 2, 
-    'escape room': 1, 'indietronica': 2,...}"""
-
+    """returns {'chillwave': 3, 'dance pop': 3, 'electropop': 6, 
+    'escape room': 4,....}"""
 
     user_genres = get_genres_by_user_artists(user_id)
 
@@ -112,6 +112,24 @@ def count_user_artists_by_genre(user_id):
         count_artists[genre] = count_artists.get(genre, 0) + len(user_genres[genre])
 
     return count_artists 
+
+def count_genres_by_user_artists(user_id):
+    """returns {'Leon Bridges': 2, 'Lady Lamb': 5, 'Tash Sultana': 1, 'Big Wild': 5, 
+    'Sylvan Esso': 6,...}"""
+
+    user_join = User.query.options( 
+             db.joinedload('artists') # attribute for user 
+               .joinedload('genres')  # attribute from artist
+         ).get(user_id)  # test is the user id ()   
+
+    artist_genres = {}
+    for artist in user_join.artists: 
+        artist_genres[artist.artist_name] = artist_genres.get(artist.artist_name, 0) + len(artist.genres)
+
+    return artist_genres
+
+
+
 
 
 

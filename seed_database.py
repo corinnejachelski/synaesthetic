@@ -61,13 +61,6 @@ end = datetime.now()
 print(end - start)    
 
 
-#seed genres table
-
-# 'genres' : artist['genres']}
-
-# print(artist_info.keys())
-
-#for key in artist_info.keys() --> API call for multiple artist's related artists
 
 ##############################################################################
 # get user's top 50 tracks from API and parse to python dict
