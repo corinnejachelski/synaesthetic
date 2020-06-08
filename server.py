@@ -1,4 +1,4 @@
-from flask import Flask, redirect, request, render_template, session
+from flask import Flask, jsonify, redirect, request, render_template, session
 #from jinja2 import StrictUndefined
 import json
 
@@ -114,9 +114,14 @@ def get_user_top_artists():
     user_id = session["user_id"]
     crud.artists_to_db(user_artists, user_id)
 
-    return render_template('circle-pack.html')
+    return redirect('/json/artists')
 
+@app.route('/json/artists')
+def get_circle_pack_data():
 
+    data = crud.optimize_genres(session["user_id"])
+
+    return jsonify(data)
 
 
 @app.route('/my-data')
