@@ -8,17 +8,22 @@ import requests
 import sys
 import spotipy
 import spotipy.util as util
-import auth
-
 # scope = 'user-top-read user-library-read playlist-read-public user-follow-read'
 
 # Client keys
 SPOTIPY_CLIENT_ID=os.environ['SPOTIPY_CLIENT_ID']
 SPOTIPY_CLIENT_SECRET=os.environ['SPOTIPY_CLIENT_SECRET']
 SPOTIPY_REDIRECT_URI='http://localhost:5000/callback'
-SCOPE = 'user-library-read'
+SCOPE='user-top-read'
+#username of account associated with Spotify Developer dashboard
+USERNAME=os.environ['USERNAME']
 
-username = "Corinne Jachelski"
+#Implements Authorization Code Flow for Spotify’s OAuth implementation.
+OAUTH = spotipy.oauth2.SpotifyOAuth(client_id=SPOTIPY_CLIENT_ID,
+                                    client_secret=SPOTIPY_CLIENT_SECRET,
+                                    redirect_uri=SPOTIPY_REDIRECT_URI,
+                                    scope=SCOPE,
+                                    username=USERNAME)
 
 
 
@@ -39,6 +44,7 @@ app.secret_key = 'SECRETSECRETSECRET'
 # set while debugging.
 #app.jinja_env.auto_reload = True
 
+
 @app.route('/')
 def display_homepage():
     
@@ -47,44 +53,40 @@ def display_homepage():
 
 @app.route('/login')
 def login():
-    oauth = spotipy.oauth2.SpotifyOAuth(client_id=SPOTIPY_CLIENT_ID,
-                                    client_secret=SPOTIPY_CLIENT_SECRET,
-                                    redirect_uri=SPOTIPY_REDIRECT_URI,
-                                    scope=SCOPE,
-                                    username=username)
+    """Authorizes Spotify user login"""
 
-    # token = oauth.get_access_token(username)
+    auth_url = OAUTH.get_authorize_url()
 
-    auth_url = oauth.get_authorize_url()
-    #returns a server error OSError: [Errno 98] Address already in use
-    # res = oauth.get_auth_response()
-    #returns a server error OSError: [Errno 98] Address already in use
-    # code = oauth.get_authorization_code()
-
-    # token = oauth.get_cached_token()
-    # token = oauth.get_access_token(code)
-
-    print("\n\n\n\n\n\n\n\n\n\n\n")
-    print(auth_url)
-    # print("\n\n\n\n\n\n\n\n\n\n\n")
-    # print(f"code: {code}")
-    # print("\n\n\n\n\n\n\n\n\n\n\n")
-    # print(f"token: {token}")
-    # print(dir(oauth))
     return redirect(auth_url)
 
 
 @app.route('/callback')
 def callback():
-    """"GET /callback?code=AQAb6q2K_.... HTTP/1.1" 200 -
-    code shows up in callack route request
-    oauth object does not exist in this route"""
+    """Spotify redirect URI"""
 
-    code = oauth.get_authorization_code()
-    print("\n\n\n\n\n\n\n\n\n\n\n")
-    print(code)
+    code = request.args.get("code")
+    token = OAUTH.get_access_token(code)
+    session["access_token"] = token["access_token"]
+    session["refresh_token"] = token["refresh_token"]
+
+    #Spotipy client Module for Spotify Web API
+    sp = spotipy.Spotify(auth=session["access_token"], oauth_manager=OAUTH)
+
+    #Get current user's top 50 artists
+    # user_artists = sp.current_user_top_artists(limit=50)
+
+    # print(user_artists)
+
+    #Get detailed profile information about the current user
+    user_info = sp.me()
+    print(user_info)
+    display_name = user_info["display_name"]
+    session["user_id"] = user_info["id"]
+    image_url = user_info["images"][0]["url"]
+    print(session)
 
     return render_template('circle-pack.html')
+
 
 @app.route('/my-data')
 def display_data():
