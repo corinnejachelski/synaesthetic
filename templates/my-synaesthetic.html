@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block title %}Synaesthetic{% endblock %}
+
+{% block head %}
+<!-- D3 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.16.0/d3.js"></script>
+{% endblock %}
+
+{% block content %}
+<h1>{display_name}'s Data</h1>
+<h3>How diverse is your taste in genres?</h3>
+<div class="circle-pack">
+    
+    <!-- D3 svg will go here -->
+    <svg></svg>
+</div>
+
+<script type="text/javascript" src="/static/circlepack.js"></script>
+{% endblock %}

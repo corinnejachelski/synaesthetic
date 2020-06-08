@@ -7,14 +7,18 @@ import os
 import requests
 import sys
 import spotipy
-import spotipy.util as util
-# scope = 'user-top-read user-library-read playlist-read-public user-follow-read'
+#API helper functions
+import spotify_api
+import crud
+from model import connect_to_db
+
 
 # Client keys
 SPOTIPY_CLIENT_ID=os.environ['SPOTIPY_CLIENT_ID']
 SPOTIPY_CLIENT_SECRET=os.environ['SPOTIPY_CLIENT_SECRET']
 SPOTIPY_REDIRECT_URI='http://localhost:5000/callback'
 SCOPE='user-top-read'
+# scope = 'user-top-read user-library-read playlist-read-public user-follow-read'
 #username of account associated with Spotify Developer dashboard
 USERNAME=os.environ['USERNAME']
 
@@ -24,7 +28,6 @@ OAUTH = spotipy.oauth2.SpotifyOAuth(client_id=SPOTIPY_CLIENT_ID,
                                     redirect_uri=SPOTIPY_REDIRECT_URI,
                                     scope=SCOPE,
                                     username=USERNAME)
-
 
 
 app = Flask(__name__)
@@ -69,23 +72,51 @@ def callback():
     session["access_token"] = token["access_token"]
     session["refresh_token"] = token["refresh_token"]
 
-    #Spotipy client Module for Spotify Web API
-    sp = spotipy.Spotify(auth=session["access_token"], oauth_manager=OAUTH)
-
     #Get current user's top 50 artists
     # user_artists = sp.current_user_top_artists(limit=50)
 
     # print(user_artists)
+    
+    # return render_template('circle-pack.html')
+    return redirect('/api/user')
 
-    #Get detailed profile information about the current user
-    user_info = sp.me()
-    print(user_info)
-    display_name = user_info["display_name"]
-    session["user_id"] = user_info["id"]
-    image_url = user_info["images"][0]["url"]
-    print(session)
+@app.route('/api/user')
+def get_user_profile():
+    """Get user profile and create User in database"""
+
+    #Spotipy client Module for Spotify Web API
+    sp = spotipy.Spotify(auth=session["access_token"], oauth_manager=OAUTH)
+    
+
+    # user = spotify_api.get_user_profile(sp)
+    user = sp.me()
+    session["user_id"] = user["id"]
+    session["display_name"] = user["display_name"]
+
+    #data needed to instantiate a User in database
+    user_id = user["id"]
+    display_name = user["display_name"]
+    image_url = user["images"][0]["url"]
+
+    crud.create_user(user_id, display_name, image_url)
+
+    return redirect('/api/artists')
+
+
+@app.route('/api/artists')
+def get_user_top_artists():
+
+    sp = spotipy.Spotify(auth=session["access_token"], oauth_manager=OAUTH)
+
+    #API call to get user's top 50 artists
+    user_artists = sp.current_user_top_artists(limit=50)
+
+    user_id = session["user_id"]
+    crud.artists_to_db(user_artists, user_id)
 
     return render_template('circle-pack.html')
+
+
 
 
 @app.route('/my-data')
@@ -95,5 +126,5 @@ def display_data():
 
 
 if __name__ == '__main__':
-    app.debug = True
-    app.run(host='0.0.0.0')
+    connect_to_db(app)
+    app.run(host='0.0.0.0', debug=True)

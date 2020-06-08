@@ -67,7 +67,7 @@ class Artist(db.Model):
 
     genres = db.relationship("Genre",
                          secondary="artist_genres",
-                         backref="artists")
+                         backref="artists") #uselist=False
 
     tracks = db.relationship("Track", backref="artists")
 
@@ -146,10 +146,33 @@ class Audio(db.Model):
     acousticness = db.Column(db.Float)
     instrumentalness = db.Column(db.Float)
     liveness = db.Column(db.Float)
+    valence = db.Column(db.Float)
+    key = db.Column(db.Integer)
+    tempo = db.Column(db.Float)
 
     #tracks relationship to Track objects
 
+#############################################################################
+#edit this for my data
+def example_data():
+    """Create some sample data."""
 
+    # In case this is run more than once, empty out existing data
+    # Employee.query.delete()
+    # Department.query.delete()
+
+    # # Add sample employees and departments
+    # # df = Department(dept_code='fin', dept='Finance', phone='555-1000')
+    # # dl = Department(dept_code='legal', dept='Legal', phone='555-2222')
+    # # dm = Department(dept_code='mktg', dept='Marketing', phone='555-9999')
+
+    # # leonard = Employee(name='Leonard', dept=dl)
+    # # liz = Employee(name='Liz', dept=dl)
+    # # maggie = Employee(name='Maggie', dept=dm)
+    # # nadine = Employee(name='Nadine')
+
+    # db.session.add_all([df, dl, dm, leonard, liz, maggie, nadine])
+    # db.session.commit()
 
 def connect_to_db(flask_app, db_uri='postgresql:///synaesthetic', echo=True):
     """Connect the database to Flask app."""
