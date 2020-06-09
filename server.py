@@ -72,56 +72,68 @@ def callback():
     session["access_token"] = token["access_token"]
     session["refresh_token"] = token["refresh_token"]
 
-    #Get current user's top 50 artists
-    # user_artists = sp.current_user_top_artists(limit=50)
-
-    # print(user_artists)
-    
-    # return render_template('circle-pack.html')
-    return redirect('/api/user')
-
-@app.route('/api/user')
-def get_user_profile():
-    """Get user profile and create User in database"""
-
     #Spotipy client Module for Spotify Web API
     sp = spotipy.Spotify(auth=session["access_token"], oauth_manager=OAUTH)
-    
-
-    # user = spotify_api.get_user_profile(sp)
-    user = sp.me()
-    session["user_id"] = user["id"]
-    session["display_name"] = user["display_name"]
-
-    #data needed to instantiate a User in database
-    user_id = user["id"]
-    display_name = user["display_name"]
-    image_url = user["images"][0]["url"]
+    user_id, display_name, image_url = spotify_api.get_user_profile(sp)
+    session["user_id"] = user_id
 
     crud.create_user(user_id, display_name, image_url)
 
-    return redirect('/api/artists')
+    user_artists = sp.current_user_top_artists(limit=50)
+    crud.artists_to_db(user_artists, user_id)
 
+    return render_template('circle-pack.html')
 
 @app.route('/api/artists')
 def get_user_top_artists():
 
-    sp = spotipy.Spotify(auth=session["access_token"], oauth_manager=OAUTH)
-
-    #API call to get user's top 50 artists
-    user_artists = sp.current_user_top_artists(limit=50)
-
-    user_id = session["user_id"]
-    crud.artists_to_db(user_artists, user_id)
-
-    return redirect('/json/artists')
-
-@app.route('/json/artists')
-def get_circle_pack_data():
-
     data = crud.optimize_genres(session["user_id"])
 
     return jsonify(data)
+
+    # return render_template('circle-pack')
+
+# @app.route('/api/user')
+# def get_user_profile():
+#     """Get user profile and create User in database"""
+
+    
+    
+
+#     # user = spotify_api.get_user_profile(sp)
+#     user = sp.me()
+#     session["user_id"] = user["id"]
+#     session["display_name"] = user["display_name"]
+
+#     #data needed to instantiate a User in database
+#     user_id = user["id"]
+#     display_name = user["display_name"]
+#     image_url = user["images"][0]["url"]
+
+#     crud.create_user(user_id, display_name, image_url)
+
+#     return redirect('/api/artists')
+
+
+# @app.route('/api/artists')
+# def get_user_top_artists():
+
+#     sp = spotipy.Spotify(auth=session["access_token"], oauth_manager=OAUTH)
+
+#     #API call to get user's top 50 artists
+#     user_artists = sp.current_user_top_artists(limit=50)
+
+#     user_id = session["user_id"]
+#     crud.artists_to_db(user_artists, user_id)
+
+#     return redirect('/json/artists')
+
+# @app.route('/json/artists')
+# def get_circle_pack_data():
+
+#     data = crud.optimize_genres(session["user_id"])
+
+#     return jsonify(data)
 
 
 @app.route('/my-data')
