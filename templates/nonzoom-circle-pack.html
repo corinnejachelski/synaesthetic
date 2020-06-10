@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<head> 
+  <style>
+  circle {
+    fill: indianred;
+    opacity: 0.3;
+    stroke: white;
+  }
+  </style>
+
+  <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+  <script src="https://d3js.org/d3.v5.js"></script>
+</head>
+<body>
+  <h1>{{display_name}}'s Data</h1>
+
+  <div id="circle-pack">
+    <h2>Artists and Genres</h2>
+    <p>How related or diverse is your taste in artists?</p>
+  </div>
+
+  <svg width="600" height="600">
+    <g></g>
+  </svg>
+
+  <script>
+  // $.get('/api/artists', (response) => {
+  //   console.log(response);
+  // })  
+
+  // const width = 800, 
+  //       height = 600; 
+
+  // const canvas = d3.select("body").append("svg")
+  //     .attr("width", width)
+  //     .attr("height", height)
+  //     .append("g")
+  //         .attr("transform", "translate(50, 50)");
+
+  // const pack = d3.pack()
+  //   .size([width, height - 50])
+  //   // padding of circles
+  //   .padding(10);
+
+  // d3.json("/static/testpack.json", function (data) {
+
+  //   var nodes = pack.nodes(data);
+  //   console.log(nodes);
+
+  //   var node = canvas.selectAll(".node")
+  //       .data(nodes)
+  //       .enter()
+  //       .append("g")
+  //           .attr("class", "node")
+  //           .attr("transform", function (d) { return "translate(" + d.x + "," + d.y + ")"; });
+
+  //   node.append("circle")
+  //       .attr("r", function (d) { return d.r; })
+  //       .attr("fill", "steelblue")
+  //       .attr("opacity", 0.25)
+  //       .attr("stroke", "#ADADAD")
+  //       .attr("stroke-width", "2");
+
+  //   node.append("text")
+  //       .text(function (d) { return d.children ? "" : d.name; })
+  // });
+
+  var data = {
+  "name": "genres",
+  "children": [
+    {
+      "name": "art pop",
+      "children": [
+        {
+          "name": "Grimes",
+          "value": 100
+        },
+        {
+          "name": "Sylvan Esso",
+          "value": 300
+        },
+        {
+          "name": "C3",
+          "value": 200
+        }
+      ]
+    },
+    {
+      "name": "B2",
+      "value": 200
+    }
+  ]
+};
+
+const packLayout = d3.pack()
+  .size([600, 600])
+  //space between hierarchy circles
+  .padding(10)
+
+//returns an object with data structure that represents hierarchy
+const rootNode = d3.hierarchy(data) 
+
+// call .sum() on the hierarchy object root before applying the pack layout
+rootNode.sum(function(d) {
+  return d.value;
+});
+
+//pack layout adds x, y and r (for radius) properties to each node
+packLayout(rootNode);
+
+const nodes = d3.select('svg g')
+  .selectAll('g')
+  .data(rootNode.descendants()) //returns an array of descendants  
+  .enter()
+  .append('g')
+  .attr('transform', function(d) {return 'translate(' + [d.x, d.y] + ')'});
+
+nodes.append('circle')
+  .attr('r', function(d) { return d.r; })
+
+
+  nodes.append('text')
+  .attr('dy', 10)
+  .attr('dx', -20)
+  .text(function(d) { return d.children === undefined ? d.data.name : '';}) 
+      .attr("font-family", "sans-serif")
+      .attr("font-size", "20px")
+      .attr("fill", "black");
+  
+
+
+  </script>
+
+</body>
+
+

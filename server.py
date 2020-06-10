@@ -50,6 +50,8 @@ app.secret_key = 'SECRETSECRETSECRET'
 
 @app.route('/')
 def display_homepage():
+
+    print(session)
     
     return render_template('homepage.html')
 
@@ -74,15 +76,23 @@ def callback():
 
     #Spotipy client Module for Spotify Web API
     sp = spotipy.Spotify(auth=session["access_token"], oauth_manager=OAUTH)
+
+    #get current user's profile info
     user_id, display_name, image_url = spotify_api.get_user_profile(sp)
+    #save user to session to pass as argument across functions
     session["user_id"] = user_id
 
+    #add user to db
     crud.create_user(user_id, display_name, image_url)
+    print(user_id, display_name, image_url)
 
+    #get current user's top 50 artists
     user_artists = sp.current_user_top_artists(limit=50)
+    print(user_artists)
+    #add artists and genres to db
     crud.artists_to_db(user_artists, user_id)
 
-    return render_template('circle-pack.html')
+    return render_template('my-data.html') # , display_name=display_name
 
 @app.route('/api/artists')
 def get_user_top_artists():
@@ -91,55 +101,13 @@ def get_user_top_artists():
 
     return jsonify(data)
 
-    # return render_template('circle-pack')
-
-# @app.route('/api/user')
-# def get_user_profile():
-#     """Get user profile and create User in database"""
-
-    
-    
-
-#     # user = spotify_api.get_user_profile(sp)
-#     user = sp.me()
-#     session["user_id"] = user["id"]
-#     session["display_name"] = user["display_name"]
-
-#     #data needed to instantiate a User in database
-#     user_id = user["id"]
-#     display_name = user["display_name"]
-#     image_url = user["images"][0]["url"]
-
-#     crud.create_user(user_id, display_name, image_url)
-
-#     return redirect('/api/artists')
+    return render_template('circle-pack')
 
 
-# @app.route('/api/artists')
-# def get_user_top_artists():
-
-#     sp = spotipy.Spotify(auth=session["access_token"], oauth_manager=OAUTH)
-
-#     #API call to get user's top 50 artists
-#     user_artists = sp.current_user_top_artists(limit=50)
-
-#     user_id = session["user_id"]
-#     crud.artists_to_db(user_artists, user_id)
-
-#     return redirect('/json/artists')
-
-# @app.route('/json/artists')
-# def get_circle_pack_data():
-
-#     data = crud.optimize_genres(session["user_id"])
-
-#     return jsonify(data)
-
-
-@app.route('/my-data')
+@app.route('/testing')
 def display_data():
 
-    return render_template('circle-pack.html')
+    return render_template('nonzoom-circle-pack.html')
 
 
 if __name__ == '__main__':

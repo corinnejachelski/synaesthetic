@@ -2,7 +2,9 @@
 
 from model import (db, User, UserArtist, UserTrack, Artist, RelatedArtist, 
 Genre, ArtistGenre, Track, Audio, connect_to_db)
-
+################################################################################
+#Artist and Genre related functions
+################################################################################
 #seed database helper functions
 def create_user(user_id, display_name, image_url):
     """Create and return new User"""
@@ -210,6 +212,14 @@ def optimize_genres(user_id):
     return final_dict
 
 
+################################################################################
+#Track and Audio Feature related functions
+################################################################################
+
+#create_track
+#create_user_track
+#create_audio_features
+#get_count_keys_by_user_tracks - donut chart with colors
 
 if __name__ == '__main__':
     from server import app
