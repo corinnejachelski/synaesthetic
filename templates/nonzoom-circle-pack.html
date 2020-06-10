@@ -24,46 +24,9 @@
   </svg>
 
   <script>
-  // $.get('/api/artists', (response) => {
-  //   console.log(response);
-  // })  
-
-  // const width = 800, 
-  //       height = 600; 
-
-  // const canvas = d3.select("body").append("svg")
-  //     .attr("width", width)
-  //     .attr("height", height)
-  //     .append("g")
-  //         .attr("transform", "translate(50, 50)");
-
-  // const pack = d3.pack()
-  //   .size([width, height - 50])
-  //   // padding of circles
-  //   .padding(10);
-
-  // d3.json("/static/testpack.json", function (data) {
-
-  //   var nodes = pack.nodes(data);
-  //   console.log(nodes);
-
-  //   var node = canvas.selectAll(".node")
-  //       .data(nodes)
-  //       .enter()
-  //       .append("g")
-  //           .attr("class", "node")
-  //           .attr("transform", function (d) { return "translate(" + d.x + "," + d.y + ")"; });
-
-  //   node.append("circle")
-  //       .attr("r", function (d) { return d.r; })
-  //       .attr("fill", "steelblue")
-  //       .attr("opacity", 0.25)
-  //       .attr("stroke", "#ADADAD")
-  //       .attr("stroke-width", "2");
-
-  //   node.append("text")
-  //       .text(function (d) { return d.children ? "" : d.name; })
-  // });
+  $.get('/api/artists', (response) => {
+    console.log(response); 
+ });
 
   var data = {
   "name": "genres",
@@ -92,7 +55,7 @@
   ]
 };
 
-const packLayout = d3.pack()
+    const packLayout = d3.pack()
   .size([600, 600])
   //space between hierarchy circles
   .padding(10)
@@ -126,7 +89,6 @@ nodes.append('circle')
       .attr("font-family", "sans-serif")
       .attr("font-size", "20px")
       .attr("fill", "black");
-  
 
 
   </script>

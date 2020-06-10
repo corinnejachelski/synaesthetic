@@ -212,6 +212,37 @@ def optimize_genres(user_id):
     return final_dict
 
 
+def circle_pack_json(user_id):
+    #trying to place artist in list of its highest artist count by genre
+    user_join = User.query.options( 
+             db.joinedload('artists') # attribute for user 
+               .joinedload('genres')  # attribute from artist
+            ).get(user_id)  # test is the user id ()  
+
+    #count of artists in each genre
+    """{'chillwave': 3, 'dance pop': 3, 'electropop': 6, 
+    'escape room': 4,....}"""
+    artist_genres = count_user_artists_by_genre(user_id) 
+
+    # genre_count = crud.count_genres_by_user_artists(user_id)
+    # #{'chillwave': [a1, a2, a3]}
+
+    data = {
+    "data": {"name" : "genres"},
+    "children": [] }
+
+    for artist in user_join.artists:
+        max_genre = ""
+        genre_count = 0
+        for genre in artist.genres:
+            if artist_genres[genre.genre] >= genre_count:
+                genre_count = artist_genres[genre.genre]
+                max_genre = genre.genre
+
+        data["children"].append({"name": max_genre, 
+            "children": [{"name": artist.artist_name}]})
+
+    return data
 ################################################################################
 #Track and Audio Feature related functions
 ################################################################################

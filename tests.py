@@ -16,11 +16,11 @@ class FlaskTestsBasic(TestCase):
         # Show Flask errors that happen during tests
         app.config['TESTING'] = True
 
-    # def test_index(self):
-    #     """Test homepage page."""
+    def test_index(self):
+        """Test homepage page."""
 
-    #     result = self.client.get("/")
-    #     self.assertIn(b"Welcome", result.data)
+        result = self.client.get("/")
+        self.assertIn(b"Synaesthetic", result.data)
 
     # def test_login(self):
     #     """Test login page."""
@@ -55,11 +55,11 @@ class FlaskTestsDatabase(TestCase):
         db.drop_all()
         db.engine.dispose()
 
-    # def test_departments_list(self):
+    # def test_users_list(self):
     #     """Test departments page."""
 
-    #     result = self.client.get("/departments")
-    #     self.assertIn(b"Legal", result.data)
+    #     result = self.client.get("/users")
+    #     self.assertIn(b"test", result.data)
 
     # def test_departments_details(self):
     #     """Test departments page."""

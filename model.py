@@ -153,27 +153,50 @@ class Audio(db.Model):
     #tracks relationship to Track objects
 
 #############################################################################
-#edit this for my data
+#Test helper function
 def example_data():
     """Create some sample data."""
 
-    # In case this is run more than once, empty out existing data
-    # Employee.query.delete()
-    # Department.query.delete()
 
-    # # Add sample employees and departments
-    # # df = Department(dept_code='fin', dept='Finance', phone='555-1000')
-    # # dl = Department(dept_code='legal', dept='Legal', phone='555-2222')
-    # # dm = Department(dept_code='mktg', dept='Marketing', phone='555-9999')
+    with open('top_artists.json') as f:
+        data = json.load(f)
 
-    # # leonard = Employee(name='Leonard', dept=dl)
-    # # liz = Employee(name='Liz', dept=dl)
-    # # maggie = Employee(name='Maggie', dept=dm)
-    # # nadine = Employee(name='Nadine')
 
-    # db.session.add_all([df, dl, dm, leonard, liz, maggie, nadine])
-    # db.session.commit()
+    user_id = "test" 
+    display_name = "test"
+    image_url = "test"
 
+    db_user = crud.create_user(user_id, display_name, image_url)
+
+    for artist in data['items']:
+        artist_id = artist['id']
+        artist_name = artist['name']
+        popularity = artist['popularity']
+
+        #check if artist is in artists table
+        if get_artist_by_id(artist_id) == None:
+            db_artist = create_artist(artist_id, artist_name, popularity)
+
+        #add each artist to user_artists table
+        db_user_artist = create_user_artist(user_id, artist_id)
+
+        #parse genres from list for each artist
+        for genre in artist['genres']:
+            genre = genre
+
+            #check if genre is in genres table
+            if get_genre_by_name(genre) == None:
+                db_genre = create_genre(genre)
+
+            #need genre_id as FK to create artist_genre, auto-created in genre table 
+            genre_id = get_genre_id_by_name(genre)  
+
+            #add each artist's genres to artist_genres table
+            db_artist_genre = create_artist_genres(artist_id, genre_id)
+
+    return "Success"
+
+################################################################################
 def connect_to_db(flask_app, db_uri='postgresql:///synaesthetic', echo=True):
     """Connect the database to Flask app."""
 

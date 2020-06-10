@@ -88,20 +88,20 @@ def callback():
 
     #get current user's top 50 artists
     user_artists = sp.current_user_top_artists(limit=50)
-    print(user_artists)
+    
     #add artists and genres to db
     crud.artists_to_db(user_artists, user_id)
 
-    return render_template('my-data.html') # , display_name=display_name
+    return render_template('my-data.html', display_name=display_name)
 
 @app.route('/api/artists')
 def get_user_top_artists():
 
-    data = crud.optimize_genres(session["user_id"])
+    data = crud.circle_pack_json(session["user_id"])
 
     return jsonify(data)
 
-    return render_template('circle-pack')
+    return render_template('my-data.html')
 
 
 @app.route('/testing')
