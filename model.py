@@ -69,8 +69,6 @@ class Artist(db.Model):
                          secondary="artist_genres",
                          backref="artists") #uselist=False
 
-    tracks = db.relationship("Track", backref="artists")
-
     def __repr__(self):
         """Return a human-readable representation of an Artist."""
 
@@ -124,7 +122,7 @@ class Track(db.Model):
     __tablename__ = "tracks"
 
     track_id = db.Column(db.String, primary_key=True)
-    artist_id = db.Column(db.String, db.ForeignKey('artists.artist_id'))
+    artist_name = db.Column(db.String)
     track_name = db.Column(db.String)
 
     #users relationship to User objects
