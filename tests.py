@@ -17,18 +17,24 @@ class FlaskTestsBasic(TestCase):
         app.config['TESTING'] = True
 
     def test_index(self):
-        """Test homepage page."""
+        """Test homepage"""
 
         result = self.client.get("/")
         self.assertIn(b"Synaesthetic", result.data)
 
-    # def test_login(self):
-    #     """Test login page."""
 
-    #     result = self.client.post("/login",
-    #                               data={"user_id": "rachel", "password": "123"},
-    #                               follow_redirects=True)
-    #     self.assertIn(b"You are a valued user", result.data)
+    def test_login(self):
+      """Test redirect of login route"""
+
+      result = self.client.get("/login")
+      self.assertEqual(result.status_code, 302)
+
+
+    def test_api_artists(self):
+      """Test response from /api/artists route"""
+
+      result = self.client.get("/api/artists")
+      self.assertEqual(result.status_code, 200)
 
 
 class FlaskTestsDatabase(TestCase):

@@ -29,6 +29,7 @@ OAUTH = spotipy.oauth2.SpotifyOAuth(client_id=SPOTIPY_CLIENT_ID,
                                     scope=SCOPE,
                                     username=USERNAME)
 
+print(USERNAME)
 
 app = Flask(__name__)
 app.secret_key = 'SECRETSECRETSECRET'
@@ -50,8 +51,6 @@ app.secret_key = 'SECRETSECRETSECRET'
 
 @app.route('/')
 def display_homepage():
-
-    print(session)
     
     return render_template('homepage.html')
 
@@ -61,7 +60,7 @@ def login():
     """Authorizes Spotify user login"""
 
     auth_url = OAUTH.get_authorize_url()
-
+    print(session)
     return redirect(auth_url)
 
 
@@ -73,14 +72,19 @@ def callback():
     token = OAUTH.get_access_token(code)
     session["access_token"] = token["access_token"]
     session["refresh_token"] = token["refresh_token"]
+    print("\n\n\n\n\n\n\n")
+    print(code)
 
     #Spotipy client Module for Spotify Web API
-    sp = spotipy.Spotify(auth=session["access_token"], oauth_manager=OAUTH)
+    sp = spotipy.Spotify(auth=session["access_token"])
+    print("\n\n\n\n\n\n\n")
+    print(sp)
 
     #get current user's profile info
     user_id, display_name, image_url = spotify_api.get_user_profile(sp)
     #save user to session to pass as argument across functions
     session["user_id"] = user_id
+    session["display_name"] = display_name
 
     #add user to db
     crud.create_user(user_id, display_name, image_url)
@@ -88,26 +92,35 @@ def callback():
 
     #get current user's top 50 artists
     user_artists = sp.current_user_top_artists(limit=50)
-    
+
     #add artists and genres to db
     crud.artists_to_db(user_artists, user_id)
 
-    return render_template('my-data.html', display_name=display_name)
+    # return render_template('nonzoom-circle-pack.html', display_name=display_name)
+    return redirect('/my-data')
 
 @app.route('/api/artists')
 def get_user_top_artists():
 
     data = crud.circle_pack_json(session["user_id"])
+    print(data)
 
     return jsonify(data)
 
-    return render_template('my-data.html')
 
-
-@app.route('/testing')
+@app.route('/my-data')
 def display_data():
 
-    return render_template('nonzoom-circle-pack.html')
+    max_genre, max_genre_artists, genre_count = crud.get_genre_data(session["user_id"])
+    
+    num_artists = crud.get_num_artists(session["user_id"])
+
+    return render_template('nonzoom-circle-pack.html', 
+                            max_genre=max_genre,
+                            max_genre_artists=max_genre_artists, 
+                            genre_count=genre_count, 
+                            num_artists=num_artists,
+                            display_name=session["display_name"])
 
 
 if __name__ == '__main__':

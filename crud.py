@@ -85,7 +85,8 @@ def get_genre_id_by_name(genre):
 def get_genres_by_user_artists(user_id):
     """returns {'art pop': ['Grimes', 'Lady Lamb'], 
     'electropop': ['Grimes', 'Big Wild'], 
-    'indietronica': ['Grimes', 'Big Wild'],..}"""
+    'indietronica': ['Grimes', 'Big Wild'],..}
+    includes repeating artists in genres"""
 
     #join tables to access relationships
     #user_join returns a User object
@@ -102,6 +103,7 @@ def get_genres_by_user_artists(user_id):
 
     return user_genres
 
+
 def count_user_artists_by_genre(user_id):
     """returns {'chillwave': 3, 'dance pop': 3, 'electropop': 6, 
     'escape room': 4,....}"""
@@ -113,6 +115,29 @@ def count_user_artists_by_genre(user_id):
         count_artists[genre] = count_artists.get(genre, 0) + len(user_genres[genre])
 
     return count_artists 
+
+
+def get_genre_data(user_id):
+    """Get a user's most popular genre (highest artist count)"""
+
+    genres = count_user_artists_by_genre(user_id)
+
+    max_genre = max(genres, key=genres.get)
+    max_genre_artists = max(genres.values())
+    genre_count = len(genres)
+    print(genre_count)
+
+    return (max_genre, max_genre_artists, genre_count)
+
+
+def get_num_artists(user_id):
+    """Gets count of user artists (50 are not always returned)"""
+    user = User.query.get(user_id)
+
+    num_artists = len(user.artists)
+
+    return num_artists
+
 
 # def count_genres_by_user_artists(user_id):
 #     """returns {'Leon Bridges': 2, 'Lady Lamb': 5, 'Tash Sultana': 1, 'Big Wild': 5, 
@@ -199,21 +224,21 @@ def optimize_genres(user_id):
         max_genre = "" #genre name
         genre_count = 0 #count of artists in that genre
         for genre in artist.genres:
-            if artist_genres[genre.genre] == []:
-                final_dict["No Genre"] = final_dict.get("No Genre", []) + [artist.artist_name]
+            if artist_genres[genre.genre] == 0:
+                final_dict["No Genre"] = final_dict.get("No Genre", []) + [{"name":artist.artist_name, "value": 20}]
             #iterates through each artist's genres to find genre with highest
             #number of associated artists
             elif artist_genres[genre.genre] >= genre_count:
                 genre_count = artist_genres[genre.genre]
                 max_genre = genre.genre
         
-        final_dict[max_genre] = final_dict.get(max_genre, []) + [artist.artist_name]
+        final_dict[max_genre] = final_dict.get(max_genre, []) + [{"name": artist.artist_name, "value": 20}]
 
     return final_dict
 
 
 def circle_pack_json(user_id):
-    #trying to place artist in list of its highest artist count by genre
+    """Input for D3 Circle Pack"""
     user_join = User.query.options( 
              db.joinedload('artists') # attribute for user 
                .joinedload('genres')  # attribute from artist
@@ -222,25 +247,18 @@ def circle_pack_json(user_id):
     #count of artists in each genre
     """{'chillwave': 3, 'dance pop': 3, 'electropop': 6, 
     'escape room': 4,....}"""
-    artist_genres = count_user_artists_by_genre(user_id) 
+    artist_genres = optimize_genres(user_id) 
 
-    # genre_count = crud.count_genres_by_user_artists(user_id)
-    # #{'chillwave': [a1, a2, a3]}
 
-    data = {
-    "data": {"name" : "genres"},
-    "children": [] }
+    #     >>>{'shamanic': ['Beautiful Chorus', 'Rising Appalachia', 'Ayla Nereo'], 
+    # 'brain waves': ['Alpha Brain Waves'], 'electropop': ['Grimes', 'Sylvan Esso', 
+    # 'Overcoats', 'Purity Ring', 'Charlotte Day Wilson'],...}"""
 
-    for artist in user_join.artists:
-        max_genre = ""
-        genre_count = 0
-        for genre in artist.genres:
-            if artist_genres[genre.genre] >= genre_count:
-                genre_count = artist_genres[genre.genre]
-                max_genre = genre.genre
+    data = {"name" : "genres", "children": [] }
 
-        data["children"].append({"name": max_genre, 
-            "children": [{"name": artist.artist_name}]})
+    for genre, artists in artist_genres.items():
+        genre_object = {"name": genre, "children": artists}
+        data["children"].append(genre_object)
 
     return data
 ################################################################################

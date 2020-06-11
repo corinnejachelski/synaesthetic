@@ -19,49 +19,24 @@
     <p>How related or diverse is your taste in artists?</p>
   </div>
 
-  <svg width="600" height="600">
+  <svg width="800" height="800">
     <g></g>
   </svg>
+
+  <p>You listen to {{genre_count}} genres among {{num_artists}} top artists.</p>
+  <p>Your top genre is {{max_genre}} with {{max_genre_artists}} artists.</p>
 
   <script>
   $.get('/api/artists', (response) => {
     console.log(response); 
- });
 
-  var data = {
-  "name": "genres",
-  "children": [
-    {
-      "name": "art pop",
-      "children": [
-        {
-          "name": "Grimes",
-          "value": 100
-        },
-        {
-          "name": "Sylvan Esso",
-          "value": 300
-        },
-        {
-          "name": "C3",
-          "value": 200
-        }
-      ]
-    },
-    {
-      "name": "B2",
-      "value": 200
-    }
-  ]
-};
-
-    const packLayout = d3.pack()
-  .size([600, 600])
+        const packLayout = d3.pack()
+  .size([800, 800])
   //space between hierarchy circles
   .padding(10)
 
 //returns an object with data structure that represents hierarchy
-const rootNode = d3.hierarchy(data) 
+const rootNode = d3.hierarchy(response) 
 
 // call .sum() on the hierarchy object root before applying the pack layout
 rootNode.sum(function(d) {
@@ -85,11 +60,13 @@ nodes.append('circle')
   nodes.append('text')
   .attr('dy', 10)
   .attr('dx', -20)
-  .text(function(d) { return d.children === undefined ? d.data.name : '';}) 
+  // .text(function(d) { return d.children === undefined ? d.data.name : '';}) 
+  .text(function(d) { return d.data.name }) 
       .attr("font-family", "sans-serif")
-      .attr("font-size", "20px")
+      .attr("font-size", "12px")
       .attr("fill", "black");
 
+ });
 
   </script>
 
