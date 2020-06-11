@@ -72,13 +72,9 @@ def callback():
     token = OAUTH.get_access_token(code)
     session["access_token"] = token["access_token"]
     session["refresh_token"] = token["refresh_token"]
-    print("\n\n\n\n\n\n\n")
-    print(code)
 
     #Spotipy client Module for Spotify Web API
     sp = spotipy.Spotify(auth=session["access_token"])
-    print("\n\n\n\n\n\n\n")
-    print(sp)
 
     #get current user's profile info
     user_id, display_name, image_url = spotify_api.get_user_profile(sp)

@@ -1,17 +1,22 @@
-<!DOCTYPE html>
-<head> 
-  <style>
-  circle {
+{% extends 'base.html' %}
+
+{% block title %}{{display_name}}'s Synaesthetic{% endblock %}
+
+{% block head %}
+<style type="text/css">
+    circle {
     fill: indianred;
     opacity: 0.3;
     stroke: white;
   }
-  </style>
+</style>
+
 
   <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
   <script src="https://d3js.org/d3.v5.js"></script>
-</head>
-<body>
+{% endblock %}
+
+{% block content %}
   <h1>{{display_name}}'s Data</h1>
 
   <div id="circle-pack">
@@ -23,14 +28,16 @@
     <g></g>
   </svg>
 
-  <p>You listen to {{genre_count}} genres among {{num_artists}} top artists.</p>
-  <p>Your top genre is {{max_genre}} with {{max_genre_artists}} artists.</p>
+  <div id="genre-data" class="data-block">
+    <p>You listen to {{genre_count}} genres among {{num_artists}} top artists.</p>
+    <p>Your top genre is {{max_genre}} with {{max_genre_artists}} artists.</p>
+  </div>
 
   <script>
   $.get('/api/artists', (response) => {
     console.log(response); 
 
-        const packLayout = d3.pack()
+  const packLayout = d3.pack()
   .size([800, 800])
   //space between hierarchy circles
   .padding(10)
@@ -46,6 +53,9 @@ rootNode.sum(function(d) {
 //pack layout adds x, y and r (for radius) properties to each node
 packLayout(rootNode);
 
+const svg = d3.select('svg')
+.style("cursor", "pointer")
+
 const nodes = d3.select('svg g')
   .selectAll('g')
   .data(rootNode.descendants()) //returns an array of descendants  
@@ -55,6 +65,9 @@ const nodes = d3.select('svg g')
 
 nodes.append('circle')
   .attr('r', function(d) { return d.r; })
+  .attr("pointer-events", d => !d.children ? "none" : null)
+  .on("mouseover", function() { d3.select(this).attr("stroke", "#000"); })
+  .on("mouseout", function() { d3.select(this).attr("stroke", null); })
 
 
   nodes.append('text')
@@ -64,12 +77,12 @@ nodes.append('circle')
   .text(function(d) { return d.data.name }) 
       .attr("font-family", "sans-serif")
       .attr("font-size", "12px")
-      .attr("fill", "black");
+      .attr("fill", "black")
+      .attr("text-anchor", "middle");
 
  });
 
   </script>
 
-</body>
-
+{% endblock %}
 

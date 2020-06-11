@@ -22,3 +22,18 @@ button, input[type="submit"] {
     margin: auto;
     /* transition: background 0.2s; */ 
   }
+  .data-block{
+    display: inline-block;
+    width: 100px;
+    height: 100px;
+    padding: 5px;
+    border: 1px solid black;
+  }
+  #circle-pack{
+    display: inline-block;
+  }
+  circle {
+    fill: indianred;
+    opacity: 0.3;
+    stroke: white;
+  }

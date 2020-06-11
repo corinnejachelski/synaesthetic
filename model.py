@@ -149,6 +149,7 @@ class Audio(db.Model):
     valence = db.Column(db.Float)
     key = db.Column(db.Integer)
     tempo = db.Column(db.Float)
+    mode = db.Column(db.String(5)) #Major is represented by 1 and minor is 0
 
     #tracks relationship to Track objects
 

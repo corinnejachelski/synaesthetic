@@ -199,6 +199,15 @@ def artists_to_db(user_artists, user_id):
 
     return "Success"
 
+def size_circle_pack(user_id):
+
+    num_artists = get_num_artists(user_id)
+
+    #800 is size of svg 
+    circle_size = (800/num_artists) * 2
+
+    return circle_size
+
 
 def optimize_genres(user_id):
     """Returns a list of artists by genre with artists in their genre with the 
@@ -219,20 +228,23 @@ def optimize_genres(user_id):
     'escape room': 4,....}"""
     artist_genres = count_user_artists_by_genre(user_id) 
 
+    #dynamically size circles based on number of user artists to optimize chart space
+    value = size_circle_pack(user_id)
+
     final_dict = {}
     for artist in user_join.artists:
         max_genre = "" #genre name
         genre_count = 0 #count of artists in that genre
         for genre in artist.genres:
             if artist_genres[genre.genre] == 0:
-                final_dict["No Genre"] = final_dict.get("No Genre", []) + [{"name":artist.artist_name, "value": 20}]
+                final_dict["No Genre"] = final_dict.get("No Genre", []) + [{"name":artist.artist_name, "value": value}]
             #iterates through each artist's genres to find genre with highest
             #number of associated artists
             elif artist_genres[genre.genre] >= genre_count:
                 genre_count = artist_genres[genre.genre]
                 max_genre = genre.genre
         
-        final_dict[max_genre] = final_dict.get(max_genre, []) + [{"name": artist.artist_name, "value": 20}]
+        final_dict[max_genre] = final_dict.get(max_genre, []) + [{"name": artist.artist_name, "value": value}]
 
     return final_dict
 
