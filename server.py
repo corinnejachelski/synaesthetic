@@ -73,36 +73,20 @@ def callback():
     session["access_token"] = token["access_token"]
     session["refresh_token"] = token["refresh_token"]
 
-    #Spotipy client Module for Spotify Web API
-    sp = spotipy.Spotify(auth=session["access_token"])
-
     #get current user's profile info
-    user_id, display_name, image_url = spotify_api.get_user_profile(sp)
+    user_id, display_name = spotify_api.user_profile(session["access_token"])
     #save user to session to pass as argument across functions
     session["user_id"] = user_id
     session["display_name"] = display_name
 
-    #add user to db
-    crud.create_user(user_id, display_name, image_url)
-    print(user_id, display_name, image_url)
+    #call API for user's top 50 artists
+    spotify_api.user_artists(session["access_token"], session["user_id"])
 
-    #get current user's top 50 artists
-    user_artists = sp.current_user_top_artists(limit=50)
+    #call API for user's top 50 tracks
+    spotify_api.user_tracks(session["access_token"], session["user_id"])
 
-    #add artists and genres to db
-    crud.artists_to_db(user_artists, user_id)
-
-    #get current user's top 50 artists
-    user_tracks = sp.current_user_top_tracks(limit=50)
-
-    #add tracks to db
-    crud.tracks_to_db(user_tracks, user_id)
-
-    #gets audio features for user's top 50 tracks
-    audio = sp.audio_features(crud.get_user_tracks_list(user_id))
-    print(audio)
-    # creates Audio objects and adds to db
-    crud.create_audio_features(audio)
+    #call API for audio features of user tracks
+    spotify_api.audio_features(session["access_token"], session["user_id"])
 
     # return render_template('nonzoom-circle-pack.html', display_name=display_name)
     return redirect('/my-data')
