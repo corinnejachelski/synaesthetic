@@ -92,6 +92,18 @@ def callback():
     #add artists and genres to db
     crud.artists_to_db(user_artists, user_id)
 
+    #get current user's top 50 artists
+    user_tracks = sp.current_user_top_tracks(limit=50)
+
+    #add tracks to db
+    crud.tracks_to_db(user_tracks, user_id)
+
+    #gets audio features for user's top 50 tracks
+    audio = sp.audio_features(crud.get_user_tracks_list(user_id))
+    print(audio)
+    # creates Audio objects and adds to db
+    crud.create_audio_features(audio)
+
     # return render_template('nonzoom-circle-pack.html', display_name=display_name)
     return redirect('/my-data')
 
@@ -111,12 +123,13 @@ def display_data():
     
     num_artists = crud.get_num_artists(session["user_id"])
 
-    return render_template('nonzoom-circle-pack.html', 
+    return render_template('nonzoom-circle-pack.html',
                             max_genre=max_genre,
                             max_genre_artists=max_genre_artists, 
                             genre_count=genre_count, 
                             num_artists=num_artists,
                             display_name=session["display_name"])
+
 
 
 if __name__ == '__main__':

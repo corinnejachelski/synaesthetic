@@ -122,8 +122,9 @@ class Track(db.Model):
     __tablename__ = "tracks"
 
     track_id = db.Column(db.String, primary_key=True)
-    artist_name = db.Column(db.String)
     track_name = db.Column(db.String)
+    artist_name = db.Column(db.String)
+    
 
     #users relationship to User objects
     #artists relationship to Artist objects
