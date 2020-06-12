@@ -129,7 +129,7 @@ class Track(db.Model):
     #users relationship to User objects
     #artists relationship to Artist objects
 
-    audio = db.relationship("Audio", backref="tracks")
+    audio = db.relationship("Audio", backref="tracks", uselist=False)
 
 
 class Audio(db.Model):

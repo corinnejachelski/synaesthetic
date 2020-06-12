@@ -3,6 +3,7 @@
 from model import (db, User, UserArtist, UserTrack, Artist, RelatedArtist, 
 Genre, ArtistGenre, Track, Audio, connect_to_db)
 from math import sqrt
+from random import choice
 ################################################################################
 #Artist and Genre related functions
 ################################################################################
@@ -94,7 +95,7 @@ def get_genres_by_user_artists(user_id):
     user_join = User.query.options( 
              db.joinedload('artists') # attribute for user 
                .joinedload('genres')  # attribute from artist
-            ).get(user_id)  # test is the user id ()                                                                                               
+            ).get(user_id)  
 
     user_genres = {}                                                                                                                 
 
@@ -191,7 +192,7 @@ def optimize_genres(user_id):
     user_join = User.query.options( 
              db.joinedload('artists') # attribute for user 
                .joinedload('genres')  # attribute from artist
-            ).get(user_id)  # test is the user id ()  
+            ).get(user_id)   
 
     #count of artists in each genre
     """{'chillwave': 3, 'dance pop': 3, 'electropop': 6, 
@@ -224,7 +225,7 @@ def circle_pack_json(user_id):
     user_join = User.query.options( 
              db.joinedload('artists') # attribute for user 
                .joinedload('genres')  # attribute from artist
-            ).get(user_id)  # test is the user id ()  
+            ).get(user_id)  
 
     #count of artists in each genre
     """{'chillwave': 3, 'dance pop': 3, 'electropop': 6, 
@@ -318,8 +319,59 @@ def create_audio_features(data):
 
     return "Success"
 
-#add tracks and audio to db - should i combine with artists db function?
 
+def avg_audio_features(user_id):
+    """Get average audio features for user's top 50 tracks"""
+
+    # user_join = User.query.options( 
+    #      db.joinedload('tracks') # attribute for user 
+    #        .joinedload('audio')  # attribute from track
+    #     ).get(user_id) 
+
+    audio = []
+
+    #data being used in radar chart, pass variables in order of expected labels
+    avg_dance = db.session.query(db.func.avg(Audio.danceability)).filter(User.user_id==user_id).scalar()
+    avg_energy = db.session.query(db.func.avg(Audio.energy)).filter(User.user_id==user_id).scalar()
+    avg_speech = db.session.query(db.func.avg(Audio.speechiness)).filter(User.user_id==user_id).scalar()
+    avg_acoustic = db.session.query(db.func.avg(Audio.acousticness)).filter(User.user_id==user_id).scalar()
+    avg_instrumental = db.session.query(db.func.avg(Audio.instrumentalness)).filter(User.user_id==user_id).scalar()
+    avg_liveness = db.session.query(db.func.avg(Audio.liveness)).filter(User.user_id==user_id).scalar()
+    avg_valence = db.session.query(db.func.avg(Audio.valence)).filter(User.user_id==user_id).scalar()
+
+    audio.extend((avg_dance, avg_energy, avg_speech, avg_acoustic, avg_instrumental, avg_liveness, avg_valence))
+    
+    return audio
+
+def get_random_song_audio(user_id):
+    """Gets audio features for a random song in user_tracks"""
+
+    user_join = User.query.options( 
+     db.joinedload('tracks') # attribute for user 
+       .joinedload('audio')  # attribute from track
+    ).get(user_id) 
+
+    audio_features = []
+
+    #get a random Track object from user's tracks
+    song = choice(db.session.query(Track).filter(User.user_id==user_id).all())
+    track_name = song.track_name
+    artist_name = song.artist_name
+
+    audio = song.audio
+
+    
+    audio_features.extend((audio.danceability, audio.energy, 
+        audio.speechiness, audio.acousticness, audio.instrumentalness, 
+        audio.liveness, audio.valence))
+
+    return (track_name, artist_name, audio_features)
+
+
+
+
+# ['Danceability', 'Energy', 'Speechiness', 'Acousticness', 
+#     'Instrulmentalness', 'Liveness', 'Valence']
 #get_count_keys_by_user_tracks - donut chart with colors
 
 

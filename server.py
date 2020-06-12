@@ -99,6 +99,13 @@ def get_user_top_artists():
 
     return jsonify(data)
 
+@app.route('/api/audio')
+def get_audio_features():
+
+    avg = crud.avg_audio_features(session["user_id"])
+    track_name, artist_name, random_song = crud.get_random_song_audio(session["user_id"])
+
+    return jsonify(avg=avg, random_song=random_song, track_name=track_name, artist_name=artist_name)
 
 @app.route('/my-data')
 def display_data():
