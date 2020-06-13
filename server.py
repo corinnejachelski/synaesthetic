@@ -107,6 +107,13 @@ def get_audio_features():
 
     return jsonify(avg=avg, random_song=random_song, track_name=track_name, artist_name=artist_name)
 
+@app.route('/api/random-song')
+def get_random_song():
+
+    track_name, artist_name, random_song = crud.get_random_song_audio(session["user_id"])
+
+    return jsonify(random_song=random_song, track_name=track_name, artist_name=artist_name)
+
 @app.route('/my-data')
 def display_data():
 

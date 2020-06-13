@@ -175,7 +175,7 @@ def size_circle_pack(user_id):
 
     svg_area = 502400 #800x800 svg, radius 400
     circle_area = svg_area/num_artists
-    circle_size = sqrt(circle_area/3.14)
+    circle_size = sqrt(circle_area/3.14) #radius of each circle in chart
 
     return circle_size
 
@@ -200,22 +200,23 @@ def optimize_genres(user_id):
     artist_genres = count_user_artists_by_genre(user_id) 
 
     #dynamically size circles based on number of user artists to optimize chart space
-    value = size_circle_pack(user_id)
+    # value = size_circle_pack(user_id)
 
     final_dict = {}
+
     for artist in user_join.artists:
         max_genre = "" #genre name
         genre_count = 0 #count of artists in that genre
         for genre in artist.genres:
             if artist_genres[genre.genre] == 0:
-                final_dict["No Genre"] = final_dict.get("No Genre", []) + [{"name":artist.artist_name, "value": value}]
+                final_dict["No Genre"] = final_dict.get("No Genre", []) + [{"name":artist.artist_name, "value": artist.popularity*100}]
             #iterates through each artist's genres to find genre with highest
             #number of associated artists
             elif artist_genres[genre.genre] >= genre_count:
                 genre_count = artist_genres[genre.genre]
                 max_genre = genre.genre
         
-        final_dict[max_genre] = final_dict.get(max_genre, []) + [{"name": artist.artist_name, "value": value}]
+        final_dict[max_genre] = final_dict.get(max_genre, []) + [{"name": artist.artist_name, "value": artist.popularity*100}]
 
     return final_dict
 
