@@ -131,6 +131,10 @@ class Track(db.Model):
 
     audio = db.relationship("Audio", backref="tracks", uselist=False)
 
+    def __repr__(self):
+        """Return a human-readable representation of an ArtistGenre."""
+
+        return f"<Track track_id={self.track_id} track_name={self.track_name}>"
 
 class Audio(db.Model):
     """Spotify audio features for tracks"""

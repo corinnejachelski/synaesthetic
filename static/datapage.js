@@ -52,21 +52,9 @@ nodes.append('circle')
 
  });
 
-
-
-
- // Get a random song button
- $('#random-song').on('click', (evt) => {
-    evt.preventDefault();
-
-    $.get('/api/audio', (resonse))
- })
-
 // Charts.js radar chart
-
+function radarChart() {
 $.get('/api/audio', (response) => {
-    console.log(response);
-    console.log(response.random_song)
 
     const data = {
     labels: ['Danceability', 'Energy', 'Speechiness', 'Acousticness', 
@@ -116,7 +104,16 @@ $.get('/api/audio', (response) => {
     }); 
     
 });
+};
 
-          
-        
+
+ // Get a random song button
+ $('#random-song').on('click', (evt) => {
+    evt.preventDefault();
+
+    radarChart()
+ })
+
+//call function to render chart on page initially          
+radarChart()        
 
