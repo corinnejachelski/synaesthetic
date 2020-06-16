@@ -67,3 +67,41 @@ def audio_features(token, user_id):
     return "Success"
 
 
+def get_related_artists(token, user_id):
+
+    user_artist_list = crud.get_user_artists(user_id)
+    artist_ids = crud.get_user_artist_ids(user_id)
+    
+    #append all search artists and related artists for nodes list for network chart
+    #IF related artist is also in user artist list
+    nodes = []
+
+    edges = []
+
+    sp = spotipy.Spotify(auth=token)
+
+    for search_artist in user_artist_list:
+        search_artist_id = search_artist.artist_id
+        sa_image_url = search_artist.image_url 
+        sa_artist_name = search_artist.artist_name
+        nodes.append({"id":search_artist_id, "shape": "circularImage", "image": sa_image_url, "label": sa_artist_name})
+        related_artists = sp.artist_related_artists(search_artist_id)
+
+
+
+        for rel_artist in related_artists["artists"]:
+            rel_artist_id = rel_artist["id"]
+            rel_artist_name = rel_artist["name"]
+
+            # if len(rel_artist["images"]) == 0:
+            #     rel_image_url = ""
+            # else:
+            #     rel_image_url = rel_artist["images"][2]["url"]
+            
+            
+            if rel_artist_id in artist_ids:
+                edges.append({"from": search_artist_id, "to": rel_artist_id})
+
+
+    return (nodes, edges)
+

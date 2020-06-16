@@ -65,6 +65,7 @@ class Artist(db.Model):
     artist_id = db.Column(db.String, primary_key=True)
     artist_name = db.Column(db.String)
     popularity = db.Column(db.Integer)
+    image_url = db.Column(db.String)
 
     #users relationship to User objects
 
@@ -133,7 +134,7 @@ class Track(db.Model):
 
     #users relationship to User objects
 
-    audio = db.relationship("Audio", backref="tracks", uselist=False)
+    audio = db.relationship("Audio", backref="tracks" , uselist=False)
 
     def __repr__(self):
         """Return a human-readable representation of an ArtistGenre."""

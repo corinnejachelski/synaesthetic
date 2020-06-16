@@ -35,12 +35,13 @@ def create_user_artist(user_id, artist_id):
     return user_artist
 
 
-def create_artist(artist_id, artist_name, popularity):
+def create_artist(artist_id, artist_name, popularity, image_url):
     """Create and return a new Artist"""
 
     artist = Artist(artist_id=artist_id, 
                     artist_name=artist_name, 
-                    popularity=popularity)
+                    popularity=popularity,
+                    image_url=image_url)
 
     db.session.add(artist)
     db.session.commit()
@@ -154,6 +155,26 @@ def get_num_artists(user_id):
     num_artists = len(user.artists)
 
     return num_artists
+
+
+def get_user_artists(user_id):
+    """Returns Artist objects for user"""
+
+    user = User.query.get(user_id)
+
+    return (user.artists)
+
+
+def get_user_artist_ids(user_id):
+    """Returns list of artist ids by user artists"""
+
+    user = User.query.get(user_id)
+
+    artist_ids = []
+    for artist in user.artists:
+        artist_ids.append(artist.artist_id)
+
+    return artist_ids
 
 
 # def count_genres_by_user_artists(user_id):
@@ -279,10 +300,12 @@ def get_track_by_id(track_id):
 
     return Track.query.get(track_id)
 
+
 def check_audio(track_id):
     """Query audio table and return object"""
 
-    return Audio.query.filter_by(track_id=track_id)
+    return Audio.query.filter_by(track_id=track_id).first()
+
 
 def get_user_tracks_list(user_id):
     """Get user tracks list to pass into API call for audio features"""
@@ -306,10 +329,10 @@ def check_user_tracks(user_id, track_id):
 def avg_audio_features(user_id):
     """Get average audio features for user's top 50 tracks"""
 
-    user_join = User.query.options( 
-         db.joinedload('tracks')
-           .joinedload('audio')  
-        ).get(user_id)
+    # user_join = User.query.options( 
+    #      db.joinedload('tracks')
+    #        .joinedload('audio')  
+    #     ).get(user_id)
 
     audio = []
 
@@ -361,10 +384,11 @@ def artists_to_db(user_artists, user_id):
         artist_id = artist['id']
         artist_name = artist['name']
         popularity = artist['popularity']
+        image_url = artist["images"][2]["url"]
 
         #check if artist is in artists table
         if get_artist_by_id(artist_id) == None:
-            db_artist = create_artist(artist_id, artist_name, popularity)
+            db_artist = create_artist(artist_id, artist_name, popularity, image_url)
 
         # if check_user_artists(user_id, artist_id) == None:
         #add each artist to user_artists table

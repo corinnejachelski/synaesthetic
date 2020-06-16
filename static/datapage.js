@@ -71,7 +71,7 @@ nodes.append('text')
  $('#genres').on('click', () => {
     $.get('/api/genres', (response) => {
       console.log(response);
-      const div = document.getElementById("genre-table");
+      const div = document.getElementById('genre-table');
       if (div.style.display = "none") {
         div.innerHTML = "hello please work";
         div.style.display = "#genre-table"
@@ -132,7 +132,7 @@ window.onload = function() {
       window.myRadar = new Chart(document.getElementById('radar-chart'), config);
       config.data.datasets[0].data = response.avg;
       config.data.datasets[1].data = response.random_song;
-      config.data.datasets[1].label = response.track_name + ' ' + response.artist_name
+      config.data.datasets[1].label = response.track_name + ' - ' + response.artist_name
       window.myRadar.update();
 
   }

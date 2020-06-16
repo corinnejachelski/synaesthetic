@@ -124,6 +124,17 @@ def get_all_genres():
 
     return jsonify(genres)
 
+
+@app.route('/api/related-artists')
+def get_related_artists():
+
+    nodes, edges = spotify_api.get_related_artists(session["user_id"])
+
+    print(nodes, edges)
+
+    return jsonify(nodes=nodes, edges=edges)
+
+
 @app.route('/my-data')
 def display_data():
 
@@ -138,7 +149,13 @@ def display_data():
                             num_artists=num_artists,
                             display_name=session["display_name"])
 
+@app.route('/test')
+def test():
 
+    response = spotify_api.get_related_artists(session["access_token"], session["user_id"])
+    print(response)
+
+    return render_template('test_network.html')
 
 if __name__ == '__main__':
     connect_to_db(app)
