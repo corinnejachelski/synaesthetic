@@ -74,6 +74,18 @@ def get_artist_by_id(artist_id):
     return Artist.query.get(artist_id)
 
 
+# def check_user_artists(user_id, artist_id):
+#     """Check if an artist is in a user's tracks"""
+
+#     return UserArtist.query.filter_by(user_id=user_id).first() and UserArtist.query.filter_by(artist_id=artist_id).first()    
+
+
+# def check_artist_genres(artist_id, genre_id):
+#     """Check if a track is in user_tracks"""
+
+#     return ArtistGenre.query.filter_by(artist_id=artist_id).first() and ArtistGenre.query.filter_by(genre_id=genre_id).first()    
+
+
 def get_genre_by_name(genre):
 
     return Genre.query.filter_by(genre=genre).first()
@@ -124,8 +136,11 @@ def get_genre_data(user_id):
 
     genres = count_user_artists_by_genre(user_id)
 
+    #genre name
     max_genre = max(genres, key=genres.get)
+    #count of artists in max genre
     max_genre_artists = max(genres.values())
+    #total number of genres
     genre_count = len(genres)
     print(genre_count)
 
@@ -169,17 +184,6 @@ def get_num_artists(user_id):
 #     return repeating_artists
 
 
-def size_circle_pack(user_id):
-
-    num_artists = get_num_artists(user_id)
-
-    svg_area = 502400 #800x800 svg, radius 400
-    circle_area = svg_area/num_artists
-    circle_size = sqrt(circle_area/3.14) #radius of each circle in chart
-
-    return circle_size
-
-
 def optimize_genres(user_id):
     """Returns a list of artists by genre with artists in their genre with the 
     highest count of artists by user
@@ -198,9 +202,6 @@ def optimize_genres(user_id):
     """{'chillwave': 3, 'dance pop': 3, 'electropop': 6, 
     'escape room': 4,....}"""
     artist_genres = count_user_artists_by_genre(user_id) 
-
-    #dynamically size circles based on number of user artists to optimize chart space
-    # value = size_circle_pack(user_id)
 
     final_dict = {}
 
@@ -222,7 +223,7 @@ def optimize_genres(user_id):
 
 
 def circle_pack_json(user_id):
-    """Input for D3 Circle Pack"""
+    """Formatted input for D3 Circle Pack"""
     user_join = User.query.options( 
              db.joinedload('artists') # attribute for user 
                .joinedload('genres')  # attribute from artist
@@ -256,7 +257,6 @@ def create_track(track_id, track_name, artist_name):
                 track_name=track_name,
                 artist_name=artist_name)
 
-
     db.session.add(track)
     db.session.commit()
 
@@ -279,6 +279,10 @@ def get_track_by_id(track_id):
 
     return Track.query.get(track_id)
 
+def check_audio(track_id):
+    """Query audio table and return object"""
+
+    return Audio.query.filter_by(track_id=track_id)
 
 def get_user_tracks_list(user_id):
     """Get user tracks list to pass into API call for audio features"""
@@ -292,73 +296,50 @@ def get_user_tracks_list(user_id):
     return track_list
 
 
-def create_audio_features(data):
-    """Create and return new Audio object.
-    Input will be dictionary from server API call
-    data = sp.audio_features(crud.get_user_tracks_list(user_id))"""
+def check_user_tracks(user_id, track_id):
+    """Check if a track is in user_tracks"""
 
-    for track in data:
-        track_id = track["id"]
-        danceability = track["danceability"]
-        energy = track["energy"]
-        speechiness = track["speechiness"]
-        acousticness = track["acousticness"]
-        instrumentalness = track["instrumentalness"]
-        liveness = track["liveness"]
-        valence = track["valence"]
-        key = track["key"]
-        tempo = track["tempo"]
-        mode = track["mode"]
-
-        audio = Audio(track_id=track_id, danceability=danceability, energy=energy, 
-                speechiness=speechiness, acousticness=acousticness, 
-                instrumentalness=instrumentalness, liveness=liveness, 
-                valence=valence, key=key, tempo=tempo, mode=mode)
-
-        db.session.add(audio)
-        db.session.commit()
-
-    return "Success"
+    return db.session.query(UserTrack).filter((UserTrack.user_id==user_id), (UserTrack.track_id==track_id)).first()
+    #UserTrack.query.filter_by(user_id=user_id).first() and UserTrack.query.filter_by(track_id=track_id).first()
 
 
 def avg_audio_features(user_id):
     """Get average audio features for user's top 50 tracks"""
 
-    # user_join = User.query.options( 
-    #      db.joinedload('tracks') # attribute for user 
-    #        .joinedload('audio')  # attribute from track
-    #     ).get(user_id) 
+    user_join = User.query.options( 
+         db.joinedload('tracks')
+           .joinedload('audio')  
+        ).get(user_id)
 
     audio = []
 
-    #data being used in radar chart, pass variables in order of expected labels
-    avg_dance = db.session.query(db.func.avg(Audio.danceability)).filter(User.user_id==user_id).scalar()
-    avg_energy = db.session.query(db.func.avg(Audio.energy)).filter(User.user_id==user_id).scalar()
-    avg_speech = db.session.query(db.func.avg(Audio.speechiness)).filter(User.user_id==user_id).scalar()
-    avg_acoustic = db.session.query(db.func.avg(Audio.acousticness)).filter(User.user_id==user_id).scalar()
-    avg_instrumental = db.session.query(db.func.avg(Audio.instrumentalness)).filter(User.user_id==user_id).scalar()
-    avg_liveness = db.session.query(db.func.avg(Audio.liveness)).filter(User.user_id==user_id).scalar()
-    avg_valence = db.session.query(db.func.avg(Audio.valence)).filter(User.user_id==user_id).scalar()
+    #was trying to do without looping over user's tracks for avg audio, but UserTrack.audio doesn't work
+    #do I need to join them and use user_join - can do user_join.tracks
+
+    # #data being used in radar chart, pass variables in order of expected labels
+    avg_dance = db.session.query(db.func.avg(Audio.danceability)).filter(UserTrack.user_id==user_id).scalar()
+    avg_energy = db.session.query(db.func.avg(Audio.energy)).filter(UserTrack.user_id==user_id).scalar()
+    avg_speech = db.session.query(db.func.avg(Audio.speechiness)).filter(UserTrack.user_id==user_id).scalar()
+    avg_acoustic = db.session.query(db.func.avg(Audio.acousticness)).filter(UserTrack.user_id==user_id).scalar()
+    avg_instrumental = db.session.query(db.func.avg(Audio.instrumentalness)).filter(UserTrack.user_id==user_id).scalar()
+    avg_liveness = db.session.query(db.func.avg(Audio.liveness)).filter(UserTrack.user_id==user_id).scalar()
+    avg_valence = db.session.query(db.func.avg(Audio.valence)).filter(UserTrack.user_id==user_id).scalar()
 
     audio.extend((avg_dance, avg_energy, avg_speech, avg_acoustic, avg_instrumental, avg_liveness, avg_valence))
     
     return audio
 
 def get_random_song_audio(user_id):
-    """Gets audio features for a random song in user_tracks"""
-
-    user_join = User.query.options( 
-     db.joinedload('tracks') # attribute for user 
-       .joinedload('audio')  # attribute from track
-    ).get(user_id) 
+    """Gets audio features for a random song in user_tracks""" 
 
     audio_features = []
 
     #get a random Track object from user's tracks
-    song = choice(db.session.query(Track).filter(User.user_id==user_id).all())
+    song = choice(db.session.query(Track).filter(UserTrack.user_id==user_id).all())
     track_name = song.track_name
     artist_name = song.artist_name
 
+    #access the song's audio features
     audio = song.audio
 
     
@@ -367,13 +348,6 @@ def get_random_song_audio(user_id):
         audio.liveness, audio.valence))
 
     return (track_name, artist_name, audio_features)
-
-
-
-
-# ['Danceability', 'Energy', 'Speechiness', 'Acousticness', 
-#     'Instrulmentalness', 'Liveness', 'Valence']
-#get_count_keys_by_user_tracks - donut chart with colors
 
 
 ################################################################################
@@ -392,6 +366,7 @@ def artists_to_db(user_artists, user_id):
         if get_artist_by_id(artist_id) == None:
             db_artist = create_artist(artist_id, artist_name, popularity)
 
+        # if check_user_artists(user_id, artist_id) == None:
         #add each artist to user_artists table
         db_user_artist = create_user_artist(user_id, artist_id)
 
@@ -426,13 +401,42 @@ def tracks_to_db(user_tracks, user_id):
         if get_track_by_id(track_id) == None:
             db_track = create_track(track_id, track_name, artist_name)
 
-        #add track to user-tracks table
-        db_user_track = create_user_track(user_id, track_id)
+        #add track to user-tracks table if track doesn't exist for user
+        if check_user_tracks(user_id, track_id) == None:
+            db_user_track = create_user_track(user_id, track_id)
 
     return "Success"
 
 
+def create_audio_features(data):
+    """Create and return new Audio object in database.
+    Input will be dictionary from server API call
+    data = sp.audio_features(crud.get_user_tracks_list(user_id))"""
 
+    for track in data:
+        track_id = track["id"]
+        danceability = track["danceability"]
+        energy = track["energy"]
+        speechiness = track["speechiness"]
+        acousticness = track["acousticness"]
+        instrumentalness = track["instrumentalness"]
+        liveness = track["liveness"]
+        valence = track["valence"]
+        key = track["key"]
+        tempo = track["tempo"]
+        mode = track["mode"]
+
+        if check_audio(track_id) == None:
+
+            audio = Audio(track_id=track_id, danceability=danceability, energy=energy, 
+                    speechiness=speechiness, acousticness=acousticness, 
+                    instrumentalness=instrumentalness, liveness=liveness, 
+                    valence=valence, key=key, tempo=tempo, mode=mode)
+
+            db.session.add(audio)
+            db.session.commit()
+
+    return "Success"
 
 if __name__ == '__main__':
     from server import app

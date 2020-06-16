@@ -24,17 +24,10 @@ class FlaskTestsBasic(TestCase):
 
 
     def test_login(self):
-      """Test redirect of login route"""
+        """Test redirect of login route"""
 
-      result = self.client.get("/login")
-      self.assertEqual(result.status_code, 302)
-
-
-    def test_api_artists(self):
-      """Test response from /api/artists route"""
-
-      result = self.client.get("/api/artists")
-      self.assertEqual(result.status_code, 200)
+        result = self.client.get("/login")
+        self.assertEqual(result.status_code, 302)
 
 
 class FlaskTestsDatabase(TestCase):
@@ -74,19 +67,39 @@ class FlaskTestsDatabase(TestCase):
     #     self.assertIn(b"Phone: 555-1000", result.data)
 
 
-# class FlaskTestsLoggedIn(TestCase):
-#     """Flask tests with user logged in to session."""
+class FlaskTestsLoggedIn(TestCase):
+    """Flask tests with user logged in to session."""
 
-#     def setUp(self):
-#         """Stuff to do before every test."""
+    def setUp(self):
+        """Stuff to do before every test."""
 
-#         app.config['TESTING'] = True
-#         app.config['SECRET_KEY'] = 'key'
-#         self.client = app.test_client()
+        app.config['TESTING'] = True
+        app.config['SECRET_KEY'] = 'key'
+        self.client = app.test_client()
 
-#         with self.client as c:
-#             with c.session_transaction() as sess:
-#                 sess['user_id'] = 1
+        with self.client as c:
+            with c.session_transaction() as sess:
+                sess['user_id'] = "test"
+
+
+    def test_api_artists(self):
+        """Test response from /api/artists route"""
+
+        result = self.client.get("/api/artists")
+        self.assertEqual(result.status_code, 200)
+
+
+    def test_api_audio(self):
+        """Test response from /api/audio route"""
+
+        result = self.client.get("/api/audio")
+        self.assertEqual(result.status_code, 200)
+
+    def test_data_page(self):
+        """Test response from /my-data route"""
+
+        result = self.client.get("/my-data")
+        self.assertEqual(result.status_code, 200)
 
 #     def test_important_page(self):
 #         """Test important page."""

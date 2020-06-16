@@ -51,6 +51,7 @@ app.secret_key = 'SECRETSECRETSECRET'
 
 @app.route('/')
 def display_homepage():
+    print(session)
     
     return render_template('homepage.html')
 
@@ -83,7 +84,9 @@ def callback():
     spotify_api.user_artists(session["access_token"], session["user_id"])
 
     #call API for user's top 50 tracks
-    spotify_api.user_tracks(session["access_token"], session["user_id"])
+    user_tracks = spotify_api.user_tracks(session["access_token"], session["user_id"])
+    print("\n\n\n\n\n\n")
+    print(user_tracks)
 
     #call API for audio features of user tracks
     spotify_api.audio_features(session["access_token"], session["user_id"])
@@ -113,6 +116,13 @@ def get_audio_features():
 #     track_name, artist_name, random_song = crud.get_random_song_audio(session["user_id"])
 
 #     return jsonify(random_song=random_song, track_name=track_name, artist_name=artist_name)
+
+@app.route('/api/genres')
+def get_all_genres():
+
+    genres = crud.get_genres_by_user_artists(session["user_id"])
+
+    return jsonify(genres)
 
 @app.route('/my-data')
 def display_data():

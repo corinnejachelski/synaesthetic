@@ -52,7 +52,7 @@ def user_tracks(token, user_id):
     #add tracks to db
     crud.tracks_to_db(user_tracks, user_id)
 
-    return "Success"
+    return user_tracks
 
 def audio_features(token, user_id):
 

@@ -35,16 +35,22 @@ const nodes = d3.select('svg g')
 
 nodes.append('circle')
   .attr('r', function(d) { return d.r; })
+  .append('text')
+  .text(function(d) { return d.data.name; })
+    .attr("font-family", "sans-serif")
+    .attr("font-size", "16px")
+    .attr("fill", "blue")
+    .attr("text-anchor", "middle");
   // .attr("pointer-events", d => !d.children ? "none" : null)
   // .on("mouseover", function() { d3.select(this).attr("stroke", "#000"); })
   // .on("mouseout", function() { d3.select(this).attr("stroke", null); })
 
 
-  nodes.append('text')
+nodes.append('text')
   .attr('dy', 10)
-  .attr('dx', -20)
-  // .text(function(d) { return d.children === undefined ? d.data.name : '';}) 
-  .text(function(d) { return d.data.name }) 
+  .attr('dx', 0)
+  .text(function(d) { return d.children === undefined ? d.data.name : '';}) 
+  // .text(function(d) { return d.data.name }) 
       .attr("font-family", "sans-serif")
       .attr("font-size", "12px")
       .attr("fill", "black")
@@ -52,49 +58,74 @@ nodes.append('circle')
 
  });
 
+ //All genres button toggle
+//  $('#genres').on('click', () => {
+//    const div = document.getElementById("genre-table");
+//    if (div.innerHTML === "") {
+//      div.innerHTML = "test";
+//    } else {
+//      div.innerHTML = "";
+//    }
+//  });
+
+ $('#genres').on('click', () => {
+    $.get('/api/genres', (response) => {
+      console.log(response);
+      const div = document.getElementById("genre-table");
+      if (div.innerHTML === "") {
+        div.innerHTML = response;
+      } else {
+        div.innerHTML = "";
+      }
+    });
+  });
+
+ //Charts.js radar chart config
  const config = {
   type: 'radar',
   data: {
-            labels: ['Danceability', 'Energy', 'Speechiness', 'Acousticness', 
-            'Instrulmentalness', 'Liveness', 'Valence'],
-            datasets: [
-                {
-                label: 'Average',
-                fill: true,
-                backgroundColor: "rgba(255,99,132,0.2)",
-                borderColor: "rgba(255,99,132,1)",
-                pointBorderColor: "#fff",
-                pointBackgroundColor: "rgba(255,99,132,1)",
-                pointBorderColor: "#fff",
-                data: []
-                },
-                {
-                label: '',
-                fill: true,
-                backgroundColor: "rgba(179,181,198,0.2)",
-                borderColor: "rgba(179,181,198,1)",
-                pointBorderColor: "#fff",
-                pointBackgroundColor: "rgba(179,181,198,1)",
-                data: []
-                }
-            ]
+        labels: ['Danceability', 'Energy', 'Speechiness', 'Acousticness', 
+        'Instrulmentalness', 'Liveness', 'Valence'],
+        //data is instantiated as empty list and is updated with API response when chart renders
+        datasets: [
+            {
+            label: 'Average',
+            fill: true,
+            backgroundColor: "rgba(255,99,132,0.2)",
+            borderColor: "rgba(255,99,132,1)",
+            pointBorderColor: "#fff",
+            pointBackgroundColor: "rgba(255,99,132,1)",
+            pointBorderColor: "#fff",
+            data: []
             },
-            options: {
-              scale: {
-                ticks: {
-                  beginAtZero: true,
-                  min: 0,
-                  max: 1,
-                  stepSize: 0.1
-                } 
-              },
-              // legend: {
-              //       position: 'left'
-              // }
+            {
+            label: '',
+            fill: true,
+            backgroundColor: "rgba(179,181,198,0.2)",
+            borderColor: "rgba(179,181,198,1)",
+            pointBorderColor: "#fff",
+            pointBackgroundColor: "rgba(179,181,198,1)",
+            data: []
             }
+        ]
+        },
+        options: {
+          scale: {
+            ticks: {
+              beginAtZero: true,
+              min: 0,
+              max: 1,
+              stepSize: 0.1
+            } 
+          },
+          // legend: {
+          //       position: 'left'
+          // }
+        }
         }; 
 
 window.onload = function() {
+  //AJAX request to API, update data to response in chart
   $.get('/api/audio', (response) => {
       window.myRadar = new Chart(document.getElementById('radar-chart'), config);
       config.data.datasets[0].data = response.avg;
@@ -106,92 +137,29 @@ window.onload = function() {
 )};
     
     
-     // Get a random song button
-    $('#random-song').on('click', () => {
-        $.get('/api/audio', (response) => {
-      config.data.datasets.splice(-1, 1);
+// Get a random song button
+$('#random-song').on('click', () => {
+    $.get('/api/audio', (response) => {
 
-            var randomSong = {
-                label: response.track_name + ' - ' + response.artist_name,
-                fill: true,
-                backgroundColor: "rgba(179,181,198,0.2)",
-                borderColor: "rgba(179,181,198,1)",
-                pointBorderColor: "#fff",
-                pointBackgroundColor: "rgba(179,181,198,1)",
-                data: response.random_song
-            };
+        //remove last dataset in list, add 1 new item
+        //chart has issues with previous random song remaining in unexpected ways if you don't do this
+        config.data.datasets.splice(-1, 1);
 
-            config.data.datasets.push(randomSong);
+        //create new dataset with new random song
+        var randomSong = {
+            label: response.track_name + ' - ' + response.artist_name,
+            fill: true,
+            backgroundColor: "rgba(179,181,198,0.2)",
+            borderColor: "rgba(179,181,198,1)",
+            pointBorderColor: "#fff",
+            pointBackgroundColor: "rgba(179,181,198,1)",
+            data: response.random_song
+        };
 
-            window.myRadar.update();
-        }  
-     )});
+        config.data.datasets.push(randomSong);
 
-// // Charts.js radar chart
-// function radarChart() {
-// $.get('/api/audio', (response) => {
-    
-//     const data = {
-//     labels: ['Danceability', 'Energy', 'Speechiness', 'Acousticness', 
-//     'Instrulmentalness', 'Liveness', 'Valence'],
-//       datasets: [
-//         {
-//           label: 'Average',
-//           fill: true,
-//           backgroundColor: "rgba(255,99,132,0.2)",
-//           borderColor: "rgba(255,99,132,1)",
-//           pointBorderColor: "#fff",
-//           pointBackgroundColor: "rgba(255,99,132,1)",
-//           pointBorderColor: "#fff",
-//           data: response.avg
-//         },
-//         {
-//           label: response.track_name + ' - ' + response.artist_name,
-//           fill: true,
-//           backgroundColor: "rgba(179,181,198,0.2)",
-//           borderColor: "rgba(179,181,198,1)",
-//           pointBorderColor: "#fff",
-//           pointBackgroundColor: "rgba(179,181,198,1)",
-//           data: response.random_song
-//         }
-//       ]
-//     }
-//     console.log(data)
-
-//     const radarChart = new Chart(
-//         $('#radar-chart'), 
-//         {
-//         type: 'radar',
-//         data: data,
-//         options: {
-//           scale: {
-//             ticks: {
-//               beginAtZero: true,
-//               min: 0,
-//               max: 1,
-//               stepSize: 0.1
-//             } 
-//           },
-//           // legend: {
-//           //       position: 'left'
-//           // }
-//         }
-//     }); 
-    
-// });
-// };
-
-
-//  // Get a random song button
-//  $('#random-song').on('click', (evt) => {
-//     evt.preventDefault();
-
-//     $('#radar-chart').html("")
-
-//     radarChart()
-//  })
-
-// //call function to render chart on page initially          
-// radarChart() 
+        window.myRadar.update();
+    }  
+)});
        
 

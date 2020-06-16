@@ -52,6 +52,11 @@ class UserTrack(db.Model):
     user_id = db.Column(db.String, db.ForeignKey('users.user_id'))
     track_id = track_id = db.Column(db.String, db.ForeignKey('tracks.track_id'))
 
+    def __repr__(self):
+        """Return a human-readable representation of a UserTrack."""
+
+        return f"<UserTrack user_id={self.user_id} track_id={self.track_id}>"
+
 class Artist(db.Model):
     """Data model for Spotify artist"""
 
@@ -127,7 +132,6 @@ class Track(db.Model):
     
 
     #users relationship to User objects
-    #artists relationship to Artist objects
 
     audio = db.relationship("Audio", backref="tracks", uselist=False)
 
@@ -155,6 +159,12 @@ class Audio(db.Model):
     mode = db.Column(db.String(5)) #Major is represented by 1 and minor is 0
 
     #tracks relationship to Track objects
+
+    def __repr__(self):
+        """Return a human-readable representation of an Audio object."""
+
+        return f"<Audio track_id={self.track_id}>"
+
 
 #############################################################################
 #Test helper function
