@@ -7,7 +7,7 @@
     text-align: center;
 }
 body{
-    background-color: black;
+    /* background-color: black; */
     font-family: 'Secular One', sans-serif;
 }
 button, input[type="submit"] {
@@ -24,8 +24,8 @@ button, input[type="submit"] {
   }
   .data-block{
     display: inline-block;
-    width: 100px;
-    height: 100px;
+    width: 600px;
+    height: 600px;
     padding: 5px;
     border: 1px solid black;
   }
@@ -36,4 +36,11 @@ button, input[type="submit"] {
     fill: indianred;
     opacity: 0.3;
     stroke: white;
+  }
+  #genre-table{
+    width: 100%;
+    padding: 50px 0;
+    text-align: center;
+    background-color: gray;
+    margin-top: 20px;
   }

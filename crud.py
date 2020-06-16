@@ -317,13 +317,13 @@ def avg_audio_features(user_id):
     #do I need to join them and use user_join - can do user_join.tracks
 
     # #data being used in radar chart, pass variables in order of expected labels
-    avg_dance = db.session.query(db.func.avg(Audio.danceability)).filter(UserTrack.user_id==user_id).scalar()
-    avg_energy = db.session.query(db.func.avg(Audio.energy)).filter(UserTrack.user_id==user_id).scalar()
-    avg_speech = db.session.query(db.func.avg(Audio.speechiness)).filter(UserTrack.user_id==user_id).scalar()
-    avg_acoustic = db.session.query(db.func.avg(Audio.acousticness)).filter(UserTrack.user_id==user_id).scalar()
-    avg_instrumental = db.session.query(db.func.avg(Audio.instrumentalness)).filter(UserTrack.user_id==user_id).scalar()
-    avg_liveness = db.session.query(db.func.avg(Audio.liveness)).filter(UserTrack.user_id==user_id).scalar()
-    avg_valence = db.session.query(db.func.avg(Audio.valence)).filter(UserTrack.user_id==user_id).scalar()
+    avg_dance = db.session.query(db.func.avg(Audio.danceability)).filter((UserTrack.user_id==user_id), (UserTrack.track_id == Audio.track_id)).scalar()
+    avg_energy = db.session.query(db.func.avg(Audio.energy)).filter((UserTrack.user_id==user_id), (UserTrack.track_id == Audio.track_id)).scalar()
+    avg_speech = db.session.query(db.func.avg(Audio.speechiness)).filter((UserTrack.user_id==user_id), (UserTrack.track_id == Audio.track_id)).scalar()
+    avg_acoustic = db.session.query(db.func.avg(Audio.acousticness)).filter((UserTrack.user_id==user_id), (UserTrack.track_id == Audio.track_id)).scalar()
+    avg_instrumental = db.session.query(db.func.avg(Audio.instrumentalness)).filter((UserTrack.user_id==user_id), (UserTrack.track_id == Audio.track_id)).scalar()
+    avg_liveness = db.session.query(db.func.avg(Audio.liveness)).filter((UserTrack.user_id==user_id), (UserTrack.track_id == Audio.track_id)).scalar()
+    avg_valence = db.session.query(db.func.avg(Audio.valence)).filter((UserTrack.user_id==user_id), (UserTrack.track_id == Audio.track_id)).scalar()
 
     audio.extend((avg_dance, avg_energy, avg_speech, avg_acoustic, avg_instrumental, avg_liveness, avg_valence))
     
@@ -335,7 +335,7 @@ def get_random_song_audio(user_id):
     audio_features = []
 
     #get a random Track object from user's tracks
-    song = choice(db.session.query(Track).filter(UserTrack.user_id==user_id).all())
+    song = choice(db.session.query(Track).filter((UserTrack.user_id==user_id), (UserTrack.track_id == Track.track_id)).all())
     track_name = song.track_name
     artist_name = song.artist_name
 

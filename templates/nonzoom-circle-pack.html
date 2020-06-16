@@ -2,63 +2,61 @@
 
 {% block title %}My Data{% endblock %}
 
-{% block head %} 
-  <style>
-  circle {
-    fill: indianred;
-    opacity: 0.3;
-    stroke: white;
-  }
-  </style>
-<!-- JQuery -->
- <script src="https://code.jquery.com/jquery-3.4.1.js" integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin></script>
- <!-- Charts.js -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.js"></script>
-   <!-- d3.js -->
-  <script src="https://d3js.org/d3.v5.js"></script>
-{% endblock %}
 
 {% block content %}
-<div class="container">
+<div class="container-fluid">
 
   <h1>{{display_name}}'s Data</h1>
   <div class="row">
-    <div class="col-8">
+    <div class="col-6">
       <div id="circle-pack">
         <h2>Artists and Genres</h2>
         <p>How related or diverse is your taste in artists?</p>
       </div>
-
-      <svg width="800" height="800">
+      <div>
+      <svg width="700" height="700">
         <g></g>
       </svg>
-  </div>
-
-  <div class="col-4 offset-8">
-
-    <div id="genre-data" class="data-block">
-      <p>You listen to {{genre_count}} genres among {{num_artists}} top artists.</p>
-      <p>Your top genre is {{max_genre}} with {{max_genre_artists}} artists.</p>
-      <button id="genres">Show All My Genres</button>
-      <div id="genre-table"></div>
     </div>
   </div>
-</div>
 
-  <h2>Audio Features</h2>
-  <p>How does any song in your top 50 tracks compare to your average listening preferences?</p>
-  <button id="random-song">Get A Random Song</button>
-  <canvas id="radar-chart"></canvas>
+    <div class="col-6">
+      <div id="genre-data" class="data-block">
+        <p>You listen to {{genre_count}} genres among {{num_artists}} top artists.</p>
+        <p>Your top genre is {{max_genre}} with {{max_genre_artists}} artists.</p>
+        <button id="genres">Show All My Genres</button>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div id="all-genres"></div>
+          <ul id="genre-table"></ul>
+      </div>
+    </div>
+  </div>
 
-  <div id="audio-data" class="data-block">
-    <p>What are audio features?</p>
-    <p>Acousticness - A confidence measure from 0.0 to 1.0 of whether the track is acoustic</p>
-    <p>Danceability - Describes how suitable a track is for dancing based on a combination of musical elements including tempo, rhythm stability, beat strength, and overall regularity</p>
-    <p>Energy- Represents a perceptual measure of intensity and activity. Typically, energetic tracks feel fast, loud, and noisy. For example, death metal has high energy, while a Bach prelude scores low on the scale. </p>
-    <p>Instrumentalness- Predicts whether a track contains no vocals. “Ooh” and “aah” sounds are treated as instrumental in this context. The closer the instrumentalness value is to 1.0, the greater likelihood the track contains no vocal content. Values above 0.5 are intended to represent instrumental tracks</p>
-    <p>Liveness - Detects the presence of an audience in the recording. Higher liveness values represent an increased probability that the track was performed live.</p>
-    <p>Speechiness - Detects the presence of spoken words in a track. The more exclusively speech-like the recording (e.g. talk show, audio book, poetry), the closer to 1.0 the attribute value. Values above 0.66 describe tracks that are probably made entirely of spoken words. Values between 0.33 and 0.66 describe tracks that may contain both music and speech, either in sections or layered, including such cases as rap music. Values below 0.33 most likely represent music and other non-speech-like tracks. </p>
-    <p>Valence - Describes the musical positiveness conveyed by a track. Tracks with high valence sound more positive (e.g. happy, cheerful, euphoric), while tracks with low valence sound more negative (e.g. sad, depressed, angry).</p>
+  <div class="row">
+    <div>
+      <h2>Audio Features</h2>
+      <p>How does any song in your top 50 tracks compare to your average listening preferences?</p>
+    </div>
+
+    <div class="col-8">
+      <button id="random-song" class="btn btn-primary">Get A Random Song</button>
+      <canvas id="radar-chart"></canvas>
+    </div>
+
+    <div class="col-4">
+      <div id="audio-data" class="data-block">
+        <p>What are audio features?</p>
+        <p>Acousticness - A confidence measure from 0.0 to 1.0 of whether the track is acoustic</p>
+        <p>Danceability - Describes how suitable a track is for dancing based on a combination of musical elements including tempo, rhythm stability, beat strength, and overall regularity</p>
+        <p>Energy- Represents a perceptual measure of intensity and activity. Typically, energetic tracks feel fast, loud, and noisy. For example, death metal has high energy, while a Bach prelude scores low on the scale. </p>
+        <p>Instrumentalness- Predicts whether a track contains no vocals. “Ooh” and “aah” sounds are treated as instrumental in this context. The closer the instrumentalness value is to 1.0, the greater likelihood the track contains no vocal content. Values above 0.5 are intended to represent instrumental tracks</p>
+        <p>Liveness - Detects the presence of an audience in the recording. Higher liveness values represent an increased probability that the track was performed live.</p>
+        <p>Speechiness - Detects the presence of spoken words in a track. The more exclusively speech-like the recording (e.g. talk show, audio book, poetry), the closer to 1.0 the attribute value. Values above 0.66 describe tracks that are probably made entirely of spoken words. Values between 0.33 and 0.66 describe tracks that may contain both music and speech, either in sections or layered, including such cases as rap music. Values below 0.33 most likely represent music and other non-speech-like tracks. </p>
+        <p>Valence - Describes the musical positiveness conveyed by a track. Tracks with high valence sound more positive (e.g. happy, cheerful, euphoric), while tracks with low valence sound more negative (e.g. sad, depressed, angry).</p>
+      </div>
+    </div>
   </div>
  </div>
  <script src="/static/datapage.js"></script>

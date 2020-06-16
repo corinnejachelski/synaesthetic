@@ -7,7 +7,7 @@
     console.log(response); 
 
   const packLayout = d3.pack()
-  .size([800, 800])
+  .size([700, 700])
   //space between hierarchy circles
   .padding(5)
 
@@ -72,10 +72,12 @@ nodes.append('text')
     $.get('/api/genres', (response) => {
       console.log(response);
       const div = document.getElementById("genre-table");
-      if (div.innerHTML === "") {
-        div.innerHTML = response;
+      if (div.style.display = "none") {
+        div.innerHTML = "hello please work";
+        div.style.display = "#genre-table"
       } else {
         div.innerHTML = "";
+        div.style.display = "none";
       }
     });
   });
