@@ -87,21 +87,12 @@ def get_related_artists(token, user_id):
         nodes.append({"id":search_artist_id, "shape": "circularImage", "image": sa_image_url, "label": sa_artist_name})
         related_artists = sp.artist_related_artists(search_artist_id)
 
-
-
         for rel_artist in related_artists["artists"]:
             rel_artist_id = rel_artist["id"]
             rel_artist_name = rel_artist["name"]
-
-            # if len(rel_artist["images"]) == 0:
-            #     rel_image_url = ""
-            # else:
-            #     rel_image_url = rel_artist["images"][2]["url"]
-            
             
             if rel_artist_id in artist_ids:
                 edges.append({"from": search_artist_id, "to": rel_artist_id})
-
 
     return (nodes, edges)
 

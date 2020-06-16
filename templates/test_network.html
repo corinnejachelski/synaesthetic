@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+<head>
+  <title>Network | Basic usage</title>
+
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis-network.min.css" rel="stylesheet" type="text/css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  <script
+      src="https://code.jquery.com/jquery-3.4.1.js"
+      integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+      crossorigin="anonymous"></script>
+
+</head>
+
+<body>
+
+<div id="mynetwork"></div>
+
+<script type="text/javascript">
+ $.get('/api/related-artists', (response) => {
+    console.log(response); 
+  // create an array with nodes
+  var nodes = response.nodes;
+
+  // create an array with edges
+  var edges = response.edges;
+
+  // create a network
+  var container = document.getElementById('mynetwork');
+  var data= {
+    nodes: nodes,
+    edges: edges,
+  };
+  var options = {
+    nodes: {
+        size:40,
+        color: {
+        background: '#006400'
+    },
+    font:{color:'#000000', "size": 20},
+    },
+    width: '700px',
+    height: '700px'
+  };
+  var network = new vis.Network(container, data, options);
+
+});
+
+</script>
+
+</body>
+</html>

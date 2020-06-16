@@ -128,7 +128,7 @@ def get_all_genres():
 @app.route('/api/related-artists')
 def get_related_artists():
 
-    nodes, edges = spotify_api.get_related_artists(session["user_id"])
+    nodes, edges = spotify_api.get_related_artists(session["access_token"], session["user_id"])
 
     print(nodes, edges)
 
