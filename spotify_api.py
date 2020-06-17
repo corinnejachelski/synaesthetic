@@ -31,6 +31,7 @@ def user_profile(token):
 
 
 def user_artists(token, user_id):
+    """Calls Spotify API for a user's top 50 artists"""
 
     sp = spotipy.Spotify(auth=token)
 
@@ -43,6 +44,7 @@ def user_artists(token, user_id):
     return "Success"
 
 def user_tracks(token, user_id):
+    """Calls Spotify API for a user's top 50 tracks"""
 
     sp = spotipy.Spotify(auth=token)
 
@@ -55,6 +57,8 @@ def user_tracks(token, user_id):
     return user_tracks
 
 def audio_features(token, user_id):
+    """Calls Spotify API for audio features based on list of ids of user tracks, 
+    adds to audio table in db"""
 
     sp = spotipy.Spotify(auth=token)
 
@@ -68,14 +72,20 @@ def audio_features(token, user_id):
 
 
 def get_related_artists(token, user_id):
+    """Call Spotify API to get related artists for each artist in a user's list,
+    format and return data for vis.js network chart"""
 
+    #get Artist objects
     user_artist_list = crud.get_user_artists(user_id)
+
+    #get list of artist ids
     artist_ids = crud.get_user_artist_ids(user_id)
     
-    #append all search artists and related artists for nodes list for network chart
-    #IF related artist is also in user artist list
+    #append all user artists (search artists) for nodes list for network chart
     nodes = []
 
+    #connection lines between related nodes
+    #append related artists if related artist also in artist_ids list
     edges = []
 
     sp = spotipy.Spotify(auth=token)

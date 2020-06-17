@@ -85,8 +85,6 @@ def callback():
 
     #call API for user's top 50 tracks
     user_tracks = spotify_api.user_tracks(session["access_token"], session["user_id"])
-    print("\n\n\n\n\n\n")
-    print(user_tracks)
 
     #call API for audio features of user tracks
     spotify_api.audio_features(session["access_token"], session["user_id"])
@@ -104,21 +102,24 @@ def get_user_top_artists():
 
 @app.route('/api/audio')
 def get_audio_features():
+    """Data to render initial radar chart of user audio features"""
 
     avg = crud.avg_audio_features(session["user_id"])
     track_name, artist_name, random_song = crud.get_random_song_audio(session["user_id"])
 
     return jsonify(avg=avg, random_song=random_song, track_name=track_name, artist_name=artist_name)
 
-# @app.route('/api/random-song')
-# def get_random_song():
+@app.route('/api/random-song')
+def get_random_song():
+    """Random song button"""
 
-#     track_name, artist_name, random_song = crud.get_random_song_audio(session["user_id"])
+    track_name, artist_name, random_song = crud.get_random_song_audio(session["user_id"])
 
-#     return jsonify(random_song=random_song, track_name=track_name, artist_name=artist_name)
+    return jsonify(random_song=random_song, track_name=track_name, artist_name=artist_name)
 
 @app.route('/api/genres')
 def get_all_genres():
+    """Data for table of all user genres with list of all artists"""
 
     genres = crud.get_genres_by_user_artists(session["user_id"])
 
@@ -127,22 +128,22 @@ def get_all_genres():
 
 @app.route('/api/related-artists')
 def get_related_artists():
+    """Return data for viz.js network chart of related artists"""
 
     nodes, edges = spotify_api.get_related_artists(session["access_token"], session["user_id"])
-
-    print(nodes, edges)
 
     return jsonify(nodes=nodes, edges=edges)
 
 
 @app.route('/my-data')
 def display_data():
+    """Main user dashboard page with all charts and stats"""
 
     max_genre, max_genre_artists, genre_count = crud.get_genre_data(session["user_id"])
     
     num_artists = crud.get_num_artists(session["user_id"])
 
-    return render_template('nonzoom-circle-pack.html',
+    return render_template('my-data.html',
                             max_genre=max_genre,
                             max_genre_artists=max_genre_artists, 
                             genre_count=genre_count, 

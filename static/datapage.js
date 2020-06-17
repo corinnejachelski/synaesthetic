@@ -141,7 +141,7 @@ window.onload = function() {
     
 // Get a random song button
 $('#random-song').on('click', () => {
-    $.get('/api/audio', (response) => {
+    $.get('/api/random-song', (response) => {
 
         //remove last dataset in list, add 1 new item
         //chart has issues with previous random song remaining in unexpected ways if you don't do this
