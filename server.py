@@ -52,7 +52,10 @@ app.secret_key = 'SECRETSECRETSECRET'
 @app.route('/')
 def display_homepage():
     print(session)
-    
+
+    # if session["access_token"]:
+    #     return redirect('/my-data')
+    # else: 
     return render_template('homepage.html')
 
 
