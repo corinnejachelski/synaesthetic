@@ -133,7 +133,7 @@ def count_user_artists_by_genre(user_id):
 
 
 def get_genre_data(user_id):
-    """Get a user's most popular genre (highest artist count)"""
+    """Get a user's most popular genre (highest artist count) and genre stats"""
 
     genres = count_user_artists_by_genre(user_id)
 
@@ -244,7 +244,7 @@ def optimize_genres(user_id):
 
 
 def circle_pack_json(user_id):
-    """Formatted input for D3 Circle Pack"""
+    """Returns formatted input for D3 Circle Pack"""
     user_join = User.query.options( 
              db.joinedload('artists') # attribute for user 
                .joinedload('genres')  # attribute from artist
@@ -267,6 +267,8 @@ def circle_pack_json(user_id):
         data["children"].append(genre_object)
 
     return data
+
+
 ################################################################################
 #Track and Audio Feature related functions
 ################################################################################
@@ -323,11 +325,10 @@ def check_user_tracks(user_id, track_id):
     """Check if a track is in user_tracks"""
 
     return db.session.query(UserTrack).filter((UserTrack.user_id==user_id), (UserTrack.track_id==track_id)).first()
-    #UserTrack.query.filter_by(user_id=user_id).first() and UserTrack.query.filter_by(track_id=track_id).first()
 
 
 def avg_audio_features(user_id):
-    """Get average audio features for user's top 50 tracks"""
+    """Returns list of average audio features for user's top 50 tracks"""
 
     # user_join = User.query.options( 
     #      db.joinedload('tracks')
@@ -335,9 +336,6 @@ def avg_audio_features(user_id):
     #     ).get(user_id)
 
     audio = []
-
-    #was trying to do without looping over user's tracks for avg audio, but UserTrack.audio doesn't work
-    #do I need to join them and use user_join - can do user_join.tracks
 
     # #data being used in radar chart, pass variables in order of expected labels
     avg_dance = db.session.query(db.func.avg(Audio.danceability)).filter((UserTrack.user_id==user_id), (UserTrack.track_id == Audio.track_id)).scalar()
@@ -351,6 +349,7 @@ def avg_audio_features(user_id):
     audio.extend((avg_dance, avg_energy, avg_speech, avg_acoustic, avg_instrumental, avg_liveness, avg_valence))
     
     return audio
+
 
 def get_random_song_audio(user_id):
     """Gets audio features for a random song in user_tracks""" 
