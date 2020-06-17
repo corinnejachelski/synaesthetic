@@ -41,6 +41,7 @@ def user_artists(token, user_id):
 
     return "Success"
 
+
 def user_tracks(token, user_id):
     """Calls Spotify API for a user's top 50 tracks"""
 
@@ -53,6 +54,7 @@ def user_tracks(token, user_id):
     crud.tracks_to_db(user_tracks, user_id)
 
     return user_tracks
+
 
 def audio_features(token, user_id):
     """Calls Spotify API for audio features based on list of ids of user tracks, 
