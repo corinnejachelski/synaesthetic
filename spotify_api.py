@@ -6,8 +6,6 @@ import server
 import crud
 import spotipy
 
-#sp refers to Spotipy client Module for Spotify Web API
-# sp = spotipy.Spotify(auth=session["access_token"], oauth_manager=OAUTH)
 
 def user_profile(token):
     """Get detailed profile information about the current user,
@@ -94,13 +92,17 @@ def get_related_artists(token, user_id):
         search_artist_id = search_artist.artist_id
         sa_image_url = search_artist.image_url 
         sa_artist_name = search_artist.artist_name
+        #create node for each artist
         nodes.append({"id":search_artist_id, "shape": "circularImage", "image": sa_image_url, "label": sa_artist_name})
+        #call API for related artists for current artist in iteration
         related_artists = sp.artist_related_artists(search_artist_id)
 
+        #parse API response
         for rel_artist in related_artists["artists"]:
             rel_artist_id = rel_artist["id"]
             rel_artist_name = rel_artist["name"]
             
+            #create edge if related artist is also in user artists
             if rel_artist_id in artist_ids:
                 edges.append({"from": search_artist_id, "to": rel_artist_id})
 
