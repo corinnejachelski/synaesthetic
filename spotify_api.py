@@ -94,8 +94,9 @@ def get_related_artists(token, user_id):
         search_artist_id = search_artist.artist_id
         sa_image_url = search_artist.image_url 
         sa_artist_name = search_artist.artist_name
+        label_name = sa_artist_name.replace(" ", "\n")
         #create node for each artist
-        nodes.append({"id":search_artist_id, "shape": "circularImage", "image": sa_image_url, "label": sa_artist_name})
+        nodes.append({"id":search_artist_id, "shape": "circularImage", "image": sa_image_url, "label": label_name})
         #call API for related artists for current artist in iteration
         related_artists = sp.artist_related_artists(search_artist_id)
 

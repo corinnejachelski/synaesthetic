@@ -43,7 +43,7 @@
       selectable:true,
     },
     nodes: {
-        size:60,
+        size:90,
         borderWidth: 1,
         borderWidthSelected: 4,
         color: {
@@ -51,7 +51,7 @@
           highlight: {border: '#00CDCD'},
           hover: {border: '#00CDCD'},
         },
-        font:{color:'#000000', "size": 26},
+        font:{color:'#000000', "size": 40},
     },
     edges: {
       color:{
@@ -59,18 +59,25 @@
         highlight: '#00CDCD',
         hover: '#00CDCD',
       },
-      hoverWidth: 4,
-      width: 2
+      hoverWidth: 6,
+      width: 3,
+      selectionWidth: 6
     },
     physics: {
       barnesHut: {
         //avoidOverlap: 1,
-        centralGravity: 0.2,
-        springLength: 200,
+        centralGravity: 0.1,
+        gravitationalConstant: -3000,
+        springLength: 400,
       },
       repulsion:{
-        nodeDistance: 1000,
+        nodeDistance: 1200,
       },
+    },
+    configure: {
+      enabled: true,
+      filter: 'physics, layout',
+      showButton: true
     },
     // tooltip: {
     //   fontColor: "black",
@@ -81,7 +88,7 @@
     //     background: "#FFFFC6"
     //   }
     // },
-    width: '700px',
+    width: '1000px',
     height: '700px'
   };
   const network = new vis.Network(container, data, options);
