@@ -16,35 +16,85 @@
 
 <body>
 
-<div id="mynetwork"></div>
+<div id="network-chart"></div>
 
 <script type="text/javascript">
  $.get('/api/related-artists', (response) => {
     console.log(response); 
   // create an array with nodes
-  var nodes = response.nodes;
+  const nodes = response.nodes;
 
   // create an array with edges
-  var edges = response.edges;
+  const edges = response.edges;
 
   // create a network
-  var container = document.getElementById('mynetwork');
-  var data= {
+  const container = document.getElementById('network-chart');
+  const data= {
     nodes: nodes,
     edges: edges,
   };
-  var options = {
+  const options = {
+    interaction:{
+      hover:true,
+      hoverConnectedEdges:true,
+      dragNodes:true,
+      zoomView:true,
+      selectConnectedEdges:true,
+      selectable:true,
+    },
     nodes: {
-        size:40,
+        size:60,
+        borderWidth: 1,
+        borderWidthSelected: 4,
         color: {
-        background: '#006400'
+          border: '#000000',
+          highlight: {border: '#00CDCD'},
+          hover: {border: '#00CDCD'},
+        },
+        font:{color:'#000000', "size": 26},
     },
-    font:{color:'#000000', "size": 20},
+    edges: {
+      color:{
+        color:'#000000',
+        highlight: '#00CDCD',
+        hover: '#00CDCD',
+      },
+      hoverWidth: 4,
+      width: 2
     },
+    physics: {
+      barnesHut: {
+        //avoidOverlap: 1,
+        centralGravity: 0.2,
+        springLength: 200,
+      },
+      repulsion:{
+        nodeDistance: 1000,
+      },
+    },
+    // tooltip: {
+    //   fontColor: "black",
+    //   fontSize: 14, // px
+    //   fontFace: "verdana",
+    //   color: {
+    //     border: "#666",
+    //     background: "#FFFFC6"
+    //   }
+    // },
     width: '700px',
     height: '700px'
   };
-  var network = new vis.Network(container, data, options);
+  const network = new vis.Network(container, data, options);
+
+   network.on("click", function (params) {
+      params.event = "[original event]";
+ 
+  });
+  
+  network.on("hoverNode", function (params) {
+    params.event = "[original event]";
+
+  });
 
 });
 
