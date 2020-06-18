@@ -57,7 +57,7 @@ nodes.append('text')
       .attr("text-anchor", "middle");
 
  });
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////////
  //All genres button toggle
 //  $('#genres').on('click', () => {
 //    const div = document.getElementById("genre-table");
@@ -82,6 +82,96 @@ nodes.append('text')
     });
   });
 
+  ///////////////////////////////////////////////////////////////////////////////////////////
+  //Viz.js network chart 
+
+
+    $.get('/api/related-artists', (response) => {
+      console.log(response); 
+    // create an array with nodes
+    const nodes = response.nodes;
+
+    // create an array with edges
+    const edges = response.edges;
+
+    // create a network
+    const container = document.getElementById('network-chart');
+    const data= {
+      nodes: nodes,
+      edges: edges,
+    };
+    const options = {
+      interaction:{
+        hover:true,
+        hoverConnectedEdges:true,
+        dragNodes:true,
+        selectConnectedEdges:true,
+        selectable:true,
+      },
+      nodes: {
+          size:90,
+          borderWidth: 1,
+          borderWidthSelected: 6,
+          color: {
+            border: '#000000',
+            highlight: {border: '#00CDCD'},
+            hover: {border: '#00CDCD'},
+          },
+          font:{color:'#000000', "size": 40},
+      },
+      edges: {
+        color:{
+          color:'#000000',
+          highlight: '#00CDCD',
+          hover: '#00CDCD',
+        },
+        hoverWidth: 6,
+        width: 3,
+        selectionWidth: 6
+      },
+      physics: {
+        barnesHut: {
+          //avoidOverlap: 1,
+          centralGravity: 0.1,
+          gravitationalConstant: -3000,
+          springLength: 400,
+        },
+        repulsion:{
+          nodeDistance: 1200,
+        },
+      },
+      configure: {
+        enabled: true,
+        filter: 'physics, layout',
+        showButton: true
+      },
+      // tooltip: {
+      //   fontColor: "black",
+      //   fontSize: 14, // px
+      //   fontFace: "verdana",
+      //   color: {
+      //     border: "#666",
+      //     background: "#FFFFC6"
+      //   }
+      // },
+      width: '700px',
+      height: '700px'
+    };
+    const network = new vis.Network(container, data, options);
+
+    network.on("click", function (params) {
+        params.event = "[original event]";
+  
+    });
+    
+    network.on("hoverNode", function (params) {
+      params.event = "[original event]";
+
+    });
+
+  });
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////
  //Charts.js radar chart config
  const config = {
   type: 'radar',
@@ -111,20 +201,23 @@ nodes.append('text')
             }
         ]
         },
-        options: {
-          scale: {
+    options: {
+        scale: {
             ticks: {
               beginAtZero: true,
               min: 0,
               max: 1,
               stepSize: 0.1
-            } 
-          },
+            },
+            scaleLabel: {
+              fontSize: 20,
+            },
           // legend: {
           //       position: 'left'
           // }
         }
-        }; 
+     } 
+  };
 
 window.onload = function() {
   //AJAX request to API, update data to response in chart
@@ -136,9 +229,10 @@ window.onload = function() {
       window.myRadar.update();
 
   }
-)};
+)
+};
     
-    
+///////////////////////////////////////////////////////////////////////////////////////////////////    
 // Get a random song button
 $('#random-song').on('click', () => {
     $.get('/api/random-song', (response) => {
