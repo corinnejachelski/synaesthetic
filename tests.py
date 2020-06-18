@@ -2,6 +2,9 @@ from unittest import TestCase
 from server import app
 from model import connect_to_db, db, example_data
 from flask import session
+import json
+from unittest.mock import patch
+import spotify_api
 
 
 class FlaskTestsBasic(TestCase):
@@ -65,6 +68,41 @@ class FlaskTestsDatabase(TestCase):
 
     #     result = self.client.get("/department/fin")
     #     self.assertIn(b"Phone: 555-1000", result.data)
+
+class SpotifyAPI(TestCase):
+
+    def setUp(self):
+        """Stuff to do before every test."""
+
+        # # Get the Flask test client
+        # self.client = app.test_client()
+        #app.config['TESTING'] = True
+
+        # Connect to test database
+        connect_to_db(app, "postgresql:///testdb")
+
+        # Create tables
+        db.create_all()
+
+
+    @patch('spotipy.Spotify')
+    def test_user_artists(self, sp):
+
+        token = "kfsdf"
+        user_id = "123"
+
+        with open('top_artists.json') as f:
+            data = json.load(f)
+
+        sp.return_value.current_user_top_artists.return_value = data
+
+        response = spotify_api.user_artists(token, user_id)
+
+        print(sp.call_args)
+
+        assert response == "Success"
+
+        
 
 
 class FlaskTestsLoggedIn(TestCase):
