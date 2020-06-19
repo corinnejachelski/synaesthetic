@@ -3,7 +3,7 @@
     font-size: 600px;
     font-weight: lighter;
     margin: auto;
-    color: white;
+    /* color: white; */
     text-align: center;
 }
 body{
@@ -11,21 +11,21 @@ body{
     font-family: 'Secular One', sans-serif;
 }
 button, input[type="submit"] {
-    font-size: 2em;
+    font-size: 1em;
     border-radius: 10px;
     background: #84bd00 ;
     color: white;
     border: 0;
-    cursor: pointer2
-    font-weight: 600;
+    cursor: pointer2;
+    font-weight: 400;
     position: absolute;
     margin: auto;
     /* transition: background 0.2s; */ 
   }
   .data-block{
     display: inline-block;
-    width: 400px;
-    height: 400px;
+    width: 500px;
+    height: 700px;
     padding: 5px;
     border: 1px solid black;
   }
@@ -37,12 +37,32 @@ button, input[type="submit"] {
     opacity: 0.3;
     stroke: white;
   }
-  #genre-table{
-    width: 100%;
-    padding: 50px 0;
+  .tooltip_ {
+    position: relative; 
+    display: block;
+    border-bottom: 1px dotted black;
+  }
+  .tooltip_ .tooltiptext_ {
+    visibility: hidden;
+    width: 220px;
+    background-color: black;
+    color: #fff;
     text-align: center;
-    background-color: gray;
-    margin-top: 20px;
+    border-radius: 6px;
+    padding: 5px 0;
+    
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+    top: 100%;
+    left: 50%;
+    margin-left: -60px;
+  }
+  .tooltip_:hover .tooltiptext_ {
+    visibility: visible;
+  }
+  .rounded-circle{
+    display:inline-block
   }
   /* #network-chart{
     width: 100%;

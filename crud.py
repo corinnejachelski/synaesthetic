@@ -383,7 +383,10 @@ def artists_to_db(user_artists, user_id):
         artist_id = artist['id']
         artist_name = artist['name']
         popularity = artist['popularity']
-        image_url = artist["images"][2]["url"]
+        if artist["images"] == []:
+            image_url = ""
+        else:
+            image_url = artist["images"][2]["url"]
 
         #check if artist is in artists table
         if get_artist_by_id(artist_id) == None:

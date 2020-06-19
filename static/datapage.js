@@ -4,7 +4,6 @@
 // rendering chart with data from AJAX request
 // data is manipulated from Spotify API call
  $.get('/api/artists', (response) => {
-    console.log(response); 
 
   const packLayout = d3.pack()
   .size([700, 700])
@@ -59,35 +58,21 @@ nodes.append('text')
  });
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
  //All genres button toggle
-//  $('#genres').on('click', () => {
-//    const div = document.getElementById("genre-table");
-//    if (div.innerHTML === "") {
-//      div.innerHTML = "test";
-//    } else {
-//      div.innerHTML = "";
-//    }
-//  });
 
  $('#genres').on('click', () => {
     $.get('/api/genres', (response) => {
-      console.log(response);
-      const div = document.getElementById('genre-table');
-      if (div.style.display = "none") {
-        div.innerHTML = "hello please work";
-        div.style.display = "#genre-table"
-      } else {
-        div.innerHTML = "";
-        div.style.display = "none";
-      }
-    });
+      console.log(response.data);
+        for (const item in response.data) {
+          $('#list-group').append('<li class="list-group-item">', item, ": ", response.data[item], '</li>');
+        }
   });
+ });
 
   ///////////////////////////////////////////////////////////////////////////////////////////
   //Viz.js network chart 
 
 
-    $.get('/api/related-artists', (response) => {
-      console.log(response); 
+    $.get('/api/related-artists', (response) => { 
     // create an array with nodes
     const nodes = response.nodes;
 
@@ -125,7 +110,7 @@ nodes.append('text')
           highlight: '#00CDCD',
           hover: '#00CDCD',
         },
-        hoverWidth: 6,
+        hoverWidth: 8,
         width: 3,
         selectionWidth: 6
       },
@@ -140,11 +125,11 @@ nodes.append('text')
           nodeDistance: 1200,
         },
       },
-      configure: {
-        enabled: true,
-        filter: 'physics, layout',
-        showButton: true
-      },
+      // configure: {
+      //   enabled: true,
+      //   filter: 'physics, layout',
+      //   showButton: true
+      // },
       // tooltip: {
       //   fontColor: "black",
       //   fontSize: 14, // px
@@ -159,17 +144,38 @@ nodes.append('text')
     };
     const network = new vis.Network(container, data, options);
 
+//bolds label and highlghts node border on click
     network.on("click", function (params) {
         params.event = "[original event]";
-  
     });
-    
+
+//changes font size, node size, and border width when hovering over node 
     network.on("hoverNode", function (params) {
-      params.event = "[original event]";
-
+      const nodeId = params.node;
+      const node = network.body.nodes[nodeId];
+      node.setOptions({
+        size: 100,
+        font: {
+          size: 70
+        },
+        borderWidth: 4
+      });
     });
 
-  });
+//reset node on hover out
+    network.on("blurNode", function (params) {
+      const nodeId = params.node;
+      const node = network.body.nodes[nodeId];
+      node.setOptions({
+        size: options.nodes.size,
+        font: {
+          size: options.nodes.font.size
+        },
+        borderWidth: options.nodes.borderWidth
+      });
+    });
+
+});
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
  //Charts.js radar chart config
@@ -257,5 +263,3 @@ $('#random-song').on('click', () => {
         window.myRadar.update();
     }  
 )});
-       
-

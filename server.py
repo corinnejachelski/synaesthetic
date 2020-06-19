@@ -78,10 +78,11 @@ def callback():
     session["refresh_token"] = token["refresh_token"]
 
     #get current user's profile info
-    user_id, display_name = spotify_api.user_profile(session["access_token"])
+    user_id, display_name, image_url = spotify_api.user_profile(session["access_token"])
     #save user to session to pass as argument across functions
     session["user_id"] = user_id
     session["display_name"] = display_name
+    session["image_url"] = image_url
 
     #call API for user's top 50 artists
     spotify_api.user_artists(session["access_token"], session["user_id"])
@@ -126,7 +127,7 @@ def get_all_genres():
 
     genres = crud.get_genres_by_user_artists(session["user_id"])
 
-    return jsonify(genres)
+    return jsonify(data=genres)
 
 
 @app.route('/api/related-artists')
@@ -151,15 +152,9 @@ def display_data():
                             max_genre_artists=max_genre_artists, 
                             genre_count=genre_count, 
                             num_artists=num_artists,
-                            display_name=session["display_name"])
+                            display_name=session["display_name"],
+                            image_url=session["image_url"])
 
-@app.route('/test')
-def test():
-
-    response = spotify_api.get_related_artists(session["access_token"], session["user_id"])
-    print(response)
-
-    return render_template('test_network.html')
 
 if __name__ == '__main__':
     connect_to_db(app)

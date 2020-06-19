@@ -20,12 +20,15 @@ def user_profile(token):
     #data needed to instantiate a User in database
     user_id = user_info["id"]
     display_name = user_info["display_name"]
-    image_url = user_info["images"][0]["url"]
+    if user_info["images"] == []:
+        image_url = ""
+    else:
+        image_url = user_info["images"][0]["url"]
 
     #add user to db
     crud.create_user(user_id, display_name, image_url)
 
-    return (user_id, display_name)
+    return (user_id, display_name, image_url)
 
 
 def user_artists(token, user_id):
