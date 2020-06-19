@@ -351,6 +351,54 @@ def avg_audio_features(user_id):
     return audio
 
 
+def audio_stats(user_id):
+    """Returns a user's highest average audio feature and a list of their preferences
+    according to Spotify's standard distribution of songs for each feature
+    i.e. if danceability > 0.5 , a user likes highly danceable songs"""
+
+    #list for reference of features at indices
+    audio_order = ["danceability", "energy", "speechiness", "acousticness", "instrumentalness", "liveness", "valence"]
+
+    avg_audio = avg_audio_features(user_id)
+
+    #get max value from user's avg list of audio features
+    max_feature = max(avg_audio)
+
+    #get index of that feature
+    max_index = avg_audio.index(max_feature)
+
+    #identify feature by name
+    max_feauture_name = audio_order[max_index]
+
+    audio_stats = []
+
+    if avg_audio[0] >= 0.5:
+        audio_stats.append("highly danceable")
+
+    if avg_audio[1] >= 0.5:
+        audio_stats.append("high energy") 
+
+    if avg_audio[2] >= 0.2:
+        audio_stats.append("spoken word")
+
+    if avg_audio[3] >= 0.2:
+        audio_stats.append("acoustic")
+
+    if avg_audio[4] >= 0.15:
+        audio_stats.append("instrumental")
+
+    if avg_audio[5] >= 0.2:
+        audio_stats.append("live songs")
+
+    if avg_audio[6] >= 0.5:
+        audio_stats.append("high valence")
+
+    if audio_stats == []:
+        audio_stats.append("lower than average in all categories")
+
+    return (max_feauture_name, audio_stats)
+
+
 def get_random_song_audio(user_id):
     """Gets audio features for a random song in user_tracks""" 
 

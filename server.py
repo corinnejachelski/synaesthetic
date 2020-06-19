@@ -127,7 +127,7 @@ def get_all_genres():
 
     genres = crud.get_genres_by_user_artists(session["user_id"])
 
-    return jsonify(data=genres)
+    return genres
 
 
 @app.route('/api/related-artists')
@@ -147,13 +147,17 @@ def display_data():
     
     num_artists = crud.get_num_artists(session["user_id"])
 
+    max_feature, audio_stats = crud.audio_stats(session["user_id"])
+
     return render_template('my-data.html',
+                            display_name=session["display_name"],
+                            image_url=session["image_url"],
                             max_genre=max_genre,
                             max_genre_artists=max_genre_artists, 
                             genre_count=genre_count, 
                             num_artists=num_artists,
-                            display_name=session["display_name"],
-                            image_url=session["image_url"])
+                            max_feature=max_feature,
+                            audio_stats=audio_stats)
 
 
 if __name__ == '__main__':

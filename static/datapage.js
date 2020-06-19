@@ -45,15 +45,28 @@ nodes.append('circle')
   // .on("mouseout", function() { d3.select(this).attr("stroke", null); })
 
 
-nodes.append('text')
-  .attr('dy', 10)
-  .attr('dx', 0)
-  .text(function(d) { return d.children === undefined ? d.data.name : '';}) 
-  // .text(function(d) { return d.data.name }) 
-      .attr("font-family", "sans-serif")
-      .attr("font-size", "12px")
-      .attr("fill", "black")
-      .attr("text-anchor", "middle");
+// nodes.append('text')
+//   .attr('dy', 10)
+//   .attr('dx', 0)
+//   .text(function(d) { return d.children === undefined ? d.data.name : '';}) 
+//   // .text(function(d) { return d.data.name }) 
+//       .attr("font-family", "sans-serif")
+//       .attr("font-size", "12px")
+//       .attr("fill", "black")
+//       .attr("text-anchor", "middle");
+
+  nodes.append("text")
+    .selectAll("tspan")
+    .data(d => d.data.name.split(/(?=[A-Z][a-z])|\s+/g))
+    .join("tspan")
+      .attr("dx", 0)
+      .attr("dy", (d, i, nodes) => `${i - nodes.length / 2 + 0.8}em`)
+      .text(d => d)
+        .attr("font-family", "sans-serif")
+        .attr("font-size", "12px")
+        .attr("fill", "black")
+        .attr("text-anchor", "middle");
+ 
 
  });
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -61,17 +74,28 @@ nodes.append('text')
 
  $('#genres').on('click', () => {
     $.get('/api/genres', (response) => {
-      console.log(response.data);
-        for (const item in response.data) {
-          $('#list-group').append('<li class="list-group-item">', item, ": ", response.data[item], '</li>');
+        for (const genre in response) {
+
+          // re-set for each iteration
+          let artists = "";
+
+          for (const index in response[genre]) {
+            const artist = response[genre][index];
+
+            //do not want commas if only 1 item of if last item
+            if (response[genre].length === 1 || index == (response[genre].length - 1)) {
+              artists += artist;
+            } else {
+              artists += artist + ', ';
+            } 
+          }
+          $('#list-group').append('<li class="list-group-item">', genre, ": ", artists, '</li>');
         }
   });
  });
 
   ///////////////////////////////////////////////////////////////////////////////////////////
   //Viz.js network chart 
-
-
     $.get('/api/related-artists', (response) => { 
     // create an array with nodes
     const nodes = response.nodes;

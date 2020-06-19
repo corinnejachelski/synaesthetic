@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}My Data{% endblock %}
+{% block title %}{{display_name}}'s Synaesthetic{% endblock %}
 
 
 {% block content %}
@@ -12,11 +12,11 @@
   </div>
   <div class="row">
     <div class="col-7">
-      <div id="circle-pack">
+      <div id="chart-intro">
         <h2>Artists and Genres</h2>
         <p>How related or diverse is your taste in artists?</p>
       </div>
-      <div>
+      <div id="circle-pack">
       <svg width="700" height="700">
         <g></g>
       </svg>
@@ -26,11 +26,13 @@
     <div class="col-5">
       <div id="genre-data" class="data-block">
         <p>You listen to {{genre_count}} genres among {{num_artists}} top artists.</p>
-        <p>Your top genre is {{max_genre}} with {{max_genre_artists}} artists.</p>
+        <p>Your top genre is <b>{{max_genre}}</b> with <b>{{max_genre_artists}}</b> artists.</p>
+        <p>The chart to the left does not show all genres. Artists can have multiple genres and are "optimized" to only 
+        show up in the genre with the highest number of other artists you listen to.</p>
         <a id= "genres" class="btn btn-primary" data-toggle="collapse" href="#genre-table" role="button" aria-expanded="false" aria-controls="genre-table" data-toggle="tooltip" data-placement="bottom" title="Click again to close table">Show All My Genres</a>
 
         <div class="collapse multi-collapse" id="genre-table">
-          <ul id="list-group" style="height:300px;overflow:auto;"></ul>
+          <ul id="list-group" style="height:400px;width:450px;overflow:auto;"></ul>
         </div>
 <!--         <button id="genres">Show All My Genres</button>
         <div id="all-genres"></div>
@@ -39,14 +41,23 @@
     </div>
   </div>
 
-  <h2> Related Artists </h2>
-  <div id="network-chart"></div>
+  <div class="row">
+    <div class="col-9">
+      <div id=chart-intro>
+        <h2> Related Artists </h2>
+        <p>A visual representation of connections in your artists' "Fans Also Like" pages</p>
+      </div>
+    
+      <div id="network-chart"></div>
+    </div>
+  </div>
 
   <div class="row">
-    <div>
-      <h2>Audio Features</h2>
-      <p>How does any song in your top 50 tracks compare to your average listening preferences?</p>
-    </div>
+    <div class="col-7">
+      <div>
+        <h2>Audio Features</h2>
+        <p>How does any song in your top 50 tracks compare to your average listening preferences?</p>
+      </div>
 
 <!--     <div class="col-7">
       <div>
@@ -57,41 +68,53 @@
       </div>
     </div> -->
 
-      <div class="col-7">
+      
         <button id="random-song" class="btn btn-primary btn-sm">Get A Random Song</button>
        <canvas id="radar-chart"></canvas>
     </div>
 
     <div class="col-5">
       <div id="audio-data" class="data-block">
-        <p>What are audio features?</p>
+        <p>Your highest average audio feature is <b>{{max_feature}}</b>.</p>
+        You tend to listen to songs that are: 
+          <ul id="audio-features">
+          {% for feature in audio_stats %}
+            <li>{{feature}}</li>
+          {% endfor %}
+          </ul>
+      
+        <p><b>What are audio features?</b><br>
+        A set of metrics/characteristics for each Spotify song that help to classify it.
+        </p>
 
-        <div class="tooltip_"> Acousticness
-          <span class="tooltiptext_">A confidence measure from 0.0 to 1.0 of whether the track is acoustic</span>
+        <p>Hover over each feature to learn more.</p>
+
+        <div class="tooltip_"> &#128131; Danceability
+          <span class="tooltiptext_">Danceability - Describes how suitable a track is for dancing based on a combination of musical elements including tempo, rhythm stability, beat strength, and overall regularity</span>
         </div>
 
-        <div class="tooltip_"> Danceability
-          <span class="tooltiptext_">Describes how suitable a track is for dancing based on a combination of musical elements including tempo, rhythm stability, beat strength, and overall regularity</span>
+        <div class="tooltip_"> &#127775; &#127755; Energy
+          <span class="tooltiptext_">Energy - Represents a perceptual measure of intensity and activity. Typically, energetic tracks feel fast, loud, and noisy. For example, death metal has high energy, while a Bach prelude scores low on the scale.</span>
         </div>
 
-        <div class="tooltip_"> Energy
-          <span class="tooltiptext_">Represents a perceptual measure of intensity and activity. Typically, energetic tracks feel fast, loud, and noisy. For example, death metal has high energy, while a Bach prelude scores low on the scale.</span>
+        <div class="tooltip_"> &#128483; Speechiness
+          <span class="tooltiptext_">Speechiness - Detects the presence of spoken words in a track. The more exclusively speech-like the recording (e.g. talk show, audio book, poetry), the closer to 1.0 the attribute value. Values above 0.66 describe tracks that are probably made entirely of spoken words. Values between 0.33 and 0.66 describe tracks that may contain both music and speech, either in sections or layered, including such cases as rap music. Values below 0.33 most likely represent music and other non-speech-like tracks.</span>
         </div>
 
-        <div class="tooltip_"> Instrumentalness
-          <span class="tooltiptext_">Predicts whether a track contains no vocals. “Ooh” and “aah” sounds are treated as instrumental in this context. The closer the instrumentalness value is to 1.0, the greater likelihood the track contains no vocal content. Values above 0.5 are intended to represent instrumental tracks</span>
+        <div class="tooltip_"> &#127931; Acousticness
+          <span class="tooltiptext_">Acousticness - A confidence measure from 0.0 to 1.0 of whether the track is acoustic</span>
         </div>
 
-        <div class="tooltip_"> Liveness
-          <span class="tooltiptext_">Detects the presence of an audience in the recording. Higher liveness values represent an increased probability that the track was performed live</span>
+        <div class="tooltip_">  &#127932; Instrumentalness
+          <span class="tooltiptext_">Instrumentalness - Predicts whether a track contains no vocals. “Ooh” and “aah” sounds are treated as instrumental in this context. The closer the instrumentalness value is to 1.0, the greater likelihood the track contains no vocal content. Values above 0.5 are intended to represent instrumental tracks</span>
         </div>
 
-        <div class="tooltip_"> Speechiness
-          <span class="tooltiptext_">Detects the presence of spoken words in a track. The more exclusively speech-like the recording (e.g. talk show, audio book, poetry), the closer to 1.0 the attribute value. Values above 0.66 describe tracks that are probably made entirely of spoken words. Values between 0.33 and 0.66 describe tracks that may contain both music and speech, either in sections or layered, including such cases as rap music. Values below 0.33 most likely represent music and other non-speech-like tracks./span>
+        <div class="tooltip_"> &#128079; Liveness
+          <span class="tooltiptext_">Liveness - Detects the presence of an audience in the recording. Higher liveness values represent an increased probability that the track was performed live</span>
         </div>
 
-        <div class="tooltip_"> Valence
-          <span class="tooltiptext_">Describes the musical positiveness conveyed by a track. Tracks with high valence sound more positive (e.g. happy, cheerful, euphoric), while tracks with low valence sound more negative (e.g. sad, depressed, angry)</span>
+        <div class="tooltip_"> &#127752; Valence
+          <span class="tooltiptext_">Valence - Describes the musical positiveness conveyed by a track. Tracks with high valence sound more positive (e.g. happy, cheerful, euphoric), while tracks with low valence sound more negative (e.g. sad, depressed, angry)</span>
         </div>
 
       </div>
