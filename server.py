@@ -108,18 +108,21 @@ def get_user_top_artists():
 @app.route('/api/artists/time-range')
 def get_top_artists_by_time_range():
 
-    time_range = request.form["artists-time-range"]
+    time_range = request.args.get("artists-time-range")
+    #time_range .lower() and split on space, take only first item
     #sys.args.get user selection
     #call user top artists with time frame
     #data = crud.circle_pack_json(session["user_id"])
     
     #return jsonify(data)
 
-    return
+    return time_range
 
 
 @app.route('/api/playlist')
 def user_playlist_to_circle_pack():
+
+    playlist_name = request.args.get("playlist")
 
     #if sys.args.get == "No playlists to analyze", skip
     #else 
@@ -127,7 +130,7 @@ def user_playlist_to_circle_pack():
     #get tracks for playlist - api call --> create artist objects from data
     #circle_pack api call 
     #return data to AJAX call 
-    return
+    return playlist_name
 
 @app.route('/api/audio')
 def get_audio_features():

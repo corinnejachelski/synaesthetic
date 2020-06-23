@@ -15,30 +15,31 @@
       <div id="chart-intro">
         <h2>Artists and Genres</h2>
         <p>How related or diverse is your taste in artists?</p>
-        <div class="artists-time-range" style="display:inline-block">
-          <form action="/api/artists/time-range">
-            <button type="submit" id="artists-time-range" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Top Artists Over Time
-            </button>
-            <div class="dropdown-menu">
-              <a class="dropdown-item" href="#">Short-term (4 weeks)</a>
-              <a class="dropdown-item" href="#">Medium-term (6 months) - default shown</a>
-              <a class="dropdown-item" href="#">Long-term (years)</a>
-            </div>
+        <div class="artists-time-range">
+          Select a time frame for top artists:
+          <form action="/api/artists/time-range" style="display: inline-block;">
+            <select name="artists-time-range" id="artists-time-range" class="selectpicker">
+              <option>Short-term (4 weeks)</option>
+              <option>Medium-term (6 months) - default shown</option>
+              <option>Long-term (years)</option>
+            </select>
+            <input type="submit" value="Submit">
           </form>
         </div>
 
-        <div class="user-playlists" style="display:inline-block">
-          <button type="submit" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Analyze A Playlist
-        </button>
-        <div class="dropdown-menu" style="height:400px;width:300px;overflow:auto;">
-          {% for playlist in playlist_names %}
-          <a class="dropdown-item" href="#">{{playlist}}</a>
-          {% endfor %}
+        <div class="user-playlists">
+          Analyze a playlist:
+          <form action="/api/playlist" style="display: inline-block;">
+            <select name="playlist" id="playlist" class="selectpicker">
+              {% for playlist in playlist_names %}
+              <option>{{playlist}}</option>
+              {% endfor %}
+            </select>
+            <input type="submit" value="Submit">
+          </form>
         </div>
-      </div>
     </div>
+
       <div id="circle-pack">
       <svg width="700" height="700">
         <g></g>
