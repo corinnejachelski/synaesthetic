@@ -75,16 +75,16 @@ def get_artist_by_id(artist_id):
     return Artist.query.get(artist_id)
 
 
-# def check_user_artists(user_id, artist_id):
-#     """Check if an artist is in a user's tracks"""
+def check_user_artists(user_id, artist_id):
+    """Check if an artist is in a user's artists"""
 
-#     return UserArtist.query.filter_by(user_id=user_id).first() and UserArtist.query.filter_by(artist_id=artist_id).first()    
+    return UserArtist.query.filter_by(user_id=user_id).first() and UserArtist.query.filter_by(artist_id=artist_id).first()    
 
 
-# def check_artist_genres(artist_id, genre_id):
-#     """Check if a track is in user_tracks"""
+def check_artist_genres(artist_id, genre_id):
+    """Check if a genre is in an artist's genres"""
 
-#     return ArtistGenre.query.filter_by(artist_id=artist_id).first() and ArtistGenre.query.filter_by(genre_id=genre_id).first()    
+    return ArtistGenre.query.filter_by(artist_id=artist_id).first() and ArtistGenre.query.filter_by(genre_id=genre_id).first()    
 
 
 def get_genre_by_name(genre):
@@ -440,9 +440,9 @@ def artists_to_db(user_artists, user_id):
         if get_artist_by_id(artist_id) == None:
             db_artist = create_artist(artist_id, artist_name, popularity, image_url)
 
-        # if check_user_artists(user_id, artist_id) == None:
-        #add each artist to user_artists table
-        db_user_artist = create_user_artist(user_id, artist_id)
+        if check_user_artists(user_id, artist_id) == None:
+        #add each artist to user_artists table if not already there
+            db_user_artist = create_user_artist(user_id, artist_id)
 
         #parse genres from list for each artist
         for genre in artist['genres']:
@@ -455,8 +455,9 @@ def artists_to_db(user_artists, user_id):
             #need genre_id as FK to create artist_genre, auto-created in genre table 
             genre_id = get_genre_id_by_name(genre)  
 
-            #add each artist's genres to artist_genres table
-            db_artist_genre = create_artist_genres(artist_id, genre_id)
+            if check_artist_genres(artist_id, genre_id) == None:
+            #add each artist's genres to artist_genres table if not existing
+                db_artist_genre = create_artist_genres(artist_id, genre_id)
 
     return "Success"
 
