@@ -101,7 +101,6 @@ def get_user_top_artists():
     """Returns formatted data for circle pack of user's top artists and genres"""
 
     data = crud.circle_pack_json(session["user_id"])
-    print(data)
 
     return jsonify(data)
 
@@ -109,7 +108,26 @@ def get_user_top_artists():
 @app.route('/api/artists/time-range')
 def get_top_artists_by_time_range():
 
+    time_range = request.form["artists-time-range"]
+    #sys.args.get user selection
+    #call user top artists with time frame
+    #data = crud.circle_pack_json(session["user_id"])
+    
+    #return jsonify(data)
 
+    return
+
+
+@app.route('/api/playlist')
+def user_playlist_to_circle_pack():
+
+    #if sys.args.get == "No playlists to analyze", skip
+    #else 
+    #get playlist id by name and user_id
+    #get tracks for playlist - api call --> create artist objects from data
+    #circle_pack api call 
+    #return data to AJAX call 
+    return
 
 @app.route('/api/audio')
 def get_audio_features():
@@ -156,6 +174,8 @@ def display_data():
 
     max_feature, audio_stats = crud.audio_stats(session["user_id"])
 
+    playlist_names = spotify_api.get_user_playlists(session["access_token"])
+
     return render_template('my-data.html',
                             display_name=session["display_name"],
                             image_url=session["image_url"],
@@ -164,7 +184,8 @@ def display_data():
                             genre_count=genre_count, 
                             num_artists=num_artists,
                             max_feature=max_feature,
-                            audio_stats=audio_stats)
+                            audio_stats=audio_stats,
+                            playlist_names=playlist_names)
 
 @app.route('/test')
 def test():

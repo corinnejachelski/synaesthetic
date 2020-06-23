@@ -245,10 +245,10 @@ def optimize_genres(user_id):
 
 def circle_pack_json(user_id):
     """Returns formatted input for D3 Circle Pack"""
-    user_join = User.query.options( 
-             db.joinedload('artists') # attribute for user 
-               .joinedload('genres')  # attribute from artist
-            ).get(user_id)  
+    # user_join = User.query.options( 
+    #          db.joinedload('artists') # attribute for user 
+    #            .joinedload('genres')  # attribute from artist
+    #         ).get(user_id)  
 
     #count of artists in each genre
     """{'chillwave': 3, 'dance pop': 3, 'electropop': 6, 

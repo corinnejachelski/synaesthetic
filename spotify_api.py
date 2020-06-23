@@ -119,13 +119,17 @@ def get_user_playlists(token):
     sp = spotipy.Spotify(auth=token)
 
     playlists = sp.current_user_playlists(limit=50)
+    print(playlists)
 
-    playlist_info = {}
+    playlist_names = set()
 
-    for playlist in playlists["items"]:
-        name = playlists["items"]["name"]
-        id = playlists["items"]["id"]
+    if playlists["total"] == 0:
+        playlist_names.add("No playlists to analyze")
+    else:
+        for playlist in playlists["items"]:
+            name = playlist["name"]
+            id = playlist["id"]
 
-        playlist_info[name] = playlist_info.get(name, "") + id
+            playlist_names.add(name)
 
-    return playlist_info
+    return playlist_names

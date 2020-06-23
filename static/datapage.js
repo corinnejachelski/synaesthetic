@@ -103,7 +103,7 @@ groupLabels
 //       .attr("text-anchor", "end")
 //       .attr("text-align", "left");
 
-nodes.append("title")
+genres.append("title")
       // .text(d => `${d.ancestors().map(d => d.data.name)}`);
       .text(d => d.data.name);
      
