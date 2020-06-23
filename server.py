@@ -85,7 +85,7 @@ def callback():
     session["image_url"] = image_url
 
     #call API for user's top 50 artists
-    spotify_api.user_artists(session["access_token"], session["user_id"])
+    spotify_api.user_artists(session["access_token"], session["user_id"], "medium_term")
 
     #call API for user's top 50 tracks
     user_tracks = spotify_api.user_tracks(session["access_token"], session["user_id"])
@@ -98,15 +98,22 @@ def callback():
 
 @app.route('/api/artists')
 def get_user_top_artists():
+    """Returns formatted data for circle pack of user's top artists and genres"""
 
     data = crud.circle_pack_json(session["user_id"])
     print(data)
 
     return jsonify(data)
 
+
+@app.route('/api/artists/time-range')
+def get_top_artists_by_time_range():
+
+
+
 @app.route('/api/audio')
 def get_audio_features():
-    """Data to render initial radar chart of user audio features"""
+    """Returns data to render initial radar chart of user audio features"""
 
     avg = crud.avg_audio_features(session["user_id"])
     track_name, artist_name, random_song = crud.get_random_song_audio(session["user_id"])
@@ -123,7 +130,7 @@ def get_random_song():
 
 @app.route('/api/genres')
 def get_all_genres():
-    """Data for table of all user genres with list of all artists"""
+    """Returns data for table of all user genres with list of all artists"""
 
     genres = crud.get_genres_by_user_artists(session["user_id"])
 
@@ -132,7 +139,7 @@ def get_all_genres():
 
 @app.route('/api/related-artists')
 def get_related_artists():
-    """Return data for viz.js network chart of related artists"""
+    """Returns data for viz.js network chart of related artists"""
 
     nodes, edges = spotify_api.get_related_artists(session["access_token"], session["user_id"])
 
@@ -159,6 +166,18 @@ def display_data():
                             max_feature=max_feature,
                             audio_stats=audio_stats)
 
+@app.route('/test')
+def test():
+
+    return render_template('test_network.html')
+
+@app.route('/api/playlists')
+def get_user_playlists():
+    sp = spotipy.Spotify(auth=session["access_token"])
+
+    playlists = sp.current_user_playlists(limit=50)
+
+    return playlists
 
 if __name__ == '__main__':
     connect_to_db(app)

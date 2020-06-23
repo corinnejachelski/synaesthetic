@@ -31,13 +31,13 @@ def user_profile(token):
     return (user_id, display_name, image_url)
 
 
-def user_artists(token, user_id):
+def user_artists(token, user_id, time_range):
     """Calls Spotify API for a user's top 50 artists"""
 
     sp = spotipy.Spotify(auth=token)
 
     #get current user's top 50 artists
-    user_artists = sp.current_user_top_artists(limit=50)
+    user_artists = sp.current_user_top_artists(limit=50, time_range=time_range)
 
     #add artists and genres to db
     crud.artists_to_db(user_artists, user_id)
@@ -81,10 +81,10 @@ def get_related_artists(token, user_id):
     #get Artist objects
     user_artist_list = crud.get_user_artists(user_id)
 
-    #get list of artist ids
-    artist_ids = crud.get_user_artist_ids(user_id)
-    
-    #append all user artists (search artists) for nodes list for network chart
+    #get list of artist ids, use set for faster search
+    artist_ids_set = set(crud.get_user_artist_ids(user_id))
+
+    #append all user artists (search artists) to nodes list for network chart
     nodes = []
 
     #connection lines between related nodes
@@ -97,6 +97,7 @@ def get_related_artists(token, user_id):
         search_artist_id = search_artist.artist_id
         sa_image_url = search_artist.image_url 
         sa_artist_name = search_artist.artist_name
+        #add new line between spaces for label/chart readability
         label_name = sa_artist_name.replace(" ", "\n")
         #create node for each artist
         nodes.append({"id":search_artist_id, "shape": "circularImage", "image": sa_image_url, "label": label_name})
@@ -106,11 +107,25 @@ def get_related_artists(token, user_id):
         #parse API response
         for rel_artist in related_artists["artists"]:
             rel_artist_id = rel_artist["id"]
-            rel_artist_name = rel_artist["name"]
             
             #create edge if related artist is also in user artists
-            if rel_artist_id in artist_ids:
+            if rel_artist_id in artist_ids_set:
                 edges.append({"from": search_artist_id, "to": rel_artist_id})
 
     return (nodes, edges)
 
+
+def get_user_playlists(token):
+    sp = spotipy.Spotify(auth=token)
+
+    playlists = sp.current_user_playlists(limit=50)
+
+    playlist_info = {}
+
+    for playlist in playlists["items"]:
+        name = playlists["items"]["name"]
+        id = playlists["items"]["id"]
+
+        playlist_info[name] = playlist_info.get(name, "") + id
+
+    return playlist_info

@@ -1,111 +1,136 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<meta charset="utf-8">
 <head>
-  <title>Network | Basic usage</title>
+    <title>Simple Circle Pack (d3 v4; CSV; 50 Lines)</title>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
 
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis.js"></script>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/vis/4.21.0/vis-network.min.css" rel="stylesheet" type="text/css" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
-  <script
-      src="https://code.jquery.com/jquery-3.4.1.js"
-      integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
-      crossorigin="anonymous"></script>
-
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.js" integrity="sha256-DrT5NfxfbHvMHux31Lkhxg42LY6of8TaYyK50jnxRnM=" crossorigin="anonymous"></script>
 </head>
 
 <body>
-
-<div id="network-chart"></div>
-
-<script type="text/javascript">
- $.get('/api/related-artists', (response) => {
-    console.log(response); 
-  // create an array with nodes
-  const nodes = response.nodes;
-
-  // create an array with edges
-  const edges = response.edges;
-
-  // create a network
-  const container = document.getElementById('network-chart');
-  const data= {
-    nodes: nodes,
-    edges: edges,
-  };
-  const options = {
-    interaction:{
-      hover:true,
-      hoverConnectedEdges:true,
-      dragNodes:true,
-      zoomView:true,
-      selectConnectedEdges:true,
-      selectable:true,
-    },
-    nodes: {
-        size:90,
-        borderWidth: 1,
-        borderWidthSelected: 4,
-        color: {
-          border: '#000000',
-          highlight: {border: '#00CDCD'},
-          hover: {border: '#00CDCD'},
-        },
-        font:{color:'#000000', "size": 40},
-    },
-    edges: {
-      color:{
-        color:'#000000',
-        highlight: '#00CDCD',
-        hover: '#00CDCD',
-      },
-      hoverWidth: 6,
-      width: 3,
-      selectionWidth: 6
-    },
-    physics: {
-      barnesHut: {
-        //avoidOverlap: 1,
-        centralGravity: 0.1,
-        gravitationalConstant: -3000,
-        springLength: 400,
-      },
-      repulsion:{
-        nodeDistance: 1200,
-      },
-    },
-    configure: {
-      enabled: true,
-      filter: 'physics, layout',
-      showButton: true
-    },
-    // tooltip: {
-    //   fontColor: "black",
-    //   fontSize: 14, // px
-    //   fontFace: "verdana",
-    //   color: {
-    //     border: "#666",
-    //     background: "#FFFFC6"
-    //   }
-    // },
-    width: '1000px',
-    height: '700px'
-  };
-  const network = new vis.Network(container, data, options);
-
-   network.on("click", function (params) {
-      params.event = "[original event]";
- 
-  });
-  
-  network.on("hoverNode", function (params) {
-    params.event = "[original event]";
-
-  });
-
-});
-
-</script>
-
+    <div id="svg-container"></div>
 </body>
-</html>
+
+<script>
+
+const width = 955;
+const height = 595;
+const margin = 20;
+
+const charSize = 10;
+
+d3.json("/stars.json"), function(response) {
+    console.log(response);
+
+        const data = getPackedData(source);
+        const container = prepareContainer();
+
+        const nodes = container
+                            .selectAll("g")
+                            .data(data).enter()
+                            .append("g")
+                                .attr("transform", function(d) { 
+                                    return `translate(${d.x},${d.y})`; 
+                                });
+
+        renderCircles(nodes);
+        addLeafLabels(nodes);
+        addGroupLabels(data, container);
+};
+
+function prepareContainer() {
+
+    const svg = d3.select("body")
+                  .append("svg")
+                    .attr("width", width)
+                    .attr("height", height);
+    const container = svg
+                        .append("g")
+                            .attr("class", "circles")
+                            .attr("transform", `translate(${margin},${margin})`);
+    return container;
+}
+
+function getPackedData(source) {
+    const stratify = d3.stratify()
+                            .parentId(function(d) { return d.family; })
+                            .id(function(d) { return d.name; });
+
+    const chartWidth = width - 2 * margin;
+    const chartHeight = height - 2 * margin;
+
+    const pack = d3.pack()
+            .size([chartWidth, chartHeight])
+            .padding(3);
+
+    const root = stratify(source)
+            .sum(function(d) { return d.starsNumber; })
+            .sort(function(a, b) { return b.starsNumber - a.starsNumber; });
+
+    pack(root);
+    return root.descendants();
+}
+
+function renderCircles(nodes) {
+    const color = d3.scaleSequential(d3.interpolateInferno).domain([-4, 4]);
+
+    nodes.append("circle")
+            .attr("id", function(d) { return "circle-" + d.id; })
+            .attr("r", function(d) { return d.r; })
+            .style("fill", function(d) { return color(d.depth); });
+}
+
+function addLeafLabels(nodes) {
+
+    const leaves = nodes.filter(function(d) { return !d.children; });
+
+    leaves
+        .attr("class", "leaf")
+        .append("clipPath")
+            .attr("id", function(d) { return "clip-" + d.id; })
+        .append("use")
+            .attr("xlink:href", function(d) { return "#circle-" + d.id + ""; });
+
+    leaves
+        .append("text")
+            .attr("clip-path", function(d) { return "url(#clip-" + d.id + ")"; })
+            .attr("dy", function(d) { return d.r / 3; })
+            .text(function(d) { return d.data.name; })
+            .style("font-size", function(d){ return `${(d.r - 1)}px`; });
+}
+
+function addGroupLabels(data, container) {
+
+    const startAngle = Math.PI * 0.1;
+    const labelArc = d3.arc()
+                        .innerRadius(function(d) { return (d.r - 5); })
+                        .outerRadius(function(d) { return (d.r + 10); })
+                        .startAngle(startAngle)
+                        .endAngle(function(d) {
+                            const total = d.data.name.length;
+                            const step = charSize / d.r;
+                            return startAngle + (total * step);
+                        });
+
+    const groupLabels = container
+                            .selectAll(".group")
+                                .data(data.filter(function(d) { return !!d.children; })).enter()
+                            .append("g")
+                                .attr("class", "group")
+                                .attr("transform", function(d) { return `translate(${d.x},${d.y})`; });
+    groupLabels
+        .append("path")
+            .attr("class", "group-arc")
+            .attr("id", function(d,i) { return `arc${i}`; })
+            .attr("d", labelArc);
+
+    groupLabels
+        .append("text")
+            .attr("class", "group-label")
+            .attr("x", 5) 
+            .attr("dy", 7) 
+        .append("textPath")
+            .attr("xlink:href", function(d,i){ return `#arc${i}`;})
+            .text(function(d) { return d.data.name ;});
+}
+</script>

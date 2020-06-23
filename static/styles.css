@@ -41,10 +41,15 @@ body{
     display: inline-block;
   }
   circle {
-    fill: indianred;
-    opacity: 0.3;
+    fill:#6ac5fe; 
+    opacity: 0.7;
     stroke: white;
   }
+  circle:hover {
+    fill-opacity: 1;
+    stroke:black;
+    stroke-width: 2;
+ }
   .tooltip_ {
     position: relative; 
     display: block;
