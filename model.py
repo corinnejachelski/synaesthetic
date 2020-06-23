@@ -22,10 +22,30 @@ class User(db.Model):
                              secondary="user_tracks",
                              backref="users")
 
+    #playlists relationship to UserPlaylists object
+
     def __repr__(self):
         """Return a human-readable representation of a User."""
 
         return f"<User user_id={self.user_id} display_name={self.display_name}>"
+
+class UserPlaylist(db.Model):
+    """Data model for user playlist"""
+
+    __tablename__ = "playlists"
+
+    playlist_id = db.Column(db.String, primary_key=True) #search user_artist table by filtering api_type = playlist_id
+    user_id = db.Column(db.String, db.ForeignKey('users.user_id'))
+    playlist_name = db.Column(db.String)
+    total_tracks = db.Column(db.Integer)
+
+    user = db.relationship("User", backref="playlists")
+    #user_artists = db.relationship("UserArtist", backref="playlists")
+
+    def __repr__(self):
+        """Return a human-readable representation of a UserArtist."""
+
+        return f"<UserPlaylist playlist_name={self.playlist_name} user_id={self.user_id}>"
 
 
 class UserArtist(db.Model):
@@ -36,6 +56,8 @@ class UserArtist(db.Model):
     userartist_id = db.Column(db.Integer, autoincrement=True, primary_key=True)
     user_id = db.Column(db.String, db.ForeignKey('users.user_id'))
     artist_id = db.Column(db.String, db.ForeignKey('artists.artist_id'))
+    #filters artists based on API calls for top artists by time frame or by playlist
+    api_type = db.Column(db.String)
 
     def __repr__(self):
         """Return a human-readable representation of a UserArtist."""

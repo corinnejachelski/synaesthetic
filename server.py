@@ -96,6 +96,31 @@ def callback():
     # return render_template('nonzoom-circle-pack.html', display_name=display_name)
     return redirect('/my-data')
 
+
+@app.route('/my-data')
+def display_data():
+    """Main user dashboard page with all charts and stats"""
+
+    max_genre, max_genre_artists, genre_count = crud.get_genre_data(session["user_id"])
+    
+    num_artists = crud.get_num_artists(session["user_id"])
+
+    max_feature, audio_stats = crud.audio_stats(session["user_id"])
+
+    playlist_names = spotify_api.get_user_playlists(session["access_token"], session["user_id"])
+
+    return render_template('my-data.html',
+                            display_name=session["display_name"],
+                            image_url=session["image_url"],
+                            max_genre=max_genre,
+                            max_genre_artists=max_genre_artists, 
+                            genre_count=genre_count, 
+                            num_artists=num_artists,
+                            max_feature=max_feature,
+                            audio_stats=audio_stats,
+                            playlist_names=playlist_names)
+
+
 @app.route('/api/artists')
 def get_user_top_artists():
     """Returns formatted data for circle pack of user's top artists and genres"""
@@ -107,10 +132,12 @@ def get_user_top_artists():
 
 @app.route('/api/artists/time-range')
 def get_top_artists_by_time_range():
+    """Change API call to get artists based on a user-selected time range"""
 
     time_range = request.args.get("artists-time-range")
-    #time_range .lower() and split on space, take only first item
-    #sys.args.get user selection
+    time_range = time_range.lower().split()[0]
+
+
     #call user top artists with time frame
     #data = crud.circle_pack_json(session["user_id"])
     
@@ -167,41 +194,11 @@ def get_related_artists():
     return jsonify(nodes=nodes, edges=edges)
 
 
-@app.route('/my-data')
-def display_data():
-    """Main user dashboard page with all charts and stats"""
-
-    max_genre, max_genre_artists, genre_count = crud.get_genre_data(session["user_id"])
-    
-    num_artists = crud.get_num_artists(session["user_id"])
-
-    max_feature, audio_stats = crud.audio_stats(session["user_id"])
-
-    playlist_names = spotify_api.get_user_playlists(session["access_token"])
-
-    return render_template('my-data.html',
-                            display_name=session["display_name"],
-                            image_url=session["image_url"],
-                            max_genre=max_genre,
-                            max_genre_artists=max_genre_artists, 
-                            genre_count=genre_count, 
-                            num_artists=num_artists,
-                            max_feature=max_feature,
-                            audio_stats=audio_stats,
-                            playlist_names=playlist_names)
-
 @app.route('/test')
 def test():
 
     return render_template('test_network.html')
 
-@app.route('/api/playlists')
-def get_user_playlists():
-    sp = spotipy.Spotify(auth=session["access_token"])
-
-    playlists = sp.current_user_playlists(limit=50)
-
-    return playlists
 
 if __name__ == '__main__':
     connect_to_db(app)

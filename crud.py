@@ -419,9 +419,22 @@ def get_random_song_audio(user_id):
 
     return (track_name, artist_name, audio_features)
 
+################################################################################
+#Playlist functions
+################################################################################
+
+def create_user_playlist(playlist_id, user_id, playlist_name, total_tracks):
+
+    user_playlist = UserPlaylist(playlist_id=playlist_id, user_id=user_id, playlist_name=playlist_name, total_tracks=total_tracks)
+
+    db.session.add(user_playlist)
+    db.session.commit()
+
+    return user_playlist
+
 
 ################################################################################
-#Write to database
+#Write API response to database
 ################################################################################
 def artists_to_db(user_artists, user_id):
     """Add artists to database from API response"""

@@ -53,7 +53,7 @@ def user_tracks(token, user_id):
     #get current user's top 50 artists
     user_tracks = sp.current_user_top_tracks(limit=50)
 
-    #add tracks to db
+    #parse response add tracks to db
     crud.tracks_to_db(user_tracks, user_id)
 
     return user_tracks
@@ -115,21 +115,29 @@ def get_related_artists(token, user_id):
     return (nodes, edges)
 
 
-def get_user_playlists(token):
+def get_user_playlists(token, user_id):
+    """Call Spotify API for user's playlists and add them to user_playlists table in db"""
     sp = spotipy.Spotify(auth=token)
 
     playlists = sp.current_user_playlists(limit=50)
-    print(playlists)
 
+    #create empty set for playlist names to pass to front end for users to select playlist by name
     playlist_names = set()
 
+    #parse API response
     if playlists["total"] == 0:
         playlist_names.add("No playlists to analyze")
     else:
         for playlist in playlists["items"]:
-            name = playlist["name"]
-            id = playlist["id"]
+            #check if user is owner of playlist
+            if playlist["owner"]["id"] == user_id:
+                playlist_name = playlist["name"]
+                playlist_id = playlist["id"]
+                total_tracks = playlist["tracks"]["total"]
 
-            playlist_names.add(name)
+                playlist_names.add(name)
+
+                #add playlist to user_playlist table
+                crud.create_user_playlist(playlist_id, user_id, playlist_name, total_tracks)
 
     return playlist_names
