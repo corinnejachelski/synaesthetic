@@ -4,21 +4,24 @@
 // rendering chart with data from AJAX request
 // data is manipulated from Spotify API call
 $.get('/api/artists', (response) => {
-  circlePack(response);
+  circlePack(response, '#circle-pack-svg');
+ });
+
+
+ $.get('/api/nested-genres', (response) => {
+   circlePack(response, '#nested-genres');
  });
 
  //re-render circle pack chart based on user click
- $('#time-range').on('submit', (evt) => {
+ $('#time_range').on('submit', (evt) => {
   evt.preventDefault();
 
   const userSelection = {'time_range': $('#artists-time-range').val()};
-  console.log(userSelection);
-
-  $.post('/api/artists/time-range'), userSelection, (response) => {
-    console.log(response);
+  
+  $.post('/api/artists/time-range', userSelection, (response) => {
     $('#circle-pack-svg').empty();
-    circlePack(response);
-  }
+    circlePack(response, '#circle-pack-svg');
+  });
  });
 
  //re-render circle pack chart based on user click
@@ -148,7 +151,7 @@ $('#random-song').on('click', () => {
 )});
 ////////////////////////////////////////////////////////////////////////////////////////
 
-function circlePack(response) {
+function circlePack(response, svgID) {
 const packLayout = d3.pack()
 .size([700, 700])
 //space between hierarchy circles
@@ -166,10 +169,10 @@ return d.value;
 //pack layout adds x, y and r (for radius) properties to each node
 packLayout(rootNode);
 
-const svg = d3.select('svg')
+const svg = d3.select(svgID)
 .style("cursor", "pointer")
 
-const nodes = d3.select('svg g')
+const nodes = d3.select(svgID)
 .selectAll('g')
 .data(rootNode.descendants()) //returns an array of descendants  
 .enter()
@@ -204,37 +207,37 @@ leaf.append("text")
 
 const genres = nodes.filter(d => d.children !== undefined);
 
-const startAngle = Math.PI * 0.1;
-const labelArc = d3.arc()
-        .innerRadius(function(d) { return (d.r - 5); })
-        .outerRadius(function(d) { return (d.r + 10); })
-        .startAngle(startAngle)
-        .endAngle(function(d) {
-          const total = d.data.name.length;
-          const step = charSize / d.r;
-          return startAngle + (total * step);
-        });
+// const startAngle = Math.PI * 0.1;
+// const labelArc = d3.arc()
+//         .innerRadius(function(d) { return (d.r - 5); })
+//         .outerRadius(function(d) { return (d.r + 10); })
+//         .startAngle(startAngle)
+//         .endAngle(function(d) {
+//           const total = d.data.name.length;
+//           const step = charSize / d.r;
+//           return startAngle + (total * step);
+//         });
 
-const groupLabels = nodes.selectAll()
-      .enter()
-        .append("g")
-        .attr("class", "group")
-        .attr("transform", function(d) { return `translate(${d.x},${d.y})`; });
+// const groupLabels = nodes.selectAll()
+//       .enter()
+//         .append("g")
+//         .attr("class", "group")
+//         .attr("transform", function(d) { return `translate(${d.x},${d.y})`; });
 
-groupLabels
-.append("path")
-  .attr("class", "group-arc")
-  .attr("id", function(d,i) { return `arc${i}`; })
-  .attr("d", labelArc);
+// groupLabels
+// .append("path")
+//   .attr("class", "group-arc")
+//   .attr("id", function(d,i) { return `arc${i}`; })
+//   .attr("d", labelArc);
 
-groupLabels
-.append("text")
-  .attr("class", "group-label")
-  .attr("x", 5) 
-  .attr("dy", 7) 
-.append("textPath")
-  .attr("xlink:href", function(d,i){ return `#arc${i}`;})
-  .text(function(d) { return d.data.name ;});
+// groupLabels
+// .append("text")
+//   .attr("class", "group-label")
+//   .attr("x", 5) 
+//   .attr("dy", 7) 
+// .append("textPath")
+//   .attr("xlink:href", function(d,i){ return `#arc${i}`;})
+//   .text(function(d) { return d.data.name ;});
 
 // genres.append('text')
 //   .attr('dy', 5)
@@ -306,20 +309,6 @@ function networkChart(response) {
           nodeDistance: 1200,
         },
       },
-      // configure: {
-      //   enabled: true,
-      //   filter: 'physics, layout',
-      //   showButton: true
-      // },
-      // tooltip: {
-      //   fontColor: "black",
-      //   fontSize: 14, // px
-      //   fontFace: "verdana",
-      //   color: {
-      //     border: "#666",
-      //     background: "#FFFFC6"
-      //   }
-      // },
       width: '700px',
       height: '700px'
     };

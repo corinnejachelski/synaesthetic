@@ -278,6 +278,72 @@ def circle_pack_json(user_id, api_type):
     return data
 
 
+def nested_genres(user_id):
+    """Return dictionary with keys that are one-word genres and values that are genres
+    containing the key (i.e. {pop: [pop rap, indie pop, pop punk]}"""
+
+    user_genres = db.session.query(Genre).filter((UserArtist.user_id==user_id), (UserArtist.artist_id==ArtistGenre.artist_id),(ArtistGenre.genre_id==Genre.genre_id)).all()
+    all_genres = db.session.query(Genre).all()
+
+    #one-word genres
+    # base_genres = {"indie": [], "hip": [], "chill": [], "jazz": [], "house": [], "trap": [], "dance": [], "electro": []}
+
+    base_genres = {'acoustic': [], 'afrobeat': [], 'alt-rock': [], 'alternative': [], 'ambient': [], 'americana': [], 'anime': [], 'black-metal': [], 
+    'bluegrass': [], 'blues': [], 'bossanova': [], 'brazil': [], 'breakbeat': [], 'british': [], 'cantopop': [], 
+    'chicago-house': [], 'children': [], 'chill': [], 'classical': [], 'club': [], 'comedy': [], 'contemporary': [], 'country': [], 
+    'dance': [], 'dancehall': [], 'death-metal': [], 'deep': [], 'deep-house': [], 'disco': [], 'disney': [], 
+    'drum-and-bass': [], 'dub': [], 'dubstep': [], 'edm': [], 'electro': [], 'electronic': [], 'emo': [], 'folk': [], 
+    'forro': [], 'french': [], 'funk': [], 'garage': [], 'german': [], 'gospel': [], 'goth': [], 'grindcore': [], 
+    'groove': [], 'grunge': [], 'guitar': [], 'happy': [], 'hard': [], 'hard-rock': [], 'hardcore': [], 'hardstyle': [], 'heavy-metal': [], 
+    'hip': [], 'holidays': [], 'honky-tonk': [], 'house': [], 'idm': [], 'indian': [], 'indie': [],  
+    'industrial': [], 'iranian': [], 'j-dance': [], 'j-idol': [], 'j-pop': [], 'j-rock': [], 'jazz': [], 'k-pop': [], 'kids': [], 
+    'latin': [], 'latino': [], 'malay': [], 'mandopop': [], 'metal': [], 'metal-misc': [], 'metalcore': [], 'minimal-techno': [], 
+    'movies': [], 'mpb': [], 'new-age': [], 'new-release': [], 'opera': [], 'pagode': [], 'party': [], 'philippines-opm': [], 
+    'piano': [], 'pop': [], 'pop-film': [], 'post-dubstep': [], 'power-pop': [], 'progressive-house': [], 'psych': [], 'psych-rock': [], 
+    'psychedelic': [], 'punk': [], 'punk-rock': [], 'r-n-b': [], 'rainy-day': [], 'reggae': [], 'reggaeton': [], 'road-trip': [], 'rock': [], 
+    'rock-n-roll': [], 'rockabilly': [], 'romance': [], 'sad': [], 'salsa': [], 'samba': [], 'sertanejo': [], 'show-tunes': [], 
+    'singer-songwriter': [], 'ska': [], 'sleep': [], 'songwriter': [], 'soul': [], 'soundtracks': [], 'spanish': [], 'study': [], 
+    'swedish': [], 'synthpop': [], 'tango': [], 'techno': [], 'trance': [], 'turkish': [], 'vapor': [], 
+    'world': []}
+
+
+    #search all genres in db for better base genre results
+    for genre in all_genres:
+        #if the genre is one word, add as key in dictionary
+        if len(genre.genre.split()) == 1:
+            base_genres[genre.genre] = base_genres.get(genre.genre, [])
+
+    for genre in user_genres:
+        genre_split = genre.genre.split()
+        if len(genre_split) >= 2:
+            for word in genre_split:
+                #check if genre shares a word with any base genre and add as value
+                if word in base_genres.keys():
+                    base_genres[word] = base_genres.get(word, []) + [{"name":genre.genre, "value": 100}]
+
+    #delete keys with no values
+    length_keys = {k: len(v) for k, v in base_genres.items()}
+
+    for k in length_keys:
+        if length_keys[k] <= 1:
+            del base_genres[k]
+
+    return base_genres
+
+
+def circle_pack_genres(user_id):
+
+    genres = nested_genres(user_id)
+
+    data = {"name" : "genres", "children": [] }
+
+    for base_genre, sub_genres in genres.items():
+        genre_object = {"name": base_genre, "children": sub_genres}
+        data["children"].append(genre_object)
+
+    return data
+
+
 ################################################################################
 #Track and Audio Feature related functions
 ################################################################################

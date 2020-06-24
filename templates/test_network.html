@@ -1,136 +1,94 @@
 <!DOCTYPE html>
-<meta charset="utf-8">
 <head>
     <title>Simple Circle Pack (d3 v4; CSV; 50 Lines)</title>
-    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="https://d3js.org/d3.v5.js"></script>
 
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.js" integrity="sha256-DrT5NfxfbHvMHux31Lkhxg42LY6of8TaYyK50jnxRnM=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+
+    <style>
+          circle {
+    fill:#6ac5fe; 
+    opacity: 0.7;
+    stroke: white;
+  }
+    </style>
 </head>
 
 <body>
-    <div id="svg-container"></div>
+    <div id="svg-container">
+        <svg width=700 height=700>
+            <g></g>
+        </svg>
+    </div>
 </body>
 
 <script>
 
-const width = 955;
-const height = 595;
-const margin = 20;
 
-const charSize = 10;
+ $.get('/api/nested-genres', (response) => {
+   circlePack(response);
+   console.log(response);
+ });
 
-d3.json("/stars.json"), function(response) {
-    console.log(response);
 
-        const data = getPackedData(source);
-        const container = prepareContainer();
+function circlePack(data) {
+var packLayout = d3.pack();
 
-        const nodes = container
-                            .selectAll("g")
-                            .data(data).enter()
-                            .append("g")
-                                .attr("transform", function(d) { 
-                                    return `translate(${d.x},${d.y})`; 
-                                });
+packLayout.size([700, 700]).padding(5);
 
-        renderCircles(nodes);
-        addLeafLabels(nodes);
-        addGroupLabels(data, container);
+const rootNode = d3.hierarchy(data); 
+
+rootNode.sum(function(d) {
+  return d.value;
+});
+
+packLayout(rootNode);
+
+d3.select('svg g')
+  .selectAll('circle')
+  .data(rootNode.descendants())
+  .enter()
+  .append('circle')
+  .attr('cx', function(d) { return d.x; })
+  .attr('cy', function(d) { return d.y; })
+  .attr('r', function(d) { return d.r; })
+
+var nodes = d3.select('svg g')
+  .selectAll('g')
+  .data(rootNode.descendants())
+  .enter()
+  .append('g')
+  .attr('transform', function(d) {return 'translate(' + [d.x, d.y] + ')'})
+
+nodes
+  .append('circle')
+  .attr('r', function(d) { return d.r; })
+
+  const leaf = nodes.filter(d => !d.children);
+
+leaf.attr("class", "leaf")
+.append("clipPath")
+.attr("id", function(d) { return "clip-" + d.id; })
+
+//artist labels
+leaf.append("text")
+  .attr("clip-path", d => d.clipUid)
+.selectAll("tspan")
+.data(d => d.data.name.split(/(?=[A-Z][a-z])|\s+/g))
+.join("tspan")
+  .attr("x", 0)
+  .attr("y", (d, i, nodes) => `${i - nodes.length / 2 + 0.8}em`)
+  .text(d => d)
+    .attr("font-family", "sans-serif")
+    .attr("font-size", "10px")
+    .attr("fill", "black")
+    .attr("text-anchor", "middle");
+
+const genres = nodes.filter(d => d.children !== undefined);
+
+genres.append("title")
+    // .text(d => `${d.ancestors().map(d => d.data.name)}`);
+    .text(d => d.data.name);
+
 };
-
-function prepareContainer() {
-
-    const svg = d3.select("body")
-                  .append("svg")
-                    .attr("width", width)
-                    .attr("height", height);
-    const container = svg
-                        .append("g")
-                            .attr("class", "circles")
-                            .attr("transform", `translate(${margin},${margin})`);
-    return container;
-}
-
-function getPackedData(source) {
-    const stratify = d3.stratify()
-                            .parentId(function(d) { return d.family; })
-                            .id(function(d) { return d.name; });
-
-    const chartWidth = width - 2 * margin;
-    const chartHeight = height - 2 * margin;
-
-    const pack = d3.pack()
-            .size([chartWidth, chartHeight])
-            .padding(3);
-
-    const root = stratify(source)
-            .sum(function(d) { return d.starsNumber; })
-            .sort(function(a, b) { return b.starsNumber - a.starsNumber; });
-
-    pack(root);
-    return root.descendants();
-}
-
-function renderCircles(nodes) {
-    const color = d3.scaleSequential(d3.interpolateInferno).domain([-4, 4]);
-
-    nodes.append("circle")
-            .attr("id", function(d) { return "circle-" + d.id; })
-            .attr("r", function(d) { return d.r; })
-            .style("fill", function(d) { return color(d.depth); });
-}
-
-function addLeafLabels(nodes) {
-
-    const leaves = nodes.filter(function(d) { return !d.children; });
-
-    leaves
-        .attr("class", "leaf")
-        .append("clipPath")
-            .attr("id", function(d) { return "clip-" + d.id; })
-        .append("use")
-            .attr("xlink:href", function(d) { return "#circle-" + d.id + ""; });
-
-    leaves
-        .append("text")
-            .attr("clip-path", function(d) { return "url(#clip-" + d.id + ")"; })
-            .attr("dy", function(d) { return d.r / 3; })
-            .text(function(d) { return d.data.name; })
-            .style("font-size", function(d){ return `${(d.r - 1)}px`; });
-}
-
-function addGroupLabels(data, container) {
-
-    const startAngle = Math.PI * 0.1;
-    const labelArc = d3.arc()
-                        .innerRadius(function(d) { return (d.r - 5); })
-                        .outerRadius(function(d) { return (d.r + 10); })
-                        .startAngle(startAngle)
-                        .endAngle(function(d) {
-                            const total = d.data.name.length;
-                            const step = charSize / d.r;
-                            return startAngle + (total * step);
-                        });
-
-    const groupLabels = container
-                            .selectAll(".group")
-                                .data(data.filter(function(d) { return !!d.children; })).enter()
-                            .append("g")
-                                .attr("class", "group")
-                                .attr("transform", function(d) { return `translate(${d.x},${d.y})`; });
-    groupLabels
-        .append("path")
-            .attr("class", "group-arc")
-            .attr("id", function(d,i) { return `arc${i}`; })
-            .attr("d", labelArc);
-
-    groupLabels
-        .append("text")
-            .attr("class", "group-label")
-            .attr("x", 5) 
-            .attr("dy", 7) 
-        .append("textPath")
-            .attr("xlink:href", function(d,i){ return `#arc${i}`;})
-            .text(function(d) { return d.data.name ;});
-}
 </script>

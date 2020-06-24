@@ -137,8 +137,10 @@ def get_top_artists_by_time_range():
     """Change API call to get artists based on a user-selected time range"""
 
     time_range = request.form.get("time_range")
+    print("\n\n\n\n\n\n")
+    print(time_range)
 
-    if crud.check_user_api_type(session["user_id"], time_range) == None:
+    if crud.check_user_api_type(session["user_id"], time_range) == []:
         spotify_api.user_artists(session["access_token"], session["user_id"], time_range)
 
     data = crud.circle_pack_json(session["user_id"], time_range)
@@ -199,7 +201,14 @@ def test():
 
     return render_template('test_network.html')
 
+@app.route('/api/nested-genres')
+def nested_genres_circle_pack():
 
+    data = crud.circle_pack_genres(session["user_id"])
+
+    return jsonify(data)
+
+    
 if __name__ == '__main__':
     connect_to_db(app)
     app.run(host='0.0.0.0', debug=True)
