@@ -148,10 +148,10 @@ def get_top_artists_by_time_range():
     return jsonify(data)
 
 
-@app.route('/api/playlist')
+@app.route('/api/playlist', methods=['POST'])
 def user_playlist_to_circle_pack():
 
-    playlist_name = request.args.get("playlist")
+    playlist_name = request.form.get("playlist")
 
     #if sys.args.get == "No playlists to analyze", skip
     #else 

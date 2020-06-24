@@ -142,3 +142,12 @@ def get_user_playlists(token, user_id):
                     crud.create_user_playlist(playlist_id, user_id, playlist_name, total_tracks)
 
     return playlist_names
+
+
+def user_playlist_to_circle_pack(token, user_id, playlist_name):
+    sp = spotipy.Spotify(auth=token)
+
+    playlist_id = crud.get_playlist_id_by_name(user_id, playlist_name)
+
+    sp.playlist_tracks(playlist_id, fields=items(track(artists(id))) ,limit=100)
+

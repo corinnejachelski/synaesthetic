@@ -17,7 +17,7 @@
         <p>How related or diverse is your taste in artists?</p>
         <div class="artists-time-range">
           Select a time frame for top artists:
-          <form id="time_range" style="display: inline-block;">
+          <form id="time-range" style="display: inline-block;">
             <select name="artists-time-range" id="artists-time-range" class="selectpicker">
               <option value="short_term">Short-term (4 weeks)</option>
               <option value="medium_term">Medium-term (6 months) - default shown</option>
@@ -29,14 +29,14 @@
 
         <div class="user-playlists">
           Analyze a playlist:
-<!--           <form action="/api/playlist" style="display: inline-block;"> -->
-            <select name="playlist" id="playlist" class="selectpicker">
+          <form id="playlist" style="display: inline-block;">
+            <select name="playlist-selection" id="playlist-selection" class="selectpicker">
               {% for playlist in playlist_names %}
               <option>{{playlist}}</option>
               {% endfor %}
             </select>
             <input type="submit" value="Submit">
-<!--           </form> -->
+          </form>
         </div>
     </div>
 

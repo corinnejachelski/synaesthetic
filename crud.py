@@ -512,7 +512,12 @@ def get_playlist_by_id(playlist_id):
 
     return UserPlaylist.query.get(playlist_id)
 
-# def get playlist_by_name(playlist_name)
+def get_playlist_id_by_name(user_id, playlist_name):
+
+    playlist = db.session.query(UserPlaylist).filter((UserPlaylist.playlist_name==playlist_name), (UserPlaylist.user_id==user_id)).first()
+
+    return playlist.playlist_id
+
 
 ################################################################################
 #Write API response to database

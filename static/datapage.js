@@ -12,25 +12,29 @@ $.get('/api/artists', (response) => {
    circlePack(response, '#nested-genres');
  });
 
- //re-render circle pack chart based on user click
- $('#time_range').on('submit', (evt) => {
+ //re-render circle pack chart based on user click for top artists time range
+ $('#time-range').on('submit', (evt) => {
   evt.preventDefault();
 
   const userSelection = {'time_range': $('#artists-time-range').val()};
-  
+
   $.post('/api/artists/time-range', userSelection, (response) => {
     $('#circle-pack-svg').empty();
     circlePack(response, '#circle-pack-svg');
   });
  });
 
- //re-render circle pack chart based on user click
-//  $('#playlist').on('click', () => {
-//   $.get('/api/playlist'), (response) => {
-//     $('#circle-pack-svg').empty();
-//     circlePack(response);
-//   }
-//  });
+ //re-render circle pack chart based on user click for playlist
+ $('#playlist').on('submit', (evt) => {
+   evt.preventDefault();
+
+   const playlistSelection = {'playlist': $('#playlist-selection').val()}
+
+  $.post('/api/playlist', playlistSelection, (response) => {
+    $('#circle-pack-svg').empty();
+    circlePack(response, '#circle-pack-svg');
+  });
+ });
  
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
  //All genres button toggle
