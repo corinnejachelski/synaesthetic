@@ -6,6 +6,28 @@
 $.get('/api/artists', (response) => {
   circlePack(response);
  });
+
+ //re-render circle pack chart based on user click
+ $('#time-range').on('submit', (evt) => {
+  evt.preventDefault();
+
+  const userSelection = {'time_range': $('#artists-time-range').val()};
+  console.log(userSelection);
+
+  $.post('/api/artists/time-range'), userSelection, (response) => {
+    console.log(response);
+    $('#circle-pack-svg').empty();
+    circlePack(response);
+  }
+ });
+
+ //re-render circle pack chart based on user click
+//  $('#playlist').on('click', () => {
+//   $.get('/api/playlist'), (response) => {
+//     $('#circle-pack-svg').empty();
+//     circlePack(response);
+//   }
+//  });
  
 /////////////////////////////////////////////////////////////////////////////////////////////////////////
  //All genres button toggle

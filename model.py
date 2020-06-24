@@ -62,7 +62,7 @@ class UserArtist(db.Model):
     def __repr__(self):
         """Return a human-readable representation of a UserArtist."""
 
-        return f"<UserArtist artist_id={self.artist_id}>"
+        return f"<UserArtist artist_id={self.artist_id} api_type={self.api_type}>"
 
 
 class UserTrack(db.Model):

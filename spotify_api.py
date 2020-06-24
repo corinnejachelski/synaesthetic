@@ -40,7 +40,7 @@ def user_artists(token, user_id, time_range):
     user_artists = sp.current_user_top_artists(limit=50, time_range=time_range)
 
     #add artists and genres to db
-    crud.artists_to_db(user_artists, user_id)
+    crud.artists_to_db(user_artists, user_id, time_range)
 
     return "Success"
 
@@ -135,9 +135,10 @@ def get_user_playlists(token, user_id):
                 playlist_id = playlist["id"]
                 total_tracks = playlist["tracks"]["total"]
 
-                playlist_names.add(name)
+                playlist_names.add(playlist_name)
 
                 #add playlist to user_playlist table
-                crud.create_user_playlist(playlist_id, user_id, playlist_name, total_tracks)
+                if crud.get_playlist_by_id(playlist_id) == None:
+                    crud.create_user_playlist(playlist_id, user_id, playlist_name, total_tracks)
 
     return playlist_names

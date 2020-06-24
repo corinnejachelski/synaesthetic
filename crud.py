@@ -1,6 +1,6 @@
 """CRUD operations"""
 
-from model import (db, User, UserArtist, UserTrack, Artist, RelatedArtist, 
+from model import (db, User, UserArtist, UserTrack, UserPlaylist, Artist, RelatedArtist, 
 Genre, ArtistGenre, Track, Audio, connect_to_db)
 from math import sqrt
 from random import choice
@@ -24,10 +24,10 @@ def create_user(user_id, display_name, image_url):
     return user
 
 
-def create_user_artist(user_id, artist_id):
+def create_user_artist(user_id, artist_id, api_type):
     """Create and return a new UserArtist"""
 
-    user_artist = UserArtist(user_id=user_id, artist_id=artist_id)
+    user_artist = UserArtist(user_id=user_id, artist_id=artist_id, api_type=api_type)
 
     db.session.add(user_artist)
     db.session.commit()
@@ -75,10 +75,10 @@ def get_artist_by_id(artist_id):
     return Artist.query.get(artist_id)
 
 
-def check_user_artists(user_id, artist_id):
+def check_user_artists(user_id, artist_id, api_type):
     """Check if an artist is in a user's artists"""
 
-    return UserArtist.query.filter_by(user_id=user_id).first() and UserArtist.query.filter_by(artist_id=artist_id).first()    
+    return db.session.query(UserArtist).filter((UserArtist.user_id==user_id), (UserArtist.artist_id==artist_id), (UserArtist.api_type==api_type)).first()
 
 
 def check_artist_genres(artist_id, genre_id):
@@ -177,6 +177,11 @@ def get_user_artist_ids(user_id):
     return artist_ids
 
 
+def check_user_api_type(user_id, api_type):
+    """Check if a time range or playlist id is in a user's artists api_type column"""
+
+    return db.session.query(UserArtist).filter((UserArtist.api_type==api_type), (UserArtist.user_id==user_id)).all()
+
 # def count_genres_by_user_artists(user_id):
 #     """returns {'Leon Bridges': 2, 'Lady Lamb': 5, 'Tash Sultana': 1, 'Big Wild': 5, 
 #     'Sylvan Esso': 6,...}"""
@@ -205,7 +210,7 @@ def get_user_artist_ids(user_id):
 #     return repeating_artists
 
 
-def optimize_genres(user_id):
+def optimize_genres(user_id, api_type):
     """Returns a list of artists by genre with artists in their genre with the 
     highest count of artists by user
 
@@ -214,10 +219,14 @@ def optimize_genres(user_id):
     'brain waves': ['Alpha Brain Waves'], 'electropop': ['Grimes', 'Sylvan Esso', 
     'Overcoats', 'Purity Ring', 'Charlotte Day Wilson'],...}"""
 
-    user_join = User.query.options( 
-             db.joinedload('artists') # attribute for user 
-               .joinedload('genres')  # attribute from artist
-            ).get(user_id)   
+    # user_join = User.query.options( 
+    #          db.joinedload('artists') # attribute for user 
+    #            .joinedload('genres')  # attribute from artist
+    #         ).get(user_id)  
+
+    filtered_artists = db.session.query(Artist).filter((UserArtist.api_type==api_type), 
+                    (UserArtist.user_id==user_id), 
+                    (UserArtist.artist_id==Artist.artist_id)).all()
 
     #count of artists in each genre
     """{'chillwave': 3, 'dance pop': 3, 'electropop': 6, 
@@ -226,7 +235,7 @@ def optimize_genres(user_id):
 
     final_dict = {}
 
-    for artist in user_join.artists:
+    for artist in filtered_artists:
         max_genre = "" #genre name
         genre_count = 0 #count of artists in that genre
         for genre in artist.genres:
@@ -243,7 +252,7 @@ def optimize_genres(user_id):
     return final_dict
 
 
-def circle_pack_json(user_id):
+def circle_pack_json(user_id, api_type):
     """Returns formatted input for D3 Circle Pack"""
     # user_join = User.query.options( 
     #          db.joinedload('artists') # attribute for user 
@@ -253,7 +262,7 @@ def circle_pack_json(user_id):
     #count of artists in each genre
     """{'chillwave': 3, 'dance pop': 3, 'electropop': 6, 
     'escape room': 4,....}"""
-    artist_genres = optimize_genres(user_id) 
+    artist_genres = optimize_genres(user_id, api_type) 
 
 
     #     >>>{'shamanic': ['Beautiful Chorus', 'Rising Appalachia', 'Ayla Nereo'], 
@@ -433,10 +442,16 @@ def create_user_playlist(playlist_id, user_id, playlist_name, total_tracks):
     return user_playlist
 
 
+def get_playlist_by_id(playlist_id):
+
+    return UserPlaylist.query.get(playlist_id)
+
+# def get playlist_by_name(playlist_name)
+
 ################################################################################
 #Write API response to database
 ################################################################################
-def artists_to_db(user_artists, user_id):
+def artists_to_db(user_artists, user_id, api_type):
     """Add artists to database from API response"""
 
     #parse artists in response
@@ -453,9 +468,9 @@ def artists_to_db(user_artists, user_id):
         if get_artist_by_id(artist_id) == None:
             db_artist = create_artist(artist_id, artist_name, popularity, image_url)
 
-        if check_user_artists(user_id, artist_id) == None:
+        if check_user_artists(user_id, artist_id, api_type) == None:
         #add each artist to user_artists table if not already there
-            db_user_artist = create_user_artist(user_id, artist_id)
+            db_user_artist = create_user_artist(user_id, artist_id, api_type)
 
         #parse genres from list for each artist
         for genre in artist['genres']:
