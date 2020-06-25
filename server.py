@@ -137,8 +137,6 @@ def get_top_artists_by_time_range():
     """Change API call to get artists based on a user-selected time range"""
 
     time_range = request.form.get("time_range")
-    print("\n\n\n\n\n\n")
-    print(time_range)
 
     if crud.check_user_api_type(session["user_id"], time_range) == []:
         spotify_api.user_artists(session["access_token"], session["user_id"], time_range)
@@ -153,13 +151,14 @@ def user_playlist_to_circle_pack():
 
     playlist_name = request.form.get("playlist")
 
-    #if sys.args.get == "No playlists to analyze", skip
-    #else 
-    #get playlist id by name and user_id
-    #get tracks for playlist - api call --> create artist objects from data
-    #circle_pack api call 
-    #return data to AJAX call 
-    return playlist_name
+    playlist_id = crud.get_playlist_id_by_name(session["user_id"], playlist_name)
+
+    artists = spotify_api.playlist_artists_to_db(session["access_token"], session["user_id"], playlist_id)
+    print(artists)
+    
+    data = crud.circle_pack_json(session["user_id"], playlist_id)
+
+    return jsonify(data)
 
 @app.route('/api/audio')
 def get_audio_features():

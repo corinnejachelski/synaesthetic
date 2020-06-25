@@ -525,8 +525,14 @@ def get_playlist_id_by_name(user_id, playlist_name):
 def artists_to_db(user_artists, user_id, api_type):
     """Add artists to database from API response"""
 
+    #initial object in API call is named differently depending on type of request
+    if api_type=="medium_term" or api_type=="short_term" or api_type=="long_term":
+        parse_key = 'items'
+    else:
+        parse_key = 'artists'
+
     #parse artists in response
-    for artist in user_artists['items']:
+    for artist in user_artists[parse_key]:
         artist_id = artist['id']
         artist_name = artist['name']
         popularity = artist['popularity']
@@ -540,7 +546,7 @@ def artists_to_db(user_artists, user_id, api_type):
             db_artist = create_artist(artist_id, artist_name, popularity, image_url)
 
         if check_user_artists(user_id, artist_id, api_type) == None:
-        #add each artist to user_artists table if not already there
+        #add each artist to user_artists table if not already there *for that api_type*
             db_user_artist = create_user_artist(user_id, artist_id, api_type)
 
         #parse genres from list for each artist

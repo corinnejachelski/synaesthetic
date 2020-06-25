@@ -29,8 +29,10 @@ $.get('/api/artists', (response) => {
    evt.preventDefault();
 
    const playlistSelection = {'playlist': $('#playlist-selection').val()}
+   console.log(playlistSelection);
 
   $.post('/api/playlist', playlistSelection, (response) => {
+    console.log(response);
     $('#circle-pack-svg').empty();
     circlePack(response, '#circle-pack-svg');
   });

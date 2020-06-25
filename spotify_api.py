@@ -144,10 +144,46 @@ def get_user_playlists(token, user_id):
     return playlist_names
 
 
-def user_playlist_to_circle_pack(token, user_id, playlist_name):
+def playlist_artists_to_db(token, user_id, playlist_id):
+    """Get artists from a user's playlist and add to database"""
     sp = spotipy.Spotify(auth=token)
 
-    playlist_id = crud.get_playlist_id_by_name(user_id, playlist_name)
+    #call API to get tracks for the user's playlist, return only artist ids
+    playlist_response = sp.user_playlist_tracks(user=user_id, playlist_id=playlist_id, fields="items(track(artists(id)))", limit=100)
 
-    sp.playlist_tracks(playlist_id, fields=items(track(artists(id))) ,limit=100)
+    #parse response for clean list of ids
+    playlist_artist_ids = []
+    for artist in playlist_response["items"]:
+        if len(artist["track"]["artists"]) == 1:
+            playlist_artist_ids.append(artist["track"]["artists"][0]["id"])
 
+        #some tracks have multiple artists
+        else:
+            for subartist in artist["track"]["artists"]:
+                count = 0
+                playlist_artist_ids.append(artist["track"]["artists"][count]["id"])
+                count +=1
+
+    #call API to get artist genres and all info to create Artist object
+    #sp.artists() takes max of 50 artists
+    if len(playlist_artist_ids) > 50:
+        num_calls = len(playlist_artist_ids)/50
+        called = 0
+        list_slice = 49
+
+        while called < num_calls:
+            artists = sp.artists(playlist_artist_ids[:list_slice])
+            list_slice +=50
+            called +=1
+            crud.artists_to_db(artists, user_id, playlist_id)
+
+    else:
+        artists = sp.artists(playlist_artist_ids)
+        crud.artists_to_db(artists, user_id, playlist_id)
+
+    print("\n\n\n\n\n\n\n\n artists written to db")
+
+    #playlist_id is the api_type in this case so that UserArtists can be filtered based on playlist
+    #crud.artists_to_db(artists, user_id, playlist_id)
+
+    return artists
