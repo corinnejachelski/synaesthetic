@@ -103,7 +103,7 @@ def display_data():
     if session == {}:
         return redirect('/')
     else:
-        max_genre, max_genre_artists, genre_count = crud.get_genre_data(session["user_id"])
+        max_genre, max_genre_artists, genre_count = crud.get_genre_data(session["user_id"], "medium_term")
         
         num_artists = crud.get_num_artists(session["user_id"])
 
@@ -164,6 +164,7 @@ def user_playlist_to_circle_pack():
 
     return jsonify(data)
 
+
 @app.route('/api/audio')
 def get_audio_features():
     """Returns data to render initial radar chart of user audio features"""
@@ -173,6 +174,7 @@ def get_audio_features():
 
     return jsonify(avg=avg, random_song=random_song, track_name=track_name, artist_name=artist_name)
 
+
 @app.route('/api/random-song')
 def get_random_song():
     """Random song button"""
@@ -180,6 +182,7 @@ def get_random_song():
     track_name, artist_name, random_song = crud.get_random_song_audio(session["user_id"])
 
     return jsonify(random_song=random_song, track_name=track_name, artist_name=artist_name)
+
 
 @app.route('/api/genres')
 def get_all_genres():
@@ -194,10 +197,24 @@ def get_all_genres():
 def get_related_artists():
     """Returns data for viz.js network chart of related artists"""
 
-    nodes, edges = spotify_api.get_related_artists(session["access_token"], session["user_id"])
+    nodes, edges = spotify_api.get_related_artists(session["access_token"], session["user_id"], "medium_term")
 
     return jsonify(nodes=nodes, edges=edges)
 
+
+@app.route('/api/related-artists-all')
+def all_related_artists():
+
+    nodes, edges = spotify_api.get_related_artists(session["access_token"], session["user_id"], None)
+
+    return jsonify(nodes=nodes, edges=edges)
+
+
+@app.route('/related-artists-all')
+def display_page_all_relartists():
+
+    return render_template('related-artists-all.html')
+    
 
 @app.route('/api/nested-genres')
 def nested_genres_circle_pack():

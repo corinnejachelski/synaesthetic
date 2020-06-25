@@ -75,15 +75,18 @@ def audio_features(token, user_id):
     return "Success"
 
 
-def get_related_artists(token, user_id):
+def get_related_artists(token, user_id, api_type):
     """Call Spotify API to get related artists for each artist in a user's list,
-    format and return data for vis.js network chart"""
+    format and return data for vis.js network chart.
+    If a user interacts with the site to look at their artists at different time frames 
+    or in playlists, the chart loses visual readability, so the deafult is set for 
+    apit_type = medium_term artists"""
 
     #get Artist objects
-    user_artist_list = crud.get_user_artists(user_id)
+    user_artist_list = crud.get_user_artists(user_id, api_type)
 
     #get list of artist ids, use set for faster search
-    artist_ids_set = set(crud.get_user_artist_ids(user_id))
+    artist_ids_set = set(crud.get_user_artist_ids(user_id, api_type))
 
     #append all user artists (search artists) to nodes list for network chart
     nodes = []
@@ -176,13 +179,21 @@ def playlist_artists_to_db(token, user_id, playlist_id):
     if len(playlist_artist_ids) > 50:
         num_calls = len(playlist_artist_ids)/50
         called = 0
-        list_slice = 49
+        list_slice_start = 0
+        list_slice_end = 49 
 
         while called < num_calls:
-            artists = sp.artists(playlist_artist_ids[:list_slice])
-            list_slice +=50
-            called +=1
-            crud.artists_to_db(artists, user_id, playlist_id)
+            if list_slice_end > len(playlist_artist_ids):
+                list_slice_end == len(playlist_artist_ids)
+                artists = sp.artists(playlist_artist_ids[list_slice_start:list_slice_end])
+                crud.artists_to_db(artists, user_id, playlist_id)
+            else:
+                artists = sp.artists(playlist_artist_ids[list_slice_start:list_slice_end])
+                #increment slices
+                list_slice_start += 50
+                list_slice_end += 50
+                called += 1
+                crud.artists_to_db(artists, user_id, playlist_id)
 
     else:
         artists = sp.artists(playlist_artist_ids)

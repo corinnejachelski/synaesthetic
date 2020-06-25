@@ -7,9 +7,9 @@ $.get('/api/artists', (response) => {
   circlePack(response, '#circle-pack-svg');
  });
 
-
+//load nested genres zoomable circle pack on page load
  $.get('/api/nested-genres', (response) => {
-   circlePack(response, '#nested-genres');
+   zoomableCirclePack(response, '#nested-genres');
  });
 
  //re-render circle pack chart based on user click for top artists time range
@@ -67,8 +67,15 @@ $('#genres').on('click', () => {
 ///////////////////////////////////////////////////////////////////////////////////////////
 //Viz.js network chart 
 $.get('/api/related-artists', (response) => { 
-  networkChart(response);
+  networkChart(response, 'network-chart');
 });
+
+
+  $.get('/api/related-artists-all', (response) => {
+    console.log(response);
+    networkChart(response, 'network-chart-all');
+  });
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
  //Charts.js radar chart config
@@ -80,22 +87,22 @@ $.get('/api/related-artists', (response) => {
         //data is instantiated as empty list and is updated with API response when chart renders
         datasets: [
             {
-            label: 'Average',
+            label: 'Your Average',
+            fill: true,
+            backgroundColor: "rgba(179,181,198,0.2)",
+            borderColor: "rgba(179,181,198,1)",
+            pointBorderColor: "#fff",
+            pointBackgroundColor: "rgba(179,181,198,1)",
+            data: []
+            },
+            {
+            label: '',
             fill: true,
             backgroundColor: "rgba(255,99,132,0.2)",
             borderColor: "rgba(255,99,132,1)",
             pointBorderColor: "#fff",
             pointBackgroundColor: "rgba(255,99,132,1)",
             pointBorderColor: "#fff",
-            data: []
-            },
-            {
-            label: '',
-            fill: true,
-            backgroundColor: "rgba(179,181,198,0.2)",
-            borderColor: "rgba(179,181,198,1)",
-            pointBorderColor: "#fff",
-            pointBackgroundColor: "rgba(179,181,198,1)",
             data: []
             }
         ]
@@ -161,7 +168,7 @@ $('#random-song').on('click', () => {
 function circlePack(response, svgID) {
 const packLayout = d3.pack()
 .size([700, 700])
-//space between hierarchy circles
+//space between circles
 .padding(5)
 
 //returns an object with data structure that represents hierarchy
@@ -262,8 +269,79 @@ genres.append("title")
     .text(d => d.data.name);
 };
 
+function zoomableCirclePack(data, svgID) {
+
+
+  var svg = d3.select(svgID),
+      margin = 20,
+      diameter = +svg.attr("width"),
+      g = svg.append("g").attr("transform", "translate(" + diameter / 2 + "," + diameter / 2 + ")");
+  
+  var color = d3.scaleLinear()
+      .domain([-1, 5])
+      .range(["hsl(147,80%,80%)", "hsl(228,30%,40%)"])
+      .interpolate(d3.interpolateHcl);
+  
+  var pack = d3.pack()
+      .size([diameter - margin, diameter - margin])
+      .padding(2);
+  
+    const root = d3.hierarchy(data)
+        .sum(function(d) { return d.value; })
+        .sort(function(a, b) { return b.value - a.value; });
+  
+    var focus = root,
+        nodes = pack(root).descendants(),
+        view;
+  
+    var circle = g.selectAll("circle")
+      .data(nodes)
+      .enter().append("circle")
+        .attr("class", function(d) { return d.parent ? d.children ? "node" : "node node--leaf" : "node node--root"; })
+        .style("fill", function(d) { return d.children ? color(d.depth) : null; })
+        .on("click", function(d) { if (focus !== d) zoom(d), d3.event.stopPropagation(); });
+  
+    var text = g.selectAll("text")
+      .data(nodes)
+      .enter().append("text")
+        .attr("class", "label")
+        .style("fill-opacity", function(d) { return d.parent === root ? 1 : 0; })
+        .style("display", function(d) { return d.parent === root ? "inline" : "none"; })
+        .text(function(d) { return d.data.name; });
+  
+    var node = g.selectAll("circle,text");
+  
+    svg
+        .style("background", color(-1))
+        .on("click", function() { zoom(root); });
+  
+    zoomTo([root.x, root.y, root.r * 2 + margin]);
+  
+    function zoom(d) {
+      var focus0 = focus; focus = d;
+  
+      var transition = d3.transition()
+          .duration(d3.event.altKey ? 7500 : 750)
+          .tween("zoom", function(d) {
+            var i = d3.interpolateZoom(view, [focus.x, focus.y, focus.r * 2 + margin]);
+            return function(t) { zoomTo(i(t)); };
+          });
+  
+      transition.selectAll("text")
+        .filter(function(d) { return d.parent === focus || this.style.display === "inline"; })
+          .style("fill-opacity", function(d) { return d.parent === focus ? 1 : 0; })
+          .on("start", function(d) { if (d.parent === focus) this.style.display = "inline"; })
+          .on("end", function(d) { if (d.parent !== focus) this.style.display = "none"; });
+    }
+  
+    function zoomTo(v) {
+      var k = diameter / v[2]; view = v;
+      node.attr("transform", function(d) { return "translate(" + (d.x - v[0]) * k + "," + (d.y - v[1]) * k + ")"; });
+      circle.attr("r", function(d) { return d.r * k; });
+    };
+  };  
 /////////////////////////////////////////////////////////////////////////////////////////
-function networkChart(response) {
+function networkChart(response, divID) {
     // create an array with nodes
     const nodes = response.nodes;
 
@@ -271,7 +349,7 @@ function networkChart(response) {
     const edges = response.edges;
 
     // create a network
-    const container = document.getElementById('network-chart');
+    const container = document.getElementById(divID);
     const data= {
       nodes: nodes,
       edges: edges,

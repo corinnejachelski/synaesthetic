@@ -132,7 +132,7 @@ def count_user_artists_by_genre(user_id):
     return count_artists 
 
 
-def get_genre_data(user_id):
+def get_genre_data(user_id, api_type):
     """Get a user's most popular genre (highest artist count) and genre stats"""
 
     genres = count_user_artists_by_genre(user_id)
@@ -157,21 +157,21 @@ def get_num_artists(user_id):
     return num_artists
 
 
-def get_user_artists(user_id):
+def get_user_artists(user_id, api_type):
     """Returns Artist objects for user"""
 
-    user = User.query.get(user_id)
+    artists = db.session.query(Artist).filter((UserArtist.user_id=="122209955"), (UserArtist.api_type=="medium_term"), (UserArtist.artist_id==Artist.artist_id)).all()
 
-    return (user.artists)
+    return artists
 
 
-def get_user_artist_ids(user_id):
+def get_user_artist_ids(user_id, api_type):
     """Returns list of artist ids by user artists"""
 
-    user = User.query.get(user_id)
+    artists = get_user_artists(user_id, api_type)
 
     artist_ids = []
-    for artist in user.artists:
+    for artist in artists:
         artist_ids.append(artist.artist_id)
 
     return artist_ids
@@ -212,17 +212,13 @@ def check_user_api_type(user_id, api_type):
 
 def optimize_genres(user_id, api_type):
     """Returns a list of artists by genre with artists in their genre with the 
-    highest count of artists by user
+    highest count of artists by user - aka to show the highest level of association
+    among a user's artists and genres
 
     >>>optimize_genres("test")
     >>>{'shamanic': ['Beautiful Chorus', 'Rising Appalachia', 'Ayla Nereo'], 
     'brain waves': ['Alpha Brain Waves'], 'electropop': ['Grimes', 'Sylvan Esso', 
     'Overcoats', 'Purity Ring', 'Charlotte Day Wilson'],...}"""
-
-    # user_join = User.query.options( 
-    #          db.joinedload('artists') # attribute for user 
-    #            .joinedload('genres')  # attribute from artist
-    #         ).get(user_id)  
 
     filtered_artists = db.session.query(Artist).filter((UserArtist.api_type==api_type), 
                     (UserArtist.user_id==user_id), 
@@ -283,11 +279,9 @@ def nested_genres(user_id):
     containing the key (i.e. {pop: [pop rap, indie pop, pop punk]}"""
 
     user_genres = db.session.query(Genre).filter((UserArtist.user_id==user_id), (UserArtist.artist_id==ArtistGenre.artist_id),(ArtistGenre.genre_id==Genre.genre_id)).all()
-    all_genres = db.session.query(Genre).all()
+    #all_genres = db.session.query(Genre).all()
 
-    #one-word genres
-    # base_genres = {"indie": [], "hip": [], "chill": [], "jazz": [], "house": [], "trap": [], "dance": [], "electro": []}
-
+    #one-word genres/seed genres from Spotify
     base_genres = {'acoustic': [], 'afrobeat': [], 'alternative': [], 'ambient': [], 'americana': [], 
     'australian': [], 'black metal': [], 'bluegrass': [], 'blues': [], 'bossanova': [], 'brazilian': [], 'british': [], 
     'canadian': [], 'chill': [], 'classical': [], 'club': [], 'comedy': [], 'contemporary': [], 'country': [], 
@@ -300,14 +294,14 @@ def nested_genres(user_id):
     'power pop': [], 'progressive': [], 'psych': [], 'psychedelic': [], 'punk': [], 'r&b': [], 'reggae': [], 'reggaeton': [], 'rock': [], 
     'rockabilly': [], 'salsa': [], 'samba': [], 'sertanejo': [], 'singer-songwriter': [], 'ska': [], 
     'songwriter': [], 'soul': [], 'soundtracks': [], 'spanish': [], 'swedish': [], 'synthpop': [], 'tango': [], 'techno': [], 
-    'trance': [], 'turkish': [], 'vapor': [], 'world': []}
+    'trance': [], 'trap': [], 'turkish': [], 'vapor': [], 'world': []}
 
 
     #search all genres in db for better base genre results
-    for genre in all_genres:
-        #if the genre is one word, add as key in dictionary
-        if len(genre.genre.split()) == 1:
-            base_genres[genre.genre] = base_genres.get(genre.genre, [])
+    # for genre in all_genres:
+    #     #if the genre is one word, add as key in dictionary
+    #     if len(genre.genre.split()) == 1:
+    #         base_genres[genre.genre] = base_genres.get(genre.genre, [])
 
     for genre in user_genres:
         genre_split = genre.genre.split()
