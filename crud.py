@@ -288,23 +288,19 @@ def nested_genres(user_id):
     #one-word genres
     # base_genres = {"indie": [], "hip": [], "chill": [], "jazz": [], "house": [], "trap": [], "dance": [], "electro": []}
 
-    base_genres = {'acoustic': [], 'afrobeat': [], 'alt-rock': [], 'alternative': [], 'ambient': [], 'americana': [], 'anime': [], 'black-metal': [], 
-    'bluegrass': [], 'blues': [], 'bossanova': [], 'brazil': [], 'breakbeat': [], 'british': [], 'cantopop': [], 
-    'chicago-house': [], 'children': [], 'chill': [], 'classical': [], 'club': [], 'comedy': [], 'contemporary': [], 'country': [], 
-    'dance': [], 'dancehall': [], 'death-metal': [], 'deep': [], 'deep-house': [], 'disco': [], 'disney': [], 
-    'drum-and-bass': [], 'dub': [], 'dubstep': [], 'edm': [], 'electro': [], 'electronic': [], 'emo': [], 'folk': [], 
-    'forro': [], 'french': [], 'funk': [], 'garage': [], 'german': [], 'gospel': [], 'goth': [], 'grindcore': [], 
-    'groove': [], 'grunge': [], 'guitar': [], 'happy': [], 'hard': [], 'hard-rock': [], 'hardcore': [], 'hardstyle': [], 'heavy-metal': [], 
-    'hip': [], 'holidays': [], 'honky-tonk': [], 'house': [], 'idm': [], 'indian': [], 'indie': [],  
+    base_genres = {'acoustic': [], 'afrobeat': [], 'alternative': [], 'ambient': [], 'americana': [], 
+    'australian': [], 'black metal': [], 'bluegrass': [], 'blues': [], 'bossanova': [], 'brazilian': [], 'british': [], 
+    'canadian': [], 'chill': [], 'classical': [], 'club': [], 'comedy': [], 'contemporary': [], 'country': [], 
+    'dance': [], 'dancehall': [], 'death metal': [], 'deep': [], 'disco': [], 'dub': [], 'dubstep': [], 'edm': [], 'electro': [], 
+    'electropop': [], 'electronic': [], 'emo': [], 'folk': [], 'french': [], 'funk': [], 'garage': [], 'german': [], 'gospel': [], 'gothic': [], 'grindcore': [], 
+    'groove': [], 'grunge': [], 'guitar': [], 'hard': [], 'hard rock': [], 'hardcore': [], 'hardstyle': [], 'hip': [], 'house': [], 'idm': [], 'indian': [], 'indie': [],  
     'industrial': [], 'iranian': [], 'j-dance': [], 'j-idol': [], 'j-pop': [], 'j-rock': [], 'jazz': [], 'k-pop': [], 'kids': [], 
-    'latin': [], 'latino': [], 'malay': [], 'mandopop': [], 'metal': [], 'metal-misc': [], 'metalcore': [], 'minimal-techno': [], 
-    'movies': [], 'mpb': [], 'new-age': [], 'new-release': [], 'opera': [], 'pagode': [], 'party': [], 'philippines-opm': [], 
-    'piano': [], 'pop': [], 'pop-film': [], 'post-dubstep': [], 'power-pop': [], 'progressive-house': [], 'psych': [], 'psych-rock': [], 
-    'psychedelic': [], 'punk': [], 'punk-rock': [], 'r-n-b': [], 'rainy-day': [], 'reggae': [], 'reggaeton': [], 'road-trip': [], 'rock': [], 
-    'rock-n-roll': [], 'rockabilly': [], 'romance': [], 'sad': [], 'salsa': [], 'samba': [], 'sertanejo': [], 'show-tunes': [], 
-    'singer-songwriter': [], 'ska': [], 'sleep': [], 'songwriter': [], 'soul': [], 'soundtracks': [], 'spanish': [], 'study': [], 
-    'swedish': [], 'synthpop': [], 'tango': [], 'techno': [], 'trance': [], 'turkish': [], 'vapor': [], 
-    'world': []}
+    'latin': [], 'latino': [], 'malay': [], 'mandopop': [], 'metal': [], 'metalcore': [], 'minimal-techno': [], 
+    'mpb': [],  'opera': [], 'pagode': [], 'party': [], 'philippines-opm': [], 'piano': [], 'pop': [], 'post-punk': [], 
+    'power pop': [], 'progressive': [], 'psych': [], 'psychedelic': [], 'punk': [], 'r&b': [], 'reggae': [], 'reggaeton': [], 'rock': [], 
+    'rockabilly': [], 'salsa': [], 'samba': [], 'sertanejo': [], 'singer-songwriter': [], 'ska': [], 
+    'songwriter': [], 'soul': [], 'soundtracks': [], 'spanish': [], 'swedish': [], 'synthpop': [], 'tango': [], 'techno': [], 
+    'trance': [], 'turkish': [], 'vapor': [], 'world': []}
 
 
     #search all genres in db for better base genre results

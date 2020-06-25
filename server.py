@@ -109,7 +109,12 @@ def display_data():
 
         max_feature, audio_stats = crud.audio_stats(session["user_id"])
 
-        playlist_names = spotify_api.get_user_playlists(session["access_token"], session["user_id"])
+        response = spotify_api.get_user_playlists(session["access_token"], session["user_id"])
+
+        if response == "token error":
+            return redirect('/')
+        else:
+           playlist_names = response
 
         return render_template('my-data.html',
                                 display_name=session["display_name"],
@@ -154,7 +159,6 @@ def user_playlist_to_circle_pack():
     playlist_id = crud.get_playlist_id_by_name(session["user_id"], playlist_name)
 
     artists = spotify_api.playlist_artists_to_db(session["access_token"], session["user_id"], playlist_id)
-    print(artists)
     
     data = crud.circle_pack_json(session["user_id"], playlist_id)
 
@@ -195,11 +199,6 @@ def get_related_artists():
     return jsonify(nodes=nodes, edges=edges)
 
 
-@app.route('/test')
-def test():
-
-    return render_template('test_network.html')
-
 @app.route('/api/nested-genres')
 def nested_genres_circle_pack():
 
@@ -207,7 +206,13 @@ def nested_genres_circle_pack():
 
     return jsonify(data)
 
-    
+@app.route('/test')
+def test():
+
+    #return render_template('test_network.html')
+    return render_template('zoomable.html')
+
+
 if __name__ == '__main__':
     connect_to_db(app)
     app.run(host='0.0.0.0', debug=True)

@@ -5,6 +5,7 @@ from model import connect_to_db, db
 import server
 import crud
 import spotipy
+from spotipy.exceptions import SpotifyException
 
 
 def user_profile(token):
@@ -119,7 +120,13 @@ def get_user_playlists(token, user_id):
     """Call Spotify API for user's playlists and add them to user_playlists table in db"""
     sp = spotipy.Spotify(auth=token)
 
-    playlists = sp.current_user_playlists(limit=50)
+    try:
+        playlists = sp.current_user_playlists(limit=50)
+    except SpotifyException as err:
+        if err.http_status == 401:
+            return "token error"
+        else:
+            raise 
 
     #create empty set for playlist names to pass to front end for users to select playlist by name
     playlist_names = set()
@@ -179,11 +186,7 @@ def playlist_artists_to_db(token, user_id, playlist_id):
 
     else:
         artists = sp.artists(playlist_artist_ids)
+        #playlist_id is the api_type in this case so that UserArtists can be filtered based on playlist
         crud.artists_to_db(artists, user_id, playlist_id)
-
-    print("\n\n\n\n\n\n\n\n artists written to db")
-
-    #playlist_id is the api_type in this case so that UserArtists can be filtered based on playlist
-    #crud.artists_to_db(artists, user_id, playlist_id)
 
     return artists

@@ -8,7 +8,7 @@
     <style>
           circle {
     fill:#6ac5fe; 
-    opacity: 0.7;
+    opacity: 0.1;
     stroke: white;
   }
     </style>
@@ -34,7 +34,7 @@
 function circlePack(data) {
 var packLayout = d3.pack();
 
-packLayout.size([700, 700]).padding(5);
+packLayout.size([700, 700]).padding(10);
 
 const rootNode = d3.hierarchy(data); 
 
@@ -60,18 +60,25 @@ var nodes = d3.select('svg g')
   .append('g')
   .attr('transform', function(d) {return 'translate(' + [d.x, d.y] + ')'})
 
+const color = d3.scaleSequential(d3.interpolateCool).domain([-10,10]);  
+
+nodes.append('circle')
+.attr('r', function(d) { return d.r; })
+.style("fill", function(d) { return color(d.depth); });
+
 nodes
   .append('circle')
   .attr('r', function(d) { return d.r; })
 
-  const leaf = nodes.filter(d => !d.children);
+const leaf = nodes.filter(d => !d.children);
+const genres = nodes.filter(d => d.children !== undefined);
 
-leaf.attr("class", "leaf")
+genres.attr("class", "node")
 .append("clipPath")
 .attr("id", function(d) { return "clip-" + d.id; })
 
 //artist labels
-leaf.append("text")
+genres.append("text")
   .attr("clip-path", d => d.clipUid)
 .selectAll("tspan")
 .data(d => d.data.name.split(/(?=[A-Z][a-z])|\s+/g))
@@ -84,9 +91,9 @@ leaf.append("text")
     .attr("fill", "black")
     .attr("text-anchor", "middle");
 
-const genres = nodes.filter(d => d.children !== undefined);
 
-genres.append("title")
+
+nodes.append("title")
     // .text(d => `${d.ancestors().map(d => d.data.name)}`);
     .text(d => d.data.name);
 

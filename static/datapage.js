@@ -20,6 +20,7 @@ $.get('/api/artists', (response) => {
 
   $.post('/api/artists/time-range', userSelection, (response) => {
     $('#circle-pack-svg').empty();
+    $('#circle-pack-svg').html('Updating.....')
     circlePack(response, '#circle-pack-svg');
   });
  });
