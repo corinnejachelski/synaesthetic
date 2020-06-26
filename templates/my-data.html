@@ -65,24 +65,28 @@
 
     <div class="col-5">
       <div id="genre-data" class="data-block">
-        <p>You listen to {{genre_count}} genres among {{num_artists}} top artists.</p>
-        <p>Your top genre is <b>{{max_genre}}</b> with <b>{{max_genre_artists}}</b> artists.</p>
+        <p>Based on your top artists from the past 6 months:</p>
+        <ul id="genre-stats">
+          <li>You listen to {{genre_count}} genres among {{num_artists}} artists.</li>
+          <li>Your top genre is <b>{{max_genre}}</b> with <b>{{max_genre_artists}}</b> artists.</li>
+        </ul>
         <p>The chart to the left does not show all genres. Artists can have multiple genres and are "optimized" to only 
         show up in the genre with the highest number of other artists you listen to.</p>
-        <a id= "genres" class="btn btn-primary" data-toggle="collapse" href="#genre-table" role="button" aria-expanded="false" aria-controls="genre-table" data-toggle="tooltip" data-placement="bottom" title="Click again to close table">Show All My Genres</a>
+        <a id= "genres" class="btn btn-primary btn-sm" data-toggle="collapse" href="#genre-table" role="button" aria-expanded="false" aria-controls="genre-table" data-toggle="tooltip" data-placement="bottom" title="Click again to close table">Show All My Genres</a>
 
-        <div class="collapse multi-collapse" id="genre-table">
-          <ul id="list-group" style="height:400px;width:450px;overflow:auto;"></ul>
+        <div class="collapse" id="genre-table">
+          <ul id="list-group" style="height:400px;width:450px;overflow:auto; background-color: black;"></ul>
         </div>
-<!--         <button id="genres">Show All My Genres</button>
-        <div id="all-genres"></div>
-          <ul id="list-group"></ul>
-        </div> -->
       </div>
   </div>
 </div>
 
 <div id="nested-genres-div">
+  <div class="chart-intro">
+    <h2>Sub-Genres</h2>
+    <p>Genres are nested in the chart below based on a shared word (i.e. "pop" will contain "acoustic pop", "pop rap", etc)</p>
+    <p>Click on any genre's circle to view its sub-genres.</p>
+  </div>
   <svg id="nested-genres" width="700" height="700">
   </svg>
 </div>
@@ -116,16 +120,6 @@
         <p>How does any song in your top 50 tracks compare to your average listening preferences?</p>
       </div>
 
-<!--     <div class="col-7">
-      <div>
-        <button id="random-song" class="btn btn-primary">Get A Random Song</button>
-      </div>
-      <div class="chart-container" style="position: relative; height:60vh; width:60vw">
-        <canvas id="radar-chart"></canvas>
-      </div>
-    </div> -->
-
-      
         <button id="random-song" class="btn btn-primary btn-sm">Get A Random Song</button>
        <canvas id="radar-chart"></canvas>
     </div>

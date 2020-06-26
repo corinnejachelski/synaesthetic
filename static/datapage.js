@@ -117,15 +117,27 @@ function pageRedirect() {
               beginAtZero: true,
               min: 0,
               max: 1,
-              stepSize: 0.1
+              stepSize: 0.1,
+              fontColor: 'rgba(232,232,232, 0.7)',
+              showLabelBackdrop: false,
             },
-            scaleLabel: {
-              fontSize: 20,
+            pointLabels: {
+              fontColor: 'rgba(232,232,232, 0.7)', // labels around the edge like 'Valence'
+              fontSize: 12
             },
-          // legend: {
-          //       position: 'left'
-          // }
-        }
+            gridLines: {
+              color: 'rgba(255, 255, 255, 0.2)'
+            },
+            angleLines: {
+              color: 'white' // lines radiating from the center
+            }
+          },
+          legend: {
+            position: 'top',
+            labels: {
+              fontColor: 'white'
+            }
+          } 
      } 
   };
 
@@ -197,7 +209,7 @@ const nodes = d3.select(svgID)
 .append('g')
 .attr('transform', function(d) {return 'translate(' + [d.x, d.y] + ')'});
 
-const color = d3.scaleSequential(d3.interpolateCool).domain([-10,10]);  
+const color = d3.scaleSequential(d3.interpolateInferno).domain([-4,4]);  
 
 nodes.append('circle')
 .attr('r', function(d) { return d.r; })
@@ -237,10 +249,12 @@ function zoomableCirclePack(data, svgID) {
       diameter = +svg.attr("width"),
       g = svg.append("g").attr("transform", "translate(" + diameter / 2 + "," + diameter / 2 + ")");
   
-  const color = d3.scaleLinear()
-      .domain([-1, 5])
-      .range(["hsl(147,80%,80%)", "hsl(228,30%,40%)"])
-      .interpolate(d3.interpolateHcl);
+  // const color = d3.scaleLinear()
+  //     .domain([-1, 5])
+  //     .range(["hsl(147,80%,80%)", "hsl(228,30%,40%)"])
+  //     .interpolate(d3.interpolateHcl);
+  
+  const color = d3.scaleSequential(d3.interpolateCool).domain([-10,10]); 
   
   const pack = d3.pack()
       .size([diameter - margin, diameter - margin])
@@ -272,7 +286,7 @@ function zoomableCirclePack(data, svgID) {
     const node = g.selectAll("circle,text");
   
     svg
-        .style("background", color(-1))
+        //.style("background", color(-1))
         .on("click", function() { zoom(root); });
   
     zoomTo([root.x, root.y, root.r * 2 + margin]);
@@ -332,11 +346,11 @@ function networkChart(response, divID) {
             highlight: {border: '#00CDCD'},
             hover: {border: '#00CDCD'},
           },
-          font:{color:'#000000', "size": 40},
+          font:{color:'#E0E0E0', "size": 40},
       },
       edges: {
         color:{
-          color:'#000000',
+          color:'#FFFFFF',
           highlight: '#00CDCD',
           hover: '#00CDCD',
         },

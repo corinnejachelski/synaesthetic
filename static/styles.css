@@ -37,6 +37,8 @@ body{
     padding: 5px;
     border: 1px solid black;
   }
+
+  /* circle pack */
   #circle-pack{
     display: inline-block;
   }
@@ -50,6 +52,35 @@ body{
     stroke:black;
     stroke-width: 2;
  }
+ /* .rounded-circle{
+  display:inline-block
+} */
+.node {
+  cursor: pointer;
+}
+
+.node:hover {
+  stroke: #000;
+  stroke-width: 1.5px;
+}
+
+.node--leaf {
+  fill: white;
+}
+
+.label {
+  font: 11px "Helvetica Neue", Helvetica, Arial, sans-serif;
+  text-anchor: middle;
+  text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, -1px 0 0 #fff, 0 -1px 0 #fff;
+}
+
+.label,
+.node--root,
+.node--leaf {
+  pointer-events: none;
+}
+
+/* tooltips */
   .tooltip_ {
     position: relative; 
     display: block;
@@ -76,33 +107,8 @@ body{
     visibility: visible;
     font-size: 12px;
   }
-  .rounded-circle{
-    display:inline-block
-  }
-  .node {
-    cursor: pointer;
-  }
-  
-  .node:hover {
-    stroke: #000;
-    stroke-width: 1.5px;
-  }
-  
-  .node--leaf {
-    fill: white;
-  }
-  
-  .label {
-    font: 11px "Helvetica Neue", Helvetica, Arial, sans-serif;
-    text-anchor: middle;
-    text-shadow: 0 1px 0 #fff, 1px 0 0 #fff, -1px 0 0 #fff, 0 -1px 0 #fff;
-  }
-  
-  .label,
-  .node--root,
-  .node--leaf {
-    pointer-events: none;
-  }
+
+/* social media icons -about page */
   .social_icons_rounded ul {
     padding: 0;
     list-style: none;
@@ -126,26 +132,10 @@ body{
     font-size: 16px
 }
 
-.f_facebook:hover {
+.btn .gap:hover {
     color: #fff;
-    background: #2a66b3;
-    border: 1px solid #2a66b3
-}
-.t_twitter:hover {
-    color: #fff;
-    background: #35bbec;
-    border: 1px solid #35bbec
-}
-.linkedin:hover {
-    color: #fff;
-    background: #007bb5;
-    border: 1px solid #007bb5
-}
-
-.g_google:hover {
-    color: #fff;
-    background: #e55644;
-    border: 1px solid #e55644
+    border: 1px solid #35bbec;
+    box-shadow: 0px 0px 2px 2px #35bbec;
 }
 .gap {
     margin-left: 15px
