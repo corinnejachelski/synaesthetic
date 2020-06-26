@@ -225,87 +225,43 @@ leaf.append("text")
 
 const genres = nodes.filter(d => d.children !== undefined);
 
-// const startAngle = Math.PI * 0.1;
-// const labelArc = d3.arc()
-//         .innerRadius(function(d) { return (d.r - 5); })
-//         .outerRadius(function(d) { return (d.r + 10); })
-//         .startAngle(startAngle)
-//         .endAngle(function(d) {
-//           const total = d.data.name.length;
-//           const step = charSize / d.r;
-//           return startAngle + (total * step);
-//         });
-
-// const groupLabels = nodes.selectAll()
-//       .enter()
-//         .append("g")
-//         .attr("class", "group")
-//         .attr("transform", function(d) { return `translate(${d.x},${d.y})`; });
-
-// groupLabels
-// .append("path")
-//   .attr("class", "group-arc")
-//   .attr("id", function(d,i) { return `arc${i}`; })
-//   .attr("d", labelArc);
-
-// groupLabels
-// .append("text")
-//   .attr("class", "group-label")
-//   .attr("x", 5) 
-//   .attr("dy", 7) 
-// .append("textPath")
-//   .attr("xlink:href", function(d,i){ return `#arc${i}`;})
-//   .text(function(d) { return d.data.name ;});
-
-// genres.append('text')
-//   .attr('dy', 5)
-//   .attr('dx', 7)
-//   //.text(function(d) { return d.children === undefined ? '' : d.data.name;}) 
-//   .text(function(d) { return d.data.name }) 
-//       .attr("font-family", "sans-serif")
-//       .attr("font-size", "12px")
-//       .attr("fill", "black")
-//       .attr("text-anchor", "end")
-//       .attr("text-align", "left");
-
 genres.append("title")
-    // .text(d => `${d.ancestors().map(d => d.data.name)}`);
     .text(d => d.data.name);
 };
 
 function zoomableCirclePack(data, svgID) {
 
 
-  var svg = d3.select(svgID),
+  const svg = d3.select(svgID),
       margin = 20,
       diameter = +svg.attr("width"),
       g = svg.append("g").attr("transform", "translate(" + diameter / 2 + "," + diameter / 2 + ")");
   
-  var color = d3.scaleLinear()
+  const color = d3.scaleLinear()
       .domain([-1, 5])
       .range(["hsl(147,80%,80%)", "hsl(228,30%,40%)"])
       .interpolate(d3.interpolateHcl);
   
-  var pack = d3.pack()
+  const pack = d3.pack()
       .size([diameter - margin, diameter - margin])
       .padding(2);
   
-    const root = d3.hierarchy(data)
+  const root = d3.hierarchy(data)
         .sum(function(d) { return d.value; })
         .sort(function(a, b) { return b.value - a.value; });
   
-    var focus = root,
+  let focus = root,
         nodes = pack(root).descendants(),
         view;
   
-    var circle = g.selectAll("circle")
+    const circle = g.selectAll("circle")
       .data(nodes)
       .enter().append("circle")
         .attr("class", function(d) { return d.parent ? d.children ? "node" : "node node--leaf" : "node node--root"; })
         .style("fill", function(d) { return d.children ? color(d.depth) : null; })
         .on("click", function(d) { if (focus !== d) zoom(d), d3.event.stopPropagation(); });
   
-    var text = g.selectAll("text")
+    const text = g.selectAll("text")
       .data(nodes)
       .enter().append("text")
         .attr("class", "label")
@@ -313,7 +269,7 @@ function zoomableCirclePack(data, svgID) {
         .style("display", function(d) { return d.parent === root ? "inline" : "none"; })
         .text(function(d) { return d.data.name; });
   
-    var node = g.selectAll("circle,text");
+    const node = g.selectAll("circle,text");
   
     svg
         .style("background", color(-1))
@@ -322,9 +278,9 @@ function zoomableCirclePack(data, svgID) {
     zoomTo([root.x, root.y, root.r * 2 + margin]);
   
     function zoom(d) {
-      var focus0 = focus; focus = d;
+      const focus0 = focus; focus = d;
   
-      var transition = d3.transition()
+      const transition = d3.transition()
           .duration(d3.event.altKey ? 7500 : 750)
           .tween("zoom", function(d) {
             var i = d3.interpolateZoom(view, [focus.x, focus.y, focus.r * 2 + margin]);
@@ -344,6 +300,7 @@ function zoomableCirclePack(data, svgID) {
       circle.attr("r", function(d) { return d.r * k; });
     };
   };  
+
 /////////////////////////////////////////////////////////////////////////////////////////
 function networkChart(response, divID) {
     // create an array with nodes
@@ -389,7 +346,6 @@ function networkChart(response, divID) {
       },
       physics: {
         barnesHut: {
-          //avoidOverlap: 1,
           centralGravity: 0.1,
           gravitationalConstant: -3000,
           springLength: 400,
