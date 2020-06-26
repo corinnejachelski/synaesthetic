@@ -86,7 +86,7 @@ def check_user_artists(user_id, artist_id, api_type):
 def check_artist_genres(artist_id, genre_id):
     """Check if a genre is in an artist's genres"""
 
-    return ArtistGenre.query.filter((ArtistGenre.artist_id=artist_id), (ArtistGenre.genre_id=genre_id)).first()    
+    return ArtistGenre.query.filter((ArtistGenre.artist_id==artist_id), (ArtistGenre.genre_id==genre_id)).first()    
 
 
 def get_genre_by_name(genre):
