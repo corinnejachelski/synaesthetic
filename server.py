@@ -105,7 +105,7 @@ def display_data():
     else:
         max_genre, max_genre_artists, genre_count = crud.get_genre_data(session["user_id"], "medium_term")
         
-        num_artists = crud.get_num_artists(session["user_id"])
+        num_artists = crud.get_num_artists(session["user_id"], "medium_term")
 
         max_feature, audio_stats = crud.audio_stats(session["user_id"])
 
@@ -143,6 +143,7 @@ def get_top_artists_by_time_range():
 
     time_range = request.form.get("time_range")
 
+    #check if user's data does not exist for requested time-range and call API
     if crud.check_user_api_type(session["user_id"], time_range) == []:
         spotify_api.user_artists(session["access_token"], session["user_id"], time_range)
 
@@ -153,12 +154,14 @@ def get_top_artists_by_time_range():
 
 @app.route('/api/playlist', methods=['POST'])
 def user_playlist_to_circle_pack():
+    """Re-render circle pack chart based on user-selected playlist"""
 
     playlist_name = request.form.get("playlist")
 
     playlist_id = crud.get_playlist_id_by_name(session["user_id"], playlist_name)
 
-    artists = spotify_api.playlist_artists_to_db(session["access_token"], session["user_id"], playlist_id)
+    if crud.get_playlist_artists_by_id(playlist_id) == None:
+        artists = spotify_api.playlist_artists_to_db(session["access_token"], session["user_id"], playlist_id)
     
     data = crud.circle_pack_json(session["user_id"], playlist_id)
 
@@ -188,7 +191,7 @@ def get_random_song():
 def get_all_genres():
     """Returns data for table of all user genres with list of all artists"""
 
-    genres = crud.get_genres_by_user_artists(session["user_id"])
+    genres = crud.get_genres_by_user_artists(session["user_id"], "medium_term")
 
     return genres
 
@@ -214,10 +217,11 @@ def all_related_artists():
 def display_page_all_relartists():
 
     return render_template('related-artists-all.html')
-    
+
 
 @app.route('/api/nested-genres')
 def nested_genres_circle_pack():
+    """Returns data for zoomable circle pack of nested genres/sub-genres"""
 
     data = crud.circle_pack_genres(session["user_id"])
 

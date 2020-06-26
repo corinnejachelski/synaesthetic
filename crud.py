@@ -4,6 +4,7 @@ from model import (db, User, UserArtist, UserTrack, UserPlaylist, Artist, Relate
 Genre, ArtistGenre, Track, Audio, connect_to_db)
 from math import sqrt
 from random import choice
+
 ################################################################################
 #Artist and Genre related functions
 ################################################################################
@@ -68,6 +69,7 @@ def create_artist_genres(artist_id, genre_id):
 
     return artist_genres
 
+
 #query helper functions
 def get_artist_by_id(artist_id):
     """Query artists table and return object"""
@@ -97,33 +99,28 @@ def get_genre_id_by_name(genre):
     return db.session.query(Genre.genre_id).filter_by(genre=genre).first()
 
 
-def get_genres_by_user_artists(user_id):
+def get_genres_by_user_artists(user_id, api_type):
     """returns {'art pop': ['Grimes', 'Lady Lamb'], 
     'electropop': ['Grimes', 'Big Wild'], 
     'indietronica': ['Grimes', 'Big Wild'],..}
     includes repeating artists in genres"""
 
-    #join tables to access relationships
-    #user_join returns a User object
-    user_join = User.query.options( 
-             db.joinedload('artists') # attribute for user 
-               .joinedload('genres')  # attribute from artist
-            ).get(user_id)  
+    artists = get_user_artists(user_id, api_type)
 
     user_genres = {}                                                                                                                 
 
-    for artist in user_join.artists: 
+    for artist in artists: 
         for genre in artist.genres: 
              user_genres[genre.genre] = user_genres.get(genre.genre, []) + [artist.artist_name]
 
     return user_genres
 
 
-def count_user_artists_by_genre(user_id):
+def count_user_artists_by_genre(user_id, api_type):
     """returns {'chillwave': 3, 'dance pop': 3, 'electropop': 6, 
     'escape room': 4,....}"""
 
-    user_genres = get_genres_by_user_artists(user_id)
+    user_genres = get_genres_by_user_artists(user_id, api_type)
 
     count_artists = {}
     for genre in user_genres:
@@ -135,7 +132,7 @@ def count_user_artists_by_genre(user_id):
 def get_genre_data(user_id, api_type):
     """Get a user's most popular genre (highest artist count) and genre stats"""
 
-    genres = count_user_artists_by_genre(user_id)
+    genres = count_user_artists_by_genre(user_id, api_type)
 
     #genre name
     max_genre = max(genres, key=genres.get)
@@ -148,27 +145,46 @@ def get_genre_data(user_id, api_type):
     return (max_genre, max_genre_artists, genre_count)
 
 
-def get_num_artists(user_id):
-    """Gets count of user artists (50 are not always returned)"""
-    user = User.query.get(user_id)
+def get_num_artists(user_id, api_type):
+    """Gets count of user artists (50 are not always returned) by api_type aka medium_term, long_term, playlist_id"""
 
-    num_artists = len(user.artists)
+    num_artists = len(get_user_artists(user_id,api_type))
 
     return num_artists
 
 
 def get_user_artists(user_id, api_type):
-    """Returns Artist objects for user"""
+    """Returns Artist objects for user filtered by api_type"""
 
-    artists = db.session.query(Artist).filter((UserArtist.user_id=="122209955"), (UserArtist.api_type=="medium_term"), (UserArtist.artist_id==Artist.artist_id)).all()
+    artists = db.session.query(Artist).filter((UserArtist.user_id==user_id), (UserArtist.api_type==api_type), (UserArtist.artist_id==Artist.artist_id)).all()
+
+    return artists
+
+
+def get_all_user_artists(user_id):
+    """Returns all Artist objects for user"""
+
+    artists = db.session.query(Artist).filter((UserArtist.user_id==user_id), (UserArtist.artist_id==Artist.artist_id)).all()
 
     return artists
 
 
 def get_user_artist_ids(user_id, api_type):
-    """Returns list of artist ids by user artists"""
+    """Returns list of artist ids by user artists filtered by api_type"""
 
     artists = get_user_artists(user_id, api_type)
+
+    artist_ids = []
+    for artist in artists:
+        artist_ids.append(artist.artist_id)
+
+    return artist_ids
+
+
+def get_all_user_artist_ids(user_id):
+    """Returns list of all artist ids by user artists"""
+
+    artists = get_all_user_artists(user_id)
 
     artist_ids = []
     for artist in artists:
@@ -181,33 +197,6 @@ def check_user_api_type(user_id, api_type):
     """Check if a time range or playlist id is in a user's artists api_type column"""
 
     return db.session.query(UserArtist).filter((UserArtist.api_type==api_type), (UserArtist.user_id==user_id)).all()
-
-# def count_genres_by_user_artists(user_id):
-#     """returns {'Leon Bridges': 2, 'Lady Lamb': 5, 'Tash Sultana': 1, 'Big Wild': 5, 
-#     'Sylvan Esso': 6,...}"""
-
-#     user_join = User.query.options( 
-#              db.joinedload('artists') # attribute for user 
-#                .joinedload('genres')  # attribute from artist
-#             ).get(user_id)  # test is the user id ()   
-
-#     artist_genres = {}
-#     for artist in user_join.artists:
-#         artist_genres[artist.artist_name] = artist_genres.get(artist.artist_name, 0) + len(artist.genres)
-
-#     return artist_genres
-
-# def get_repeating_artists(user_id):
-#     """return list of artists that have multiple genres"""
-
-#     artist_genres = count_genres_by_user_artists(user_id)
-
-#     repeating_artists = []
-#     for artist in artist_genres:
-#         if artist_genres[artist] > 1:
-#             repeating_artists.append(artist)
-
-#     return repeating_artists
 
 
 def optimize_genres(user_id, api_type):
@@ -227,23 +216,24 @@ def optimize_genres(user_id, api_type):
     #count of artists in each genre
     """{'chillwave': 3, 'dance pop': 3, 'electropop': 6, 
     'escape room': 4,....}"""
-    artist_genres = count_user_artists_by_genre(user_id) 
+    artist_genres = count_user_artists_by_genre(user_id, api_type) 
 
     final_dict = {}
 
     for artist in filtered_artists:
         max_genre = "" #genre name
         genre_count = 0 #count of artists in that genre
+        #iterates through each artist's genres to find genre with highest number of associated artists
         for genre in artist.genres:
-            if artist_genres[genre.genre] == 0:
-                final_dict["No Genre"] = final_dict.get("No Genre", []) + [{"name":artist.artist_name, "value": artist.popularity*100}]
-            #iterates through each artist's genres to find genre with highest
-            #number of associated artists
-            elif artist_genres[genre.genre] >= genre_count:
+            if artist_genres[genre.genre] >= genre_count:
                 genre_count = artist_genres[genre.genre]
                 max_genre = genre.genre
         
-        final_dict[max_genre] = final_dict.get(max_genre, []) + [{"name": artist.artist_name, "value": artist.popularity*100}]
+        final_dict[max_genre] = final_dict.get(max_genre, []) + [{"name": artist.artist_name, "value": 100}]
+
+    if "" in final_dict.keys():
+        final_dict["No Genre"] = final_dict[""]
+        del final_dict[""]
 
     return final_dict
 
@@ -279,7 +269,6 @@ def nested_genres(user_id):
     containing the key (i.e. {pop: [pop rap, indie pop, pop punk]}"""
 
     user_genres = db.session.query(Genre).filter((UserArtist.user_id==user_id), (UserArtist.artist_id==ArtistGenre.artist_id),(ArtistGenre.genre_id==Genre.genre_id)).all()
-    #all_genres = db.session.query(Genre).all()
 
     #one-word genres/seed genres from Spotify
     base_genres = {'acoustic': [], 'afrobeat': [], 'alternative': [], 'ambient': [], 'americana': [], 
@@ -297,13 +286,8 @@ def nested_genres(user_id):
     'trance': [], 'trap': [], 'turkish': [], 'vapor': [], 'world': []}
 
 
-    #search all genres in db for better base genre results
-    # for genre in all_genres:
-    #     #if the genre is one word, add as key in dictionary
-    #     if len(genre.genre.split()) == 1:
-    #         base_genres[genre.genre] = base_genres.get(genre.genre, [])
-
     for genre in user_genres:
+        #split name of genre into list
         genre_split = genre.genre.split()
         if len(genre_split) >= 2:
             for word in genre_split:
@@ -502,11 +486,18 @@ def get_playlist_by_id(playlist_id):
 
     return UserPlaylist.query.get(playlist_id)
 
+
 def get_playlist_id_by_name(user_id, playlist_name):
 
     playlist = db.session.query(UserPlaylist).filter((UserPlaylist.playlist_name==playlist_name), (UserPlaylist.user_id==user_id)).first()
 
     return playlist.playlist_id
+
+
+def get_playlist_artists_by_id(playlist_id):
+    """Check if UserArtists already exist by playlist"""
+
+    return db.session.query(UserArtist).filter(UserArtist.api_type==playlist_id).first()
 
 
 ################################################################################

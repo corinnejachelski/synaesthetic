@@ -30,10 +30,8 @@ $.get('/api/artists', (response) => {
    evt.preventDefault();
 
    const playlistSelection = {'playlist': $('#playlist-selection').val()}
-   console.log(playlistSelection);
 
   $.post('/api/playlist', playlistSelection, (response) => {
-    console.log(response);
     $('#circle-pack-svg').empty();
     circlePack(response, '#circle-pack-svg');
   });
@@ -70,13 +68,6 @@ $.get('/api/related-artists', (response) => {
   networkChart(response, 'network-chart');
 });
 
-
-  $.get('/api/related-artists-all', (response) => {
-    console.log(response);
-    networkChart(response, 'network-chart-all');
-  });
-
-
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
  //Charts.js radar chart config
  const config = {
@@ -102,7 +93,6 @@ $.get('/api/related-artists', (response) => {
             borderColor: "rgba(255,99,132,1)",
             pointBorderColor: "#fff",
             pointBackgroundColor: "rgba(255,99,132,1)",
-            pointBorderColor: "#fff",
             data: []
             }
         ]
