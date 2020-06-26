@@ -83,6 +83,7 @@ def get_related_artists(token, user_id, api_type):
     or in playlists, the chart loses visual readability, so the deafult is set for 
     apit_type = medium_term artists"""
 
+    #pass in api_type = None to get all user artists without filtering by api_type
     if api_type == None:
         user_artist_list = crud.get_all_user_artists(user_id)
         artist_ids_set = set(crud.get_all_user_artist_ids(user_id))
