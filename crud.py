@@ -162,9 +162,9 @@ def get_user_artists(user_id, api_type):
 
 
 def get_all_user_artists(user_id):
-    """Returns all Artist objects for user"""
+    """Returns all Artist objects for user, up to 250 artists"""
 
-    artists = db.session.query(Artist).filter((UserArtist.user_id==user_id), (UserArtist.artist_id==Artist.artist_id)).all()
+    artists = db.session.query(Artist).filter((UserArtist.artist_id==Artist.artist_id), (UserArtist.user_id==user_id)).limit(250).all()
 
     return artists
 
