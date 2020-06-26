@@ -207,6 +207,7 @@ def get_related_artists():
 
 @app.route('/api/related-artists-all')
 def all_related_artists():
+    """Returns nodes and edges data for network chart of a user's related artists"""
 
     nodes, edges = spotify_api.get_related_artists(session["access_token"], session["user_id"], None)
 
@@ -215,6 +216,7 @@ def all_related_artists():
 
 @app.route('/related-artists-all')
 def display_page_all_relartists():
+    """Display page for network chart of non-filtered user artists"""
 
     return render_template('related-artists-all.html')
 
@@ -230,14 +232,10 @@ def nested_genres_circle_pack():
 
 @app.route('/about')
 def about_page():
+    """Display page about project and creator"""
 
     return render_template('about.html')
 
-@app.route('/test')
-def test():
-
-    #return render_template('test_network.html')
-    return render_template('zoomable.html')
 
 
 if __name__ == '__main__':
