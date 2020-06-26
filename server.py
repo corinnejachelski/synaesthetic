@@ -227,6 +227,12 @@ def nested_genres_circle_pack():
 
     return jsonify(data)
 
+
+@app.route('/about')
+def about_page():
+
+    return render_template('about.html')
+
 @app.route('/test')
 def test():
 

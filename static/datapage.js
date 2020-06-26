@@ -1,5 +1,8 @@
 "use strict";
 
+//default hide loading gif
+$('#status').hide();
+
 // Circle pack d3 chart
 // rendering chart with data from AJAX request
 // data is manipulated from Spotify API call
@@ -15,25 +18,28 @@ $.get('/api/artists', (response) => {
  //re-render circle pack chart based on user click for top artists time range
  $('#time-range').on('submit', (evt) => {
   evt.preventDefault();
+  $('#circle-pack-svg').empty();
+  $('#status').show();
+  
 
   const userSelection = {'time_range': $('#artists-time-range').val()};
 
   $.post('/api/artists/time-range', userSelection, (response) => {
-    $('#circle-pack-svg').empty();
-    $('#circle-pack-svg').html('Updating.....')
     circlePack(response, '#circle-pack-svg');
+    $('#status').hide(); 
   });
  });
 
  //re-render circle pack chart based on user click for playlist
  $('#playlist').on('submit', (evt) => {
    evt.preventDefault();
-
+   $('#circle-pack-svg').empty();
+   $('#status').show();
    const playlistSelection = {'playlist': $('#playlist-selection').val()}
 
   $.post('/api/playlist', playlistSelection, (response) => {
-    $('#circle-pack-svg').empty();
     circlePack(response, '#circle-pack-svg');
+    $('#status').hide();
   });
  });
  
@@ -65,7 +71,9 @@ $('#genres').on('click', () => {
 ///////////////////////////////////////////////////////////////////////////////////////////
 //Viz.js network chart 
 $.get('/api/related-artists', (response) => { 
+  $('#rel-artists-status').show();
   networkChart(response, 'network-chart');
+  $('#rel-artists-status').hide();
 });
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////

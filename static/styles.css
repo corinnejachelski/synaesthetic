@@ -103,9 +103,68 @@ body{
   .node--leaf {
     pointer-events: none;
   }
+  .social_icons_rounded ul {
+    padding: 0;
+    list-style: none;
+    margin-top: 200px;
+    margin-left: 500px
+}
+
+.social_icons_rounded ul li a {
+    float: left;
+    border-radius: 50%;
+    line-height: 40px;
+    color: #e0e0e0;
+    height: 40px;
+    width: 40px;
+    text-align: center;
+    margin-bottom: 40px;
+    border: 1px solid #e0e0e0
+}
+
+.social_icons_rounded ul li a i {
+    font-size: 16px
+}
+
+.f_facebook:hover {
+    color: #fff;
+    background: #2a66b3;
+    border: 1px solid #2a66b3
+}
+.t_twitter:hover {
+    color: #fff;
+    background: #35bbec;
+    border: 1px solid #35bbec
+}
+.linkedin:hover {
+    color: #fff;
+    background: #007bb5;
+    border: 1px solid #007bb5
+}
+
+.g_google:hover {
+    color: #fff;
+    background: #e55644;
+    border: 1px solid #e55644
+}
+.gap {
+    margin-left: 15px
+}
   /* #network-chart{
     width: 100%;
     height: 900px;
     border: 1px solid lightgray;
     background-color:#333333;
   } */
+  .status {
+    background: url('loading.gif') no-repeat center center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 9999999;
+}
+.hide {
+  display: none;
+}
