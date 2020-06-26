@@ -20,7 +20,6 @@ $.get('/api/artists', (response) => {
   evt.preventDefault();
   $('#circle-pack-svg').empty();
   $('#status').show();
-  
 
   const userSelection = {'time_range': $('#artists-time-range').val()};
 
@@ -35,6 +34,7 @@ $.get('/api/artists', (response) => {
    evt.preventDefault();
    $('#circle-pack-svg').empty();
    $('#status').show();
+
    const playlistSelection = {'playlist': $('#playlist-selection').val()}
 
   $.post('/api/playlist', playlistSelection, (response) => {
@@ -76,6 +76,12 @@ $.get('/api/related-artists', (response) => {
   $('#rel-artists-status').hide();
 });
 
+//get all related artists redirect
+function pageRedirect() {
+  window.location.href = '/related-artists-all'
+};
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
  //Charts.js radar chart config
  const config = {
@@ -97,10 +103,10 @@ $.get('/api/related-artists', (response) => {
             {
             label: '',
             fill: true,
-            backgroundColor: "rgba(255,99,132,0.2)",
-            borderColor: "rgba(255,99,132,1)",
+            backgroundColor: "rgba(95, 216, 211, 0.2)",
+            borderColor: "rgba(95, 216, 211, 1)",
             pointBorderColor: "#fff",
-            pointBackgroundColor: "rgba(255,99,132,1)",
+            pointBackgroundColor: "rgba(95, 216, 211, 1)",
             data: []
             }
         ]
@@ -149,13 +155,13 @@ $('#random-song').on('click', () => {
         var randomSong = {
             label: response.track_name + ' - ' + response.artist_name,
             fill: true,
-            backgroundColor: "rgba(179,181,198,0.2)",
-            borderColor: "rgba(179,181,198,1)",
+            backgroundColor: "rgba(95, 216, 211, 0.2)",
+            borderColor: "rgba(95, 216, 211, 1)",
             pointBorderColor: "#fff",
-            pointBackgroundColor: "rgba(179,181,198,1)",
+            pointBackgroundColor: "rgba(95, 216, 211, 1)",
             data: response.random_song
         };
-
+        
         config.data.datasets.push(randomSong);
 
         window.myRadar.update();

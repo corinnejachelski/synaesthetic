@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block title %}All Related Artists{% endblock %}
+
+{% block content %}
+
+<!--     <p class="intro-text">Synesthesia -  a perceptual phenomenon in which stimulation of one sensory or cognitive pathway leads to involuntary experiences in a second sensory or cognitive pathway, such as seeing sound. From the Greek "joined perception"</p>
+    <p class="intro-text">Aesthetic - giving or designed to give pleasure through beauty; of pleasing appearance</p> -->
+
+      <div id="network-chart-all">
+          <div id="status" class="status"></div>
+          <div id="status-text" style="position: center; display: inline-block;"><p>Fetching artist data...</p></div>
+      </div>
+
+
+<script type="text/javascript">
+$('#status').show()
+
+$.get('/api/related-artists-all', (response) => {
+  console.log(response);
+  networkChart(response, 'network-chart-all');
+  $('#status').hide();
+});
+
+function networkChart(response, divID) {
+    // create an array with nodes
+    const nodes = response.nodes;
+
+    // create an array with edges
+    const edges = response.edges;
+
+    // create a network
+    const container = document.getElementById(divID);
+    const data= {
+      nodes: nodes,
+      edges: edges,
+    };
+    const options = {
+      interaction:{
+        hover:true,
+        hoverConnectedEdges:true,
+        dragNodes:true,
+        selectConnectedEdges:true,
+        selectable:true,
+      },
+      nodes: {
+          size:90,
+          borderWidth: 1,
+          borderWidthSelected: 6,
+          color: {
+            border: '#000000',
+            highlight: {border: '#00CDCD'},
+            hover: {border: '#00CDCD'},
+          },
+          font:{color:'#000000', "size": 40},
+      },
+      edges: {
+        color:{
+          color:'#000000',
+          highlight: '#00CDCD',
+          hover: '#00CDCD',
+        },
+        hoverWidth: 8,
+        width: 3,
+        selectionWidth: 6
+      },
+      physics: {
+        barnesHut: {
+          //avoidOverlap: 1,
+          centralGravity: 0.1,
+          gravitationalConstant: -3000,
+          springLength: 400,
+        },
+        repulsion:{
+          nodeDistance: 1200,
+        },
+      },
+      width: '1000px',
+      height: '1200px'
+    };
+    const network = new vis.Network(container, data, options);
+
+//bolds label and highlghts node border on click
+    network.on("click", function (params) {
+        params.event = "[original event]";
+    });
+
+//changes font size, node size, and border width when hovering over node 
+    network.on("hoverNode", function (params) {
+      const nodeId = params.node;
+      const node = network.body.nodes[nodeId];
+      node.setOptions({
+        size: 150,
+        font: {
+          size: 100
+        },
+        borderWidth: 4
+      });
+    });
+
+//reset node on hover out
+    network.on("blurNode", function (params) {
+      const nodeId = params.node;
+      const node = network.body.nodes[nodeId];
+      node.setOptions({
+        size: options.nodes.size,
+        font: {
+          size: options.nodes.font.size
+        },
+        borderWidth: options.nodes.borderWidth
+      });
+    });
+};
+</script>
+{% endblock %}
