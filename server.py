@@ -94,10 +94,10 @@ def callback():
     spotify_api.audio_features(session["access_token"], session["user_id"])
 
     # return render_template('nonzoom-circle-pack.html', display_name=display_name)
-    return redirect('/my-data')
+    return redirect('/data')
 
 
-@app.route('/my-data')
+@app.route('/data')
 def display_data():
     """Main user dashboard page with all charts and stats"""
     if session == {}:

@@ -49,6 +49,7 @@ $.get('/api/artists', (response) => {
 $('#genres').on('click', () => {
   $.get('/api/genres', (response) => {
       for (const genre in response) {
+        console.log(response);
 
         // re-set for each iteration
         let artists = "";
@@ -76,9 +77,9 @@ $.get('/api/related-artists', (response) => {
   $('#rel-artists-status').hide();
 });
 
-//get all related artists redirect
+//get all related artists redirect, open in new tab
 function pageRedirect() {
-  window.location.href = '/related-artists-all'
+  window.open('/related-artists-all', '_blank');
 };
 
 
