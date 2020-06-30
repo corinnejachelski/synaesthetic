@@ -64,7 +64,7 @@ Install the dependencies:
 ```sh
 $ pip install -r requirements.txt
 ```
-##### Spotify API
+#### Spotify API
 Sign up with the [Spotify Developer Dashboard](https://developer.spotify.com/dashboard/login)
 - Create an app
 - Go to your app and locate Client ID and Client Secret
