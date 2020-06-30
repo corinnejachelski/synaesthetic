@@ -8,9 +8,9 @@ Synaesthetic is a Spotify app for visualizing user-specific data, based on the i
   - link
   
 ### Contents
-- Tech Stack
-- Features
-- Installation
+- [Tech Stack](https://github.com/corinnejachelski/synaesthetic/blob/master/README.md#tech-stack)
+- [Features](https://github.com/corinnejachelski/synaesthetic/blob/master/README.md#features)
+- [Installation](https://github.com/corinnejachelski/synaesthetic/blob/master/README.md#installation)
 
 ### Tech Stack
 - Python: back-end language
