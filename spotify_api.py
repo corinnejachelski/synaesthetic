@@ -139,6 +139,7 @@ def get_user_playlists(token, user_id):
 
     #create empty set for playlist names to pass to front end for users to select playlist by name
     playlist_names = set()
+    # playlist_ids = set()
 
     #parse API response
     if playlists["total"] == 0:
@@ -152,6 +153,7 @@ def get_user_playlists(token, user_id):
                 total_tracks = playlist["tracks"]["total"]
 
                 playlist_names.add(playlist_name)
+                # playlist_ids.add(playlist_id)
 
                 #add playlist to user_playlist table
                 if crud.get_playlist_by_id(playlist_id) == None:

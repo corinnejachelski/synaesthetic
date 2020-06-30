@@ -1,12 +1,14 @@
 {% extends 'base.html' %}
 
-{% block title %}{{display_name}}'s Synaesthetic{% endblock %}
+{% block title %}Synaesthetic{% endblock %}
 
 
 {% block content %}
 
 <nav class="navbar navbar-expand-md nav-transparent w-100">
   <div class="container-fluid">
+    <a><img src={{image_url}} alt=user_image width="50" height="50" class="rounded-circle"></a>
+    <a class="navbar-brand">  </a>
     <a class="navbar-brand">Synaesthetic</a>
           <ul class="navbar-nav">
         <li class="nav-item">
@@ -18,7 +20,6 @@
       
     </div>
     <p class="my-auto">
-      <a><img src={{image_url}} alt=user_image width="50" height="50" class="rounded-circle"></a>
       <a class="navbar-brand">{{display_name}}'s Data</a>
     </p>
   </div>
@@ -31,30 +32,8 @@
       <div id="chart-intro">
         <h2>Artists and Genres</h2>
         <p>How related or diverse is your taste in artists?</p>
-        <div class="artists-time-range">
-          Select a time frame for top artists:
-          <form id="time-range" style="display: inline-block;">
-            <select name="artists-time-range" id="artists-time-range" class="selectpicker">
-              <option value="short_term">Short-term (4 weeks)</option>
-              <option value="medium_term">Medium-term (6 months) - default shown</option>
-              <option value="long_term">Long-term (years)</option>
-            </select>
-            <input type="submit" value="Submit">
-          </form>
-        </div>
 
-        <div class="user-playlists">
-          Analyze a playlist:
-          <form id="playlist" style="display: inline-block;">
-            <select name="playlist-selection" id="playlist-selection" class="selectpicker">
-              {% for playlist in playlist_names %}
-              <option>{{playlist}}</option>
-              {% endfor %}
-            </select>
-            <input type="submit" value="Submit">
-          </form>
         </div>
-    </div>
 
       <div id="circle-pack">
         <div class="status" id="status"></div>
@@ -65,6 +44,33 @@
 
     <div class="col-5">
       <div id="genre-data" class="data-block">
+        <h3>Interaction</h3>
+        <p><b>Hover over circles to view genre</b></p>
+        <p>Change the chart to the left to view top artists by a different time range or analyze the genres of a playlist</p>
+        <div class="artists-time-range">
+          Select a time frame for top artists:
+          <form id="time-range">
+            <select name="artists-time-range" id="artists-time-range" class="selectpicker">
+              <option value="short_term">Short-term (4 weeks)</option>
+              <option value="medium_term">Medium-term (6 months) - default shown</option>
+              <option value="long_term">Long-term (years)</option>
+            </select>
+            <input type="submit" value="Submit" class="btn btn-primary btn-sm">
+          </form>
+        </div>
+
+        <div class="user-playlists">
+          Analyze a playlist:
+          <form id="playlist">
+            <select name="playlist-selection" id="playlist-selection" class="selectpicker">
+              {% for playlist in playlist_names %}
+              <option id>{{playlist}}</option>
+              {% endfor %}
+            </select>
+            <input type="submit" value="Submit" class="btn btn-primary btn-sm" style="display: inline-block;">
+          </form>
+        </div>
+        <br><h3>Overview</h3>
         <p>Based on your top artists from the past 6 months:</p>
         <ul id="genre-stats">
           <li>You listen to {{genre_count}} genres among {{num_artists}} artists.</li>
@@ -75,7 +81,7 @@
         <a id= "genres" class="btn btn-primary btn-sm" data-toggle="collapse" href="#genre-table" role="button" aria-expanded="false" aria-controls="genre-table" data-toggle="tooltip" data-placement="bottom" title="Click again to close table">Show All My Genres</a>
 
         <div class="collapse" id="genre-table">
-          <ul id="list-group" style="height:400px;width:450px;overflow:auto; background-color: black;"></ul>
+          <ul id="list-group" style="height:400px;width:450px;overflow:auto;"></ul>
         </div>
       </div>
   </div>
@@ -96,7 +102,8 @@
       <div id="chart-intro">
         <h2> Related Artists </h2>
         <p>A visual representation of connections in your artists' "Fans Also Like" pages on Spotify</p>
-        <p>Artists are connected with lines between them if they are considered "related" by Spotify</p>
+        <p>Artists are connected with lines if they are considered "related" by Spotify</p>
+        
       </div>
     
       <div id="network-chart">
@@ -105,9 +112,13 @@
     </div>
     <div class ="col-5">
       <div id="rel-artists-about" class="data-block">
+        <h3>Overview</h3>
+        <p><b>Hover, click, and drag the circles.</b></p>
         <p>The artists in this network chart are your top {{num_artists}} artists over the past 6 months.</p>
+        <h3>Interaction</h3>
         <p>If you've interacted with the buttons at the top to view your top artists over different
-        time frames or playlists, click here to view a network of up to 250 artists you listen to.</p>
+        time frames or playlists, click here to view a network of up to 250 artists you listen to.<br>
+        Note: All of this data is gotten live and takes awhile to load.</p>
         <button id="redirect-all-related" class="btn btn-primary btn-sm" onclick="pageRedirect()">Show Me More Related Artists</button>
       </div>
     </div>
@@ -117,6 +128,7 @@
     <div class="col-7">
       <div>
         <h2>Audio Features</h2>
+        <p>Audio features are a set of metrics/characteristics for each Spotify song that help to classify it.</p>
         <p>How does any song in your top 50 tracks compare to your average listening preferences?</p>
       </div>
 
@@ -126,6 +138,7 @@
 
     <div class="col-5">
       <div id="audio-data" class="data-block">
+        <h3>Overview</h3>
         <p>Your highest average audio feature is <b>{{max_feature}}</b>.</p>
         You tend to listen to songs that are: 
           <ul id="audio-features">
@@ -134,12 +147,11 @@
           {% endfor %}
           </ul>
       
-        <p><b>What are audio features?</b><br>
+<!--         <p><b>What are audio features?</b><br>
         A set of metrics/characteristics for each Spotify song that help to classify it.
-        </p>
+        </p> -->
 
-        <p>Hover over each feature to learn more.</p>
-
+        <p>Hover over each feature below to learn more:
         <div class="tooltip_"> &#128131; Danceability
           <span class="tooltiptext_">Danceability - Describes how suitable a track is for dancing based on a combination of musical elements including tempo, rhythm stability, beat strength, and overall regularity</span>
         </div>
@@ -149,7 +161,7 @@
         </div>
 
         <div class="tooltip_"> &#128483; Speechiness
-          <span class="tooltiptext_">Speechiness - Detects the presence of spoken words in a track. The more exclusively speech-like the recording (e.g. talk show, audio book, poetry), the closer to 1.0 the attribute value. Values above 0.66 describe tracks that are probably made entirely of spoken words. Values between 0.33 and 0.66 describe tracks that may contain both music and speech, either in sections or layered, including such cases as rap music. Values below 0.33 most likely represent music and other non-speech-like tracks.</span>
+          <span class="tooltiptext_">Speechiness - Detects the presence of spoken words in a track. The more exclusively speech-like the recording (e.g. talk show, audio book, poetry), the closer to 1.0 the attribute value. Values above 0.66 describe tracks that are probably made entirely of spoken words. Values between 0.33 and 0.66 describe tracks that may contain both music and speech, either in sections or layered, including such cases as rap music.</span>
         </div>
 
         <div class="tooltip_"> &#127931; Acousticness
@@ -167,7 +179,7 @@
         <div class="tooltip_"> &#127752; Valence
           <span class="tooltiptext_">Valence - Describes the musical positiveness conveyed by a track. Tracks with high valence sound more positive (e.g. happy, cheerful, euphoric), while tracks with low valence sound more negative (e.g. sad, depressed, angry)</span>
         </div>
-
+        </p>
       </div>
     </div>
   </div>

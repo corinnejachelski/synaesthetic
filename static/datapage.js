@@ -94,19 +94,19 @@ function pageRedirect() {
             {
             label: 'Your Average',
             fill: true,
-            backgroundColor: "rgba(179,181,198,0.2)",
-            borderColor: "rgba(179,181,198,1)",
+            backgroundColor: "rgba(95, 216, 211, 0.2)",
+            borderColor: "rgba(95, 216, 211, 1)",
             pointBorderColor: "#fff",
-            pointBackgroundColor: "rgba(179,181,198,1)",
+            pointBackgroundColor: "rgba(95, 216, 211, 1)",
             data: []
             },
             {
             label: '',
             fill: true,
-            backgroundColor: "rgba(95, 216, 211, 0.2)",
-            borderColor: "rgba(95, 216, 211, 1)",
+            backgroundColor: "rgba(179,181,198,0.3)",
+            borderColor: "rgba(179,181,198,1)",
             pointBorderColor: "#fff",
-            pointBackgroundColor: "rgba(95, 216, 211, 1)",
+            pointBackgroundColor: "rgba(179,181,198,1)",
             data: []
             }
         ]
@@ -126,7 +126,7 @@ function pageRedirect() {
               fontSize: 12
             },
             gridLines: {
-              color: 'rgba(255, 255, 255, 0.2)'
+              color: 'rgba(255, 255, 255, 0.3)'
             },
             angleLines: {
               color: 'white' // lines radiating from the center
@@ -167,10 +167,10 @@ $('#random-song').on('click', () => {
         var randomSong = {
             label: response.track_name + ' - ' + response.artist_name,
             fill: true,
-            backgroundColor: "rgba(95, 216, 211, 0.2)",
-            borderColor: "rgba(95, 216, 211, 1)",
+            backgroundColor: "rgba(179,181,198,0.2)",
+            borderColor: "rgba(179,181,198,1)",
             pointBorderColor: "#fff",
-            pointBackgroundColor: "rgba(95, 216, 211, 1)",
+            pointBackgroundColor: "rgba(179,181,198,1)",
             data: response.random_song
         };
         
@@ -209,7 +209,7 @@ const nodes = d3.select(svgID)
 .append('g')
 .attr('transform', function(d) {return 'translate(' + [d.x, d.y] + ')'});
 
-const color = d3.scaleSequential(d3.interpolateInferno).domain([-4,4]);  
+const color = d3.scaleSequential(d3.interpolateCool).domain([-10,10]);  
 
 nodes.append('circle')
 .attr('r', function(d) { return d.r; })

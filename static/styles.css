@@ -1,9 +1,9 @@
 .main-text{
     font-family: 'Roboto', sans-serif;
+    /* font-weight: 300; */
     margin: auto;
-    /* color: white; */
-    text-align: center;    
-    
+    color: white;
+    text-align: center; 
 }
 body{
     background-color: black;
@@ -11,18 +11,21 @@ body{
     color: white;
 }
 #login-button {
-    font-size: 16px;
+    font-size: 1.2em;
     border-radius: 10px;
-    background: #84bd00 ;
+    background: #43B4A0;
     color: white;
     border: 0;
     cursor: pointer2;
-    font-weight: 200;
+    /* font-weight: 200; */
     margin: auto;
     display: flex; 
     justify-content: center;
     align-items: center;
     /* transition: background 0.2s; */ 
+}
+#login-button:hover{
+  box-shadow: 0px 0px 4px 4px #35bbec;
 }
 .intro-text{
   width: 500px;
@@ -33,9 +36,11 @@ body{
   .data-block{
     display: inline-block;
     width: 500px;
-    height: 700px;
+    height: 600px;
     padding: 5px;
-    border: 1px solid black;
+    display: table-cell;
+    vertical-align: middle;
+    /* border: 1px solid white; */
   }
 
   /* circle pack */
@@ -84,14 +89,14 @@ body{
   .tooltip_ {
     position: relative; 
     display: block;
-    border-bottom: 1px dotted black;
+    border-bottom: 1px dotted white;
     width: 170px
   }
   .tooltip_ .tooltiptext_ {
     visibility: hidden;
-    width: 300px;
-    background-color: black;
-    color: #fff;
+    width: 400px;
+    background-color: white;
+    color: black;
     text-align: center;
     border-radius: 6px;
     padding: 5px 0;
@@ -113,7 +118,7 @@ body{
     padding: 0;
     list-style: none;
     margin-top: 200px;
-    margin-left: 500px
+    margin-left: 45%;
 }
 
 .social_icons_rounded ul li a {
@@ -132,7 +137,7 @@ body{
     font-size: 16px
 }
 
-.btn .gap:hover {
+.gap:hover {
     color: #fff;
     border: 1px solid #35bbec;
     box-shadow: 0px 0px 2px 2px #35bbec;
@@ -180,10 +185,55 @@ body{
   color: #ffec5c;
 }
 
+.footer {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  color: white;
+  text-align: center;
+}
 
 
-.container {
-  /* background-color: black; */
-  background-image: url('listen.jpg') no-repeat center center;
+html, body {
+  height: 100%;
+  margin: 0px;
+}
+
+#homepage {
+  background: url("cover.jpg") no-repeat;
   background-size: cover;
+  /* background-size: 100% 100%; */
+  background-position: bottom;
+  color: black;
+  height: 100%;
+  width: 100%;
+}
+#about{
+  /* display: inline-block; */
+  height: 50%;
+  padding: 10%;
+}
+#center{
+  padding: 15%;
+}
+input[type=submit]{
+  font-size: 0.8em;
+}
+.btn {
+  font-size: 1em;
+  font-weight: 700;
+  border-radius: 10px;
+  background:#18BEA6;
+  color: white;
+  border: 0;
+  cursor: pointer2;
+  /* font-weight: 200; */
+  /* margin: auto;
+  display: flex;  */
+  justify-content: center;
+  align-items: center;
+}
+.btn:hover{
+  box-shadow: 0px 0px 4px 4px #35bbec;
 }

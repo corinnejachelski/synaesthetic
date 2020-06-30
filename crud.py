@@ -295,12 +295,16 @@ def nested_genres(user_id):
                 if word in base_genres.keys():
                     base_genres[word] = base_genres.get(word, []) + [{"name":genre.genre, "value": 100}]
 
-    #delete keys with no values
+    #delete keys with values less than length 1 for visual appearance
     length_keys = {k: len(v) for k, v in base_genres.items()}
 
     for k in length_keys:
         if length_keys[k] <= 1:
             del base_genres[k]
+
+    #hip-hop is not hyphenated in data, so does not work with algorithm - search by "hip" and then change key
+    base_genres["hip-hop"] = base_genres["hip"]
+    del base_genres["hip"]
 
     return base_genres
 

@@ -17,7 +17,7 @@ from model import connect_to_db
 SPOTIPY_CLIENT_ID=os.environ['SPOTIPY_CLIENT_ID']
 SPOTIPY_CLIENT_SECRET=os.environ['SPOTIPY_CLIENT_SECRET']
 SPOTIPY_REDIRECT_URI='http://localhost:5000/callback'
-SCOPE='user-top-read'
+SCOPE='user-top-read playlist-read-private'
 # scope = 'user-top-read user-library-read playlist-read-public user-follow-read'
 #username of account associated with Spotify Developer dashboard
 USERNAME=os.environ['USERNAME']
