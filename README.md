@@ -57,7 +57,8 @@ https://github.com/corinnejachelski/synaesthetic
 ```
 Create and activate a virtual environment inside your project directory:
 ```sh
-virtualenv env
+$virtualenv env
+(if on Windows: $virtualenv env --always-copy)
 $ source env/bin/activate
 ```
 Install the dependencies:
