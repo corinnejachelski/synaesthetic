@@ -10,6 +10,7 @@ Synaesthetic is a Spotify app for visualizing user-specific data, based on the i
 ### Contents
 - [Tech Stack](https://github.com/corinnejachelski/synaesthetic/blob/master/README.md#tech-stack)
 - [Features](https://github.com/corinnejachelski/synaesthetic/blob/master/README.md#features)
+- [Data Model](https://github.com/corinnejachelski/synaesthetic/blob/master/README.md#data-model)
 - [Installation](https://github.com/corinnejachelski/synaesthetic/blob/master/README.md#installation)
 
 ### Tech Stack
@@ -45,6 +46,9 @@ If users interact with the app a lot or have a lot of playlists, they can also v
 
 4. Audio Features
 Each Spotify track has a set of audio features, or characteristics which help to classify the song. Users are shown their average listening preferences for audio features based on their top 50 songs in a Charts.js radar chart. Users can explore the audio features for any random song in their top 50 with the click of a button. A few summary stats are provided to help users interpret the data or to explore what each audio feature means.  
+
+### Data Model
+![Data model](https://github.com/corinnejachelski/synaesthetic/blob/master/static/images/data_model.JPG)
 
 ### Installation
 To run Synaesthetic on your own machine:
