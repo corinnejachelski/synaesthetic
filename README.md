@@ -57,6 +57,7 @@ Each Spotify track has a set of audio features, or characteristics which help to
 
 ### Data Model
 ![Data model](https://github.com/corinnejachelski/synaesthetic/blob/master/static/images/data_model.JPG)
+This data model is reflected in model.py as SQLAlchemy classes
 
 ### Installation
 To run Synaesthetic on your own machine:
