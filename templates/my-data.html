@@ -28,7 +28,7 @@
 <div class="container-fluid">
 
   <div class="row">
-    <div class="col-7">
+    <div class="col-md-7 col-sm-12">
       <div id="chart-intro">
         <h2>Artists and Genres</h2>
         <p>How related or diverse is your taste in artists?</p>
@@ -42,7 +42,7 @@
     </div>
   </div>
 
-    <div class="col-5">
+    <div class="col-md-5 col-sm-12 order-sm-1">
       <div id="genre-data" class="data-block">
         <h3>Interaction</h3>
         <p><b>Hover over circles to view genre</b></p>
@@ -50,7 +50,7 @@
         <div class="artists-time-range">
           Select a time frame for top artists:
           <form id="time-range">
-            <select name="artists-time-range" id="artists-time-range" class="selectpicker">
+            <select name="artists-time-range" id="artists-time-range" class="selectpicker" style="width: 320px;">
               <option value="short_term">Short-term (4 weeks)</option>
               <option value="medium_term">Medium-term (6 months) - default shown</option>
               <option value="long_term">Long-term (years)</option>
@@ -62,7 +62,7 @@
         <div class="user-playlists">
           Analyze a playlist:
           <form id="playlist">
-            <select name="playlist-selection" id="playlist-selection" class="selectpicker">
+            <select name="playlist-selection" id="playlist-selection" class="selectpicker" style="width: 320px;">
               {% for playlist in playlist_names %}
               <option id>{{playlist}}</option>
               {% endfor %}
