@@ -36,16 +36,24 @@ Most Spotify artists are associated with one or more genres, which can be highly
 
 Users can re-render the circle pack based on top artists over a different time frame or from a personal playlist.
 
+![Artists and Genres Circle Pack](https://github.com/corinnejachelski/synaesthetic/blob/master/static/images/artists-genres.gif)
+
 2. Sub-genres
 Due to the highly specific nature of Spotify's genres, a method was created to be able to "nest" genres based on a common shared word for greater insight into genre preferences. One-word "base genres" were taken from [Spotify](https://developer.spotify.com/console/get-available-genre-seeds/) and then a function searches a user's genres for sub-genres (i.e. "pop" would include "pop rap", "art pop", "chamber pop", etc) and displays them in a D3 zoomable circle pack. 
 
+![Sub-genres Zoomable Circle Pack](https://github.com/corinnejachelski/synaesthetic/blob/master/static/images/genres-zoomable.gif)
+
 3. Related Artists Network
 Each artist has a set of "related artists", as specified by Spotify (which can be viewed in Spotify through the "Fans Also Like" page for any artists). A network chart was created using viz.js. The algorithm calls the API for a list of related artists for each of a user's top 50 artsits and adds the artist as an edge (line between 2 artists) if any related artist is also in a user's top artists. Users can click or hover over any node to highlight the connections between other artists.
+
+![Related Artists Network](https://github.com/corinnejachelski/synaesthetic/blob/master/static/images/artist-network.gif)
 
 If users interact with the app a lot or have a lot of playlists, they can also view a robust network of up to 250 artists they listen to on a separate page. Due to the structure of the API, where getting related artists can only happen one artist at a time, this calls the API up to 250 times in real time and parses each response, leading to a slow runtime. 
 
 4. Audio Features
 Each Spotify track has a set of audio features, or characteristics which help to classify the song. Users are shown their average listening preferences for audio features based on their top 50 songs in a Charts.js radar chart. Users can explore the audio features for any random song in their top 50 with the click of a button. A few summary stats are provided to help users interpret the data or to explore what each audio feature means.  
+
+![Audio Features](https://github.com/corinnejachelski/synaesthetic/blob/master/static/images/audio-features.gif)
 
 ### Data Model
 ![Data model](https://github.com/corinnejachelski/synaesthetic/blob/master/static/images/data_model.JPG)
