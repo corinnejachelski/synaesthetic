@@ -11,7 +11,7 @@ import spotipy
 import spotify_api
 import crud
 from model import connect_to_db
-
+from spotipy.oauth2 import SpotifyOAuth
 
 # Client keys
 SPOTIPY_CLIENT_ID=os.environ['SPOTIPY_CLIENT_ID']
@@ -22,6 +22,7 @@ SCOPE='user-top-read'
 #username of account associated with Spotify Developer dashboard
 USERNAME=os.environ['USERNAME']
 
+
 #Implements Authorization Code Flow for Spotify’s OAuth implementation.
 OAUTH = spotipy.oauth2.SpotifyOAuth(client_id=SPOTIPY_CLIENT_ID,
                                     client_secret=SPOTIPY_CLIENT_SECRET,
@@ -29,7 +30,7 @@ OAUTH = spotipy.oauth2.SpotifyOAuth(client_id=SPOTIPY_CLIENT_ID,
                                     scope=SCOPE,
                                     username=USERNAME)
 
-print(USERNAME)
+
 
 app = Flask(__name__)
 app.secret_key = 'SECRETSECRETSECRET'
@@ -51,11 +52,11 @@ app.secret_key = 'SECRETSECRETSECRET'
 
 @app.route('/')
 def display_homepage():
-    print(session)
 
-    # if session["access_token"]:
-    #     return redirect('/my-data')
-    # else: 
+    #remove cached token before login
+    if os.path.exists(".cache-Corinne Jachelski"):
+        os.remove(".cache-Corinne Jachelski")
+
     return render_template('homepage.html')
 
 
@@ -64,7 +65,7 @@ def login():
     """Authorizes Spotify user login"""
 
     auth_url = OAUTH.get_authorize_url()
-    print(session)
+    
     return redirect(auth_url)
 
 
@@ -100,6 +101,7 @@ def callback():
 @app.route('/data')
 def display_data():
     """Main user dashboard page with all charts and stats"""
+
     if session == {}:
         return redirect('/')
     else:
@@ -240,4 +242,5 @@ def about_page():
 
 if __name__ == '__main__':
     connect_to_db(app)
-    app.run(host='0.0.0.0', debug=True)
+    # app.run(host='0.0.0.0', debug=True)
+    app.run()
