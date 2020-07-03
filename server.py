@@ -29,7 +29,6 @@ OAUTH = spotipy.oauth2.SpotifyOAuth(client_id=SPOTIPY_CLIENT_ID,
                                     scope=SCOPE,
                                     username=USERNAME)
 
-print(USERNAME)
 
 app = Flask(__name__)
 app.secret_key = 'SECRETSECRETSECRET'
@@ -51,11 +50,10 @@ app.secret_key = 'SECRETSECRETSECRET'
 
 @app.route('/')
 def display_homepage():
-    print(session)
+    #remove cached token before login
+    if os.path.exists(".cache-Corinne Jachelski"):
+        os.remove(".cache-Corinne Jachelski")
 
-    # if session["access_token"]:
-    #     return redirect('/my-data')
-    # else: 
     return render_template('homepage.html')
 
 
@@ -64,7 +62,6 @@ def login():
     """Authorizes Spotify user login"""
 
     auth_url = OAUTH.get_authorize_url()
-    print(session)
     return redirect(auth_url)
 
 
