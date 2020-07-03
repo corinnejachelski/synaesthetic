@@ -76,7 +76,7 @@ $ source env/bin/activate
 ```
 Install the dependencies:
 ```sh
-$ pip install -r requirements.txt
+(env)$ pip install -r requirements.txt
 ```
 #### Spotify API
 Sign up with the [Spotify Developer Dashboard](https://developer.spotify.com/dashboard/login)
@@ -93,16 +93,16 @@ export USERNAME="username associated with your app"
 
 Source your keys from your secrets.sh file into your virtual environment:
 ```sh
-$ source secrets.sh
+(env)$ source secrets.sh
 ```
 Set up the database:
 ```sh
-$ createdb synaesthetic
-$ python3 model.py
+(env)$ createdb synaesthetic
+(env)$ python3 model.py
 >>> db.create_all()
 ```
 Run the app:
 ```sh
-$ python3 server.py
+(env)$ python3 server.py
 ```
 You can now navigate to 'localhost:5000/' to access Synaesthetic.
