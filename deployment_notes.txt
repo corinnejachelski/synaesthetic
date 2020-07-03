@@ -1,0 +1,1 @@
+- make sure to change callback route in secrets.sh and or/ server.py AND Spotify developer dashboard callback URIs
