@@ -1,11 +1,11 @@
 # Synaesthetic
 
-Synaesthetic is a Spotify app for visualizing user-specific data, based on the idea of “seeing sound” (synesthesia). Utilizing OAuth and the Spotify Web API, users can explore their listening patterns and relationships among their top artists and genres via an interactive dashboard of stats and charts made with D3.js, viz.js, and Charts.js (aesthetic). Think: visual Spotify Unwrapped
+Synaesthetic is a Spotify app for visualizing interactive, user-specific data. Utilizing OAuth and the Spotify Web API, users can explore their listening patterns and relationships among their top artists and genres via an interactive dashboard of stats and charts made with D3.js, viz.js, and Charts.js. Think: visual Spotify Unwrapped
 
 #### Deployment
 
   - Deployed via Lightsail on AWS
-  - link
+  - [www.synaesthetic.me](www.synaesthetic.me)
   
 ### Contents
 - [Tech Stack](https://github.com/corinnejachelski/synaesthetic/blob/master/README.md#tech-stack)
