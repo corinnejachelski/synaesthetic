@@ -5,7 +5,7 @@ Synaesthetic is a Spotify app for visualizing user-specific data, based on the i
 #### Deployment
 
   - Deployed via Lightsail on AWS
-  - link
+  - [www.synaesthetic.me](www.synaesthetic.me)
   
 ### Contents
 - [Tech Stack](https://github.com/corinnejachelski/synaesthetic/blob/master/README.md#tech-stack)
