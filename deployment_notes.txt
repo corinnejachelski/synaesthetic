@@ -1,0 +1,2 @@
+- make sure to change callback route in secrets.sh and/or server.py AND Spotify developer dashboard callback URIs
+- removed debug=True at bottom of server.py --> app.run()
