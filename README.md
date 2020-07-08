@@ -9,6 +9,7 @@ Synaesthetic is a Spotify app for visualizing interactive, user-specific data. U
   
 ### Contents
 - [Tech Stack](https://github.com/corinnejachelski/synaesthetic/blob/master/README.md#tech-stack)
+- [Demo Video](https://github.com/corinnejachelski/synaesthetic/blob/master/README.md#demo-video)
 - [Features](https://github.com/corinnejachelski/synaesthetic/blob/master/README.md#features)
 - [Data Model](https://github.com/corinnejachelski/synaesthetic/blob/master/README.md#data-model)
 - [Installation](https://github.com/corinnejachelski/synaesthetic/blob/master/README.md#installation)
@@ -28,6 +29,9 @@ Synaesthetic is a Spotify app for visualizing interactive, user-specific data. U
 - D3.js
 - viz.js
 - Charts.js
+
+### Demo Video
+[2 minute video demoing features and functionality](https://www.youtube.com/watch?v=8I4Kgoo7jtM)
 
 ### Features
 The features are primarily built off of a user's [top 50 artists and tracks](https://developer.spotify.com/documentation/web-api/reference/personalization/get-users-top-artists-and-tracks/).
